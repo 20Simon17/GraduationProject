@@ -66,6 +66,15 @@
                     "id": "43803ff7-49f1-474f-82a9-8d0cca339017",
                     "expectedControlType": "",
                     "processors": "",
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Slam",
+                    "type": "Button",
+                    "id": "7e4d8f56-1eec-4c16-8253-5b67e33d45c5",
+                    "expectedControlType": "",
+                    "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 }
@@ -184,11 +193,22 @@
                 {
                     "name": "",
                     "id": "2b845e25-b985-4091-b7c2-7bb2995da488",
-                    "path": "",
+                    "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ea075336-3277-4d76-9595-31f5501c149f",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slam",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

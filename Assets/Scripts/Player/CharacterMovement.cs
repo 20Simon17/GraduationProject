@@ -84,7 +84,7 @@ public class CharacterMovement : MonoBehaviour
     
     private void UpdateMovement()
     {
-        if (movementVector == Vector2.zero && rb.linearVelocity.magnitude > counterForceSpeedThreshold)
+        if (movementVector == Vector2.zero && rb.linearVelocity.magnitude > counterForceSpeedThreshold && isGrounded)
         {
             Vector3 counterForce = new Vector3(-rb.linearVelocity.x, 0, -rb.linearVelocity.z).normalized;
             rb.AddForce(counterForce * decelerationForce);
@@ -160,7 +160,8 @@ public class CharacterMovement : MonoBehaviour
                 }
             }
             
-            rb.AddForce(transform.up * jumpForce * jumpForceScaling, ForceMode.Force);
+            float slideJumpMultiplier = isSliding ? slideJumpForceMultiplier : 1f;
+            rb.AddForce(transform.up * jumpForce * jumpForceScaling * slideJumpMultiplier, ForceMode.Force);
             CanJump = false;
         }
     }
@@ -198,7 +199,7 @@ public class CharacterMovement : MonoBehaviour
     
     private void OnSlam(InputValue value)
     {
-        if (value.isPressed)
+        if (value.isPressed && !isSlamming)
         {
             //TODO: check why player loses speed upon landing after a ground slam
             isSlamming = true;

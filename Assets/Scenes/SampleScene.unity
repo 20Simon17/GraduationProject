@@ -571,7 +571,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 429482157}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -671,16 +671,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cae6121bd3bfb14e9b6c754397a101b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterMovement
+  timeAtLastSlide: 0
+  timeAtLastSlam: 0
+  currentSpeed: 0
   isGrounded: 0
   canJump: 0
-  counterForceThreshold: 1
-  airGravityMultiplier: 1
+  isSliding: 0
+  isSlamming: 0
+  counterForceSpeedThreshold: 3
+  defaultFriction: 0.15
   jumpForce: 3.5
-  slideSpeedBoost: 1.5
+  slamJumpTimeFrame: 0.2
+  slideJumpTimeFrame: 0.2
+  slideSpeedBoost: 1.2
+  slideSpeed: 12
+  slideJumpForceMultiplier: 0.75
+  slideJumpSpeedMultiplier: 1.1
+  slideFriction: 0.05
+  slidePlayerScaleY: 0.5
   groundSlamForce: 10
-  maxVelocity: 10
+  slamJumpForceMultiplier: 1.5
+  groundSlamGravityMultiplier: 3
+  physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
+  maxVelocity: 12
   accelerationForce: 50
-  decelerationForce: 50
+  decelerationForce: 250
 --- !u!54 &429482163
 Rigidbody:
   m_ObjectHideFlags: 0

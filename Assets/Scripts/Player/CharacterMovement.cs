@@ -9,12 +9,21 @@ public class CharacterMovement : MonoBehaviour
     private Rigidbody rb;
     private Vector2 movementVector;
     private Vector3 defaultGravity;
+    private float defaultPlayerScaleY;
+    
+    private float jumpForceScaling = 100f;
+    
+    [Header("Debugging - Values")] 
+    [SerializeField] private float timeAtLastSlide;
+    [SerializeField] private float timeAtLastSlam;
+    [SerializeField] private float currentSpeed;
     
     //TODO: convert all of these to properties and set "disableMovement" to true in the setters?
-    [Header("Debugging")] 
+    [Header("Debugging - Bools")] 
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool canJump;
     [SerializeField] private bool isSliding;
+    [SerializeField] private bool isSlamming;
 
     private bool CanJump
     {
@@ -23,22 +32,32 @@ public class CharacterMovement : MonoBehaviour
     }
     
     [Header("Ground")]
-    [SerializeField] private float counterForceThreshold = 3.0f;
+    [SerializeField] private float counterForceSpeedThreshold = 3.0f;
+    [SerializeField] private float defaultFriction = 0.6f;
     
-    [Header("Air")]
-    [SerializeField] private float airGravityMultiplier = 1.0f;
+    /*[Header("Air")]
+    [SerializeField] private float airGravityMultiplier = 1.0f;*/
 
     [Header("Jump")]
     [SerializeField] private float jumpForce = 7.5f;
+    [SerializeField] private float slamJumpTimeFrame = 0.2f;
+    [SerializeField] private float slideJumpTimeFrame = 0.2f;
     
     [Header("Slide")]
     [SerializeField] private float slideSpeedBoost = 1.2f;
     [SerializeField] private float slideSpeed = 9.0f;
+    [SerializeField] private float slideJumpForceMultiplier = 0.85f;
+    [SerializeField] private float slideJumpSpeedMultiplier = 1.15f;
+    [SerializeField] private float slideFriction = 0.05f;
+    [SerializeField] private float slidePlayerScaleY = 0.5f;
 
     [Header("Ground Slam")]
     [SerializeField] private float groundSlamForce = 10f;
+    [SerializeField] private float slamJumpForceMultiplier = 1.3f;
+    [SerializeField] private float groundSlamGravityMultiplier = 3.0f;
     
     [Header("Movement")]
+    [SerializeField] private PhysicsMaterial physicsMaterial;
     [SerializeField] private float maxVelocity = 10f;
     [SerializeField] private float accelerationForce = 50f;
     [SerializeField] private float decelerationForce = 50f;
@@ -47,18 +66,25 @@ public class CharacterMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         defaultGravity = Physics.gravity;
+        defaultPlayerScaleY = transform.localScale.y;
     }
     
     private void FixedUpdate()
     {
-        GroundCheck();
         if (!isSliding) UpdateMovement();
         UpdateGravity();
+
+        currentSpeed = rb.linearVelocity.magnitude;
+        if (isGrounded && isSlamming)
+        {
+            isSlamming = false;
+            timeAtLastSlam = Time.time;
+        }
     }
     
     private void UpdateMovement()
     {
-        if (movementVector == Vector2.zero && rb.linearVelocity.magnitude > counterForceThreshold)
+        if (movementVector == Vector2.zero && rb.linearVelocity.magnitude > counterForceSpeedThreshold)
         {
             Vector3 counterForce = new Vector3(-rb.linearVelocity.x, 0, -rb.linearVelocity.z).normalized;
             rb.AddForce(counterForce * decelerationForce);
@@ -70,27 +96,11 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-    private void GroundCheck()
-    {
-        Ray groundRay = new Ray(transform.position, Vector3.down);
-        if (Physics.Raycast(groundRay, out RaycastHit hitInfo, 1.1f))
-        {
-            if (hitInfo.collider.CompareTag("Ground"))
-            {
-                isGrounded = true;
-            }
-        }
-        else
-        {
-            isGrounded = false;
-        }
-    }
-
     private void UpdateGravity()
     {
-        if (!isGrounded && rb.linearVelocity.y < 0)
+        if (!isGrounded && isSlamming)
         {
-            Physics.gravity = defaultGravity * airGravityMultiplier;
+            Physics.gravity = defaultGravity * groundSlamGravityMultiplier;
         }
         else
         {
@@ -103,6 +113,8 @@ public class CharacterMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            isSlamming = false;
+            timeAtLastSlam = Time.time;
         }
     }
 
@@ -119,11 +131,36 @@ public class CharacterMovement : MonoBehaviour
         movementVector = value.Get<Vector2>();
     }
     
-    private void OnJump(InputValue value)
+    private void OnJump(InputValue value) //should I combine both slide and slam jump into 1 with reduced effect
     {
         if (value.isPressed && CanJump)
         {
-            rb.AddForce(transform.up * jumpForce * 100, ForceMode.Force);
+            float now = Time.time;
+            if (timeAtLastSlide != 0 && timeAtLastSlide < timeAtLastSlam)   
+            {
+                if (now - timeAtLastSlide <= slideJumpTimeFrame)
+                {
+                    timeAtLastSlide = 0;
+                    
+                    rb.AddForce(transform.forward * slideJumpSpeedMultiplier, ForceMode.Force); //Little speed boost when jumping from slide
+                    rb.AddForce(transform.up * jumpForce * slideJumpForceMultiplier * jumpForceScaling, ForceMode.Force); //Weaker jump when sliding
+                    CanJump = false;
+                    return;
+                }
+            }
+            else
+            {
+                if (now - timeAtLastSlam <= slamJumpTimeFrame && timeAtLastSlam != 0)
+                {
+                    timeAtLastSlam = 0;
+                    
+                    rb.AddForce(transform.up * jumpForce * slamJumpForceMultiplier * jumpForceScaling, ForceMode.Force); //Higher jump when jumping from slam
+                    CanJump = false;
+                    return;
+                }
+            }
+            
+            rb.AddForce(transform.up * jumpForce * jumpForceScaling, ForceMode.Force);
             CanJump = false;
         }
     }
@@ -134,11 +171,15 @@ public class CharacterMovement : MonoBehaviour
         if (value.isPressed)
         {
             isSliding = true;
-            //add physics material with ~0.05 friction to player collider - or potentially edit the properties of the existing physics material
+            physicsMaterial.dynamicFriction = slideFriction;
+            transform.localScale = new Vector3(transform.localScale.x, slidePlayerScaleY, transform.localScale.z);
 
             if (!isGrounded) return;
             
-            if (rb.linearVelocity.magnitude < slideSpeed)
+            rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
+            timeAtLastSlide = Time.time;
+            
+            if (rb.linearVelocity.magnitude < maxVelocity)
             {
                 rb.linearVelocity = transform.forward * slideSpeed;
             }
@@ -150,7 +191,8 @@ public class CharacterMovement : MonoBehaviour
         else
         {
             isSliding = false;
-            //remove physics material from player collider
+            physicsMaterial.dynamicFriction = defaultFriction;
+            transform.localScale = new Vector3(transform.localScale.x, defaultPlayerScaleY, transform.localScale.z);
         }
     }
     
@@ -158,6 +200,8 @@ public class CharacterMovement : MonoBehaviour
     {
         if (value.isPressed)
         {
+            //TODO: check why player loses speed upon landing after a ground slam
+            isSlamming = true;
             rb.AddForce(-transform.up * groundSlamForce * 100, ForceMode.Force);
         }
     }
@@ -167,6 +211,19 @@ public class CharacterMovement : MonoBehaviour
         if (value.isPressed)
         {
             CanJump = true;
+            
+            //TODO: Interaction stuff
+            //probably make it be "look at interactable object" rather than proximity based
+            //if nearby zipline, attach to it
+            //if nearby door, open it
+            //if nearby item, pick it up
         }
     }
+    
+    
+    //TODO: NOTES
+    //Cancel action keybind - shift ? -> cancel zipline riding, cancel wallrun without jumping
+    //Coyote time probably
+    //Zipline speed gain/loss based on DotProduct of the angle between the players down and the zipline direction * gravity? (sounds correct)
+    //when pull grappling, if the player is grounded && pull point is below player, apply the force to the players forward instead of towards the pull point.
 }

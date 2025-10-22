@@ -413,6 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5689ab8aed20ee4a9c337029e80086f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
+  cameraComponent: {fileID: 0}
   playerObject: {fileID: 429482157}
   mouseSensitivity: 0.15
   clampAngleMin: -90
@@ -710,6 +711,7 @@ MonoBehaviour:
   canJump: 0
   isSliding: 0
   isSlamming: 0
+  velocityHardCap: 75
   counterForceSpeedThreshold: 3
   defaultFriction: 0.8
   jumpForce: 3.5
@@ -717,15 +719,17 @@ MonoBehaviour:
   slideJumpTimeFrame: 0.3
   slideSpeedBoost: 1.2
   slideSpeed: 12
-  slideJumpForceMultiplier: 0.5
-  slideJumpSpeedMultiplier: 1.1
+  slideJumpForceMultiplier: 0.9
+  slideJumpSpeedMultiplier: 1.4
   slideFriction: 0.05
   slidePlayerScaleY: 0.5
-  groundSlamForce: 10
+  slideFallOfThreshold: 9
+  slideFallOfForce: 20
+  groundSlamForce: 1
   slamJumpForceMultiplier: 1.5
   groundSlamGravityMultiplier: 3
   physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
-  maxVelocity: 12
+  maxRunVelocity: 10
   accelerationForce: 50
   decelerationForce: 250
 --- !u!54 &429482163
@@ -880,6 +884,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1169613930}
+  - {fileID: 1709584436}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1566,6 +1571,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1709584435
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1709584436}
+  - component: {fileID: 1709584438}
+  - component: {fileID: 1709584437}
+  m_Layer: 5
+  m_Name: GrapplePointIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1709584436
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709584435}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 475057696}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 64, y: 64}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1709584437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709584435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 503421a5b59822a40add9e2e0e9c232b, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1709584438
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709584435}
+  m_CullTransparentMesh: 1
 --- !u!1 &1709899972
 GameObject:
   m_ObjectHideFlags: 0
@@ -1859,6 +1939,7 @@ GameObject:
   - component: {fileID: 2065444803}
   - component: {fileID: 2065444808}
   - component: {fileID: 2065444807}
+  - component: {fileID: 2065444809}
   m_Layer: 0
   m_Name: GrappleGun
   m_TagString: Untagged
@@ -2058,7 +2139,7 @@ LineRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
-    alignment: 0
+    alignment: 1
     textureMode: 0
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
@@ -2080,18 +2161,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleGun
   predictionPoint: {fileID: 1709899976}
-  isEquipped: 0
+  isEquipped: 1
+  grapplePointIcon: {fileID: 1709584437}
+  minIconScale: 0.75
   gunTip: {fileID: 253855853}
   grappleLineRenderer: {fileID: 2065444807}
-  grappleRange: 250
+  grappleRange: 30
   predictionSphereCastRadius: 1
-  pullStrength: 100
+  swapPrimarySecondary: 0
+  pullStrength: 25
   springJointSpring: 4.5
-  springJointDamper: 7
+  springJointDamper: 1
   springJointMassScale: 4.5
   springJointMinDistance: 0.25
-  springJointMaxDistance: 0.8
-  swapPrimarySecondary: 0
+  springJointMaxDistance: 0.5
+--- !u!114 &2065444809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2065444802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+  m_Actions: {fileID: -944628639613478452, guid: 86854b41b24c15b499f2d84adbbe7925, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

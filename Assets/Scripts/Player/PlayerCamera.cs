@@ -3,8 +3,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerCamera : MonoBehaviour
 {
+    [HideInInspector] public Camera cameraComponent;
+    
     [SerializeField]
     private GameObject playerObject;
+    private CharacterMovement characterMovement;
     
     [SerializeField]
     private float mouseSensitivity = 1f;
@@ -20,11 +23,15 @@ public class PlayerCamera : MonoBehaviour
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
+     
+        cameraComponent = GetComponent<Camera>();
         
         if (playerObject == null)
         {
             playerObject = transform.parent.gameObject;
         }
+        
+        characterMovement = playerObject.GetComponent<CharacterMovement>();
         
         transform.rotation = playerObject.transform.rotation;
     }
@@ -32,10 +39,31 @@ public class PlayerCamera : MonoBehaviour
     private void OnLook(InputValue value)
     {
         Vector2 lookVector = value.Get<Vector2>();
+        
         playerObject.transform.Rotate(Vector3.up, lookVector.x * mouseSensitivity);
+        
+        /*if (characterMovement.IsDisconnectedFromCamera)
+        {
+            transform.Rotate(Vector3.up, lookVector.x * mouseSensitivity); //rotate the camera and stop the player from rotating? maybe don't want this though
+        }*/
         
         cameraVerticalRotation += -lookVector.y * mouseSensitivity;
         cameraVerticalRotation = Mathf.Clamp(cameraVerticalRotation, clampAngleMin, clampAngleMax);
         transform.localEulerAngles = new Vector3(cameraVerticalRotation, 0f, 0f);
+    }
+    
+    public bool IsObjectVisible(Transform targetObject)
+    {
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(cameraComponent);
+
+        foreach (var plane in planes)
+        {
+            if (plane.GetDistanceToPoint(targetObject.position) < 0f)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

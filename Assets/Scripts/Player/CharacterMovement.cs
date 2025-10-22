@@ -12,7 +12,20 @@ public class CharacterMovement : MonoBehaviour
     private float defaultPlayerScaleY;
     
     private float jumpForceScaling = 100f;
-    
+
+    public bool IsDisconnectedFromCamera
+    {
+        get
+        {
+            if (isSliding)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
     [Header("Debugging - Values")] 
     [SerializeField] private float timeAtLastSlide;
     [SerializeField] private float timeAtLastSlam;
@@ -30,6 +43,9 @@ public class CharacterMovement : MonoBehaviour
         get => isGrounded || canJump;
         set => canJump = value;
     }
+
+    [Header("General Settings")] [SerializeField]
+    private float velocityHardCap = 150f;
     
     [Header("Ground")]
     [SerializeField] private float counterForceSpeedThreshold = 3.0f;
@@ -50,6 +66,8 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float slideJumpSpeedMultiplier = 1.15f;
     [SerializeField] private float slideFriction = 0.05f;
     [SerializeField] private float slidePlayerScaleY = 0.5f;
+    [SerializeField] private float slideFallOfThreshold = 8f;
+    [SerializeField] private float slideFallOfForce = 5f;
 
     [Header("Ground Slam")]
     [SerializeField] private float groundSlamForce = 10f;
@@ -58,7 +76,7 @@ public class CharacterMovement : MonoBehaviour
     
     [Header("Movement")]
     [SerializeField] private PhysicsMaterial physicsMaterial;
-    [SerializeField] private float maxVelocity = 10f;
+    [SerializeField] private float maxRunVelocity = 10f;
     [SerializeField] private float accelerationForce = 50f;
     [SerializeField] private float decelerationForce = 50f;
     
@@ -84,12 +102,24 @@ public class CharacterMovement : MonoBehaviour
     
     private void UpdateMovement()
     {
+        if(rb.linearVelocity.magnitude > velocityHardCap)
+        {
+            rb.linearVelocity = rb.linearVelocity.normalized * velocityHardCap;
+        }
+        
+        if (isSliding && rb.linearVelocity.magnitude < slideFallOfThreshold && rb.linearVelocity.magnitude > counterForceSpeedThreshold)
+        {
+            Vector3 relativeVelocity = transform.InverseTransformPoint(rb.linearVelocity);
+            rb.AddForce(-relativeVelocity.normalized * slideFallOfForce, ForceMode.Acceleration);
+            Debug.Log("Countering slide");
+        }
+        
         if (movementVector == Vector2.zero && rb.linearVelocity.magnitude > counterForceSpeedThreshold && isGrounded)
         {
             Vector3 counterForce = new Vector3(-rb.linearVelocity.x, 0, -rb.linearVelocity.z).normalized;
             rb.AddForce(counterForce * decelerationForce);
         }
-        else if (rb.linearVelocity.magnitude < maxVelocity)
+        else if (rb.linearVelocity.magnitude < maxRunVelocity)
         {
             rb.AddForce(transform.forward * (movementVector.y * accelerationForce));
             rb.AddForce(transform.right * (movementVector.x * accelerationForce));
@@ -180,7 +210,7 @@ public class CharacterMovement : MonoBehaviour
             rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
             timeAtLastSlide = Time.time;
             
-            if (rb.linearVelocity.magnitude < maxVelocity)
+            if (rb.linearVelocity.magnitude < maxRunVelocity)
             {
                 rb.linearVelocity = transform.forward * slideSpeed;
             }
@@ -203,7 +233,7 @@ public class CharacterMovement : MonoBehaviour
         {
             //TODO: check why player loses speed upon landing after a ground slam
             isSlamming = true;
-            rb.AddForce(-transform.up * groundSlamForce * 100, ForceMode.Force);
+            rb.AddForce(-transform.up * groundSlamForce * 100, ForceMode.VelocityChange);
         }
     }
     
@@ -211,14 +241,20 @@ public class CharacterMovement : MonoBehaviour
     {
         if (value.isPressed)
         {
-            CanJump = true;
-            
+            //CanJump = true;
+            GetComponent<PlayerInput>().SwitchCurrentActionMap("PlayerZipline");
+
             //TODO: Interaction stuff
             //probably make it be "look at interactable object" rather than proximity based
             //if nearby zipline, attach to it
             //if nearby door, open it
             //if nearby item, pick it up
         }
+    }
+
+    private void OnDrop(InputValue value)
+    {
+        GetComponent<PlayerInput>().SwitchCurrentActionMap("Player");
     }
     
     

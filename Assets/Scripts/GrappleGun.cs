@@ -1,11 +1,14 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GrappleGun : MonoBehaviour
 {
     private CharacterMovement characterMovement;
     private PlayerCamera playerCamera;
+    private Camera playerCameraComponent;
+    private bool disableIcon = false;
 
     private RaycastHit predictionHit;
     [SerializeField] private Transform predictionPoint;
@@ -16,14 +19,17 @@ public class GrappleGun : MonoBehaviour
     private SpringJoint joint;
     
     public bool isEquipped = false;
-    
-    [Header("References")]
+
+    [Header("References")] 
+    [SerializeField] private Image grapplePointIcon;
+    [SerializeField] private float minIconScale = 0.75f;
     [SerializeField] private Transform gunTip;
     
     [Header("General Settings")]
     [SerializeField] private LineRenderer grappleLineRenderer;
     [SerializeField] private float grappleRange = 50f;
     [SerializeField] private float predictionSphereCastRadius = 1f;
+    [SerializeField] private bool swapPrimarySecondary = false; //TODO: Add keybind to toggle this setting in-game + visual for what keybind does what
 
     [Header("Pull Grapple Settings")] 
     [SerializeField] private float pullStrength = 100f;
@@ -34,54 +40,61 @@ public class GrappleGun : MonoBehaviour
     [SerializeField] private float springJointMassScale = 4.5f;
     [SerializeField] private float springJointMinDistance = 0.25f;
     [SerializeField] private float springJointMaxDistance = 0.8f;
-    
-    [SerializeField] private bool swapPrimarySecondary = false; //TODO: Add keybind to toggle this setting in-game + visual for what keybind does what
 
     private void Awake()
     {
         characterMovement = FindFirstObjectByType<CharacterMovement>();
         playerCamera = FindFirstObjectByType<PlayerCamera>();
         grappleLineRenderer = GetComponent<LineRenderer>();
+        playerCameraComponent = playerCamera.GetComponent<Camera>();
     }
 
-    private void PrimaryAction()
+    private void PrimaryAction(bool startAction)
     {
-        if (swapPrimarySecondary)
-        {
-            PullGrapple(); //Swapped primary action
-        }
-        else
-        {
-            StartSwingGrapple(); //True primary action
-        }
+        if (startAction) StartSwingGrapple();
+        else StopSwingGrapple();
     }
 
     private void SecondaryAction()
     {
-        if (swapPrimarySecondary)
-        {
-            StartSwingGrapple(); //Swapped secondary action
-        }
-        else
-        {
-            PullGrapple(); //True secondary action
-        }
+        PullGrapple();
     }
     
     private void OnPrimaryAction(InputValue value)
     {
-        if (isEquipped && value.isPressed)
+        if (!isEquipped) return;
+
+        if (value.isPressed)
         {
-            PrimaryAction();
+            if (!swapPrimarySecondary)
+            {
+                PrimaryAction(true);
+                return;
+            }
+            SecondaryAction();
         }
-        else StopSwingGrapple();
+        else if (!swapPrimarySecondary)
+        {
+            PrimaryAction(false);
+        }
     }
     
     private void OnSecondaryAction(InputValue value)
     {
-        if (isEquipped && value.isPressed)
+        if(!isEquipped) return;
+
+        if (value.isPressed)
         {
-            SecondaryAction();
+            if (!swapPrimarySecondary)
+            {
+                SecondaryAction();
+                return;
+            }
+            PrimaryAction(true);
+        }
+        else if (swapPrimarySecondary)
+        {
+            PrimaryAction(false);
         }
     }
 
@@ -93,6 +106,7 @@ public class GrappleGun : MonoBehaviour
     private void LateUpdate()
     {
         DrawRope();
+        DrawIndicator();
     }
 
     private void DrawRope()
@@ -103,6 +117,45 @@ public class GrappleGun : MonoBehaviour
         
         grappleLineRenderer.SetPosition(0, gunTip.position);
         grappleLineRenderer.SetPosition(1, currentGrapplePosition);
+    }
+
+    private void DrawIndicator()
+    {
+        if (disableIcon)
+        {
+            grapplePointIcon.enabled = false;
+            return;
+        }
+        
+        float distanceToCamera = Vector3.Distance(predictionPoint.position, playerCamera.transform.position);
+        
+        if (predictionPoint.position == Vector3.zero || distanceToCamera > grappleRange)
+        {
+            if (grapplePointIcon.enabled)
+            {
+                grapplePointIcon.enabled = false;
+            }
+        }
+        else
+        {
+            if (playerCamera.IsObjectVisible(predictionPoint))
+            {
+                if (!grapplePointIcon.enabled)
+                {
+                    grapplePointIcon.enabled = true;
+                }
+            }
+            else if (grapplePointIcon.enabled)
+            {
+                grapplePointIcon.enabled = false;
+            }
+            
+            grapplePointIcon.transform.position = playerCameraComponent.WorldToScreenPoint(predictionPoint.position);
+            
+            float lerpValue = distanceToCamera / grappleRange;
+            float scaleValue = Mathf.Lerp(1f, minIconScale, lerpValue);
+            grapplePointIcon.rectTransform.sizeDelta = new Vector2(64 * scaleValue, 64 * scaleValue);
+        }
     }
 
     private void CheckForSwingPoints()
@@ -132,12 +185,14 @@ public class GrappleGun : MonoBehaviour
 
         if (realHitPoint != Vector3.zero)
         {
-            predictionPoint.gameObject.SetActive(true);
+            //predictionPoint.gameObject.SetActive(true);
             predictionPoint.position = realHitPoint;
+            disableIcon = false;
         }
         else
         {
-            predictionPoint.gameObject.SetActive(false);
+            //predictionPoint.gameObject.SetActive(false);
+            disableIcon = true;
         }
         
         predictionHit = raycastHit.point == Vector3.zero ? sphereCastHit : raycastHit;

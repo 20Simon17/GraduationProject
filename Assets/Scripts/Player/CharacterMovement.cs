@@ -47,6 +47,8 @@ public class CharacterMovement : MonoBehaviour
     [Header("General Settings")] [SerializeField]
     private float velocityHardCap = 150f;
     
+    [SerializeField] private PlayerData playerData;
+    
     [Header("Ground")]
     [SerializeField] private float counterForceSpeedThreshold = 3.0f;
     [SerializeField] private float defaultFriction = 0.6f;
@@ -111,7 +113,6 @@ public class CharacterMovement : MonoBehaviour
         {
             Vector3 relativeVelocity = transform.InverseTransformPoint(rb.linearVelocity);
             rb.AddForce(-relativeVelocity.normalized * slideFallOfForce, ForceMode.Acceleration);
-            Debug.Log("Countering slide");
         }
         
         if (movementVector == Vector2.zero && rb.linearVelocity.magnitude > counterForceSpeedThreshold && isGrounded)
@@ -231,9 +232,19 @@ public class CharacterMovement : MonoBehaviour
     {
         if (value.isPressed && !isSlamming)
         {
-            //TODO: check why player loses speed upon landing after a ground slam
+            if (!isGrounded)
+            {
+                isSlamming = true;
+                rb.AddForce(-transform.up * groundSlamForce * 100, ForceMode.VelocityChange);
+            }
+            else
+            {
+                timeAtLastSlam = Time.time;
+            }
+            
+            /*//TODO: check why player loses speed upon landing after a ground slam
             isSlamming = true;
-            rb.AddForce(-transform.up * groundSlamForce * 100, ForceMode.VelocityChange);
+            rb.AddForce(-transform.up * groundSlamForce * 100, ForceMode.VelocityChange);*/
         }
     }
     

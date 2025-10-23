@@ -1,49 +1,59 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class BaseState : MonoBehaviour
+public class BaseState
 {
-    public void EnableState()
+    protected Player Player;
+    
+    public virtual void EnableState(Player player, PlayerData playerData)
+    {
+        Player = player;
+    }
+
+    public virtual void DisableState()
+    {
+        
+    }
+    
+    public virtual void OnMove(InputValue value)
+    {
+
+    }
+
+    public virtual void OnJump(InputValue value)
+    {
+        
+    }
+    
+    public virtual void OnCrouch(InputValue value)
+    {
+        /*if (value.isPressed)
+        {
+            Player.SwitchState<SlidingState>();
+        }*/
+    }
+    
+    public virtual void OnSlam(InputValue value)
+    {
+        //Player.SwitchState<SlammingState>();
+    }
+    
+    public virtual void OnInteract(InputValue value)
     {
         
     }
 
-    public void DisableState()
+    public virtual void OnPrimaryAction(InputValue value)
     {
         
     }
     
-    public void OnMove(InputValue value)
-    {
-
-    }
-
-    public void OnJump(InputValue value)
-    {
-        
-    }
-    
-    public void OnCrouch(InputValue value)
-    {
-        
-    }
-    
-    public void OnSlam(InputValue value)
-    {
-        
-    }
-    
-    public void OnInteract(InputValue value)
+    public virtual void OnSecondaryAction(InputValue value)
     {
         
     }
 
-    public void OnPrimaryAction(InputValue value)
-    {
-        
-    }
-    
-    public void OnSecondaryAction(InputValue value)
+    public virtual void UpdateState()
     {
         
     }

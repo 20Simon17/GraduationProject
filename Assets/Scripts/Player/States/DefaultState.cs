@@ -31,6 +31,7 @@ public class DefaultState : BaseState
         base.OnMove(value);
         
         Vector2 moveInput = value.Get<Vector2>();
+        _playerMovement.SetMoveDirection(moveInput);
     }
     
     public override void OnJump(InputValue value)
@@ -41,5 +42,15 @@ public class DefaultState : BaseState
         {
             _playerJump.Jump();
         }
+    }
+
+    public override void OnCrouch(InputValue value)
+    {
+        Player.SwitchState<SlidingState>(); // switch to slide state when implemented
+    }
+
+    public override void OnSlam(InputValue value)
+    {
+        Player.SwitchState<DefaultState>(); // switch to slam state when implemented
     }
 }

@@ -17,13 +17,13 @@ public class Player : MonoBehaviour
     private BaseState _currentState;
     
     #region InputPassThrough
-    private void OnMove(InputValue value) => _currentState.OnMove(value);
-    private void OnJump(InputValue value) => _currentState.OnJump(value);
-    private void OnCrouch(InputValue value) => _currentState.OnCrouch(value);
-    private void OnSlam(InputValue value) => _currentState.OnSlam(value);
-    private void OnInteract(InputValue value) => _currentState.OnInteract(value);
-    private void OnPrimaryAction(InputValue value) => _currentState.OnPrimaryAction(value);
-    private void OnSecondaryAction(InputValue value) => _currentState.OnSecondaryAction(value);
+    private void OnMove(InputValue value) => _currentState?.OnMove(value);
+    private void OnJump(InputValue value) => _currentState?.OnJump(value);
+    private void OnCrouch(InputValue value) => _currentState?.OnCrouch(value);
+    private void OnSlam(InputValue value) => _currentState?.OnSlam(value);
+    private void OnInteract(InputValue value) => _currentState?.OnInteract(value);
+    private void OnPrimaryAction(InputValue value) => _currentState?.OnPrimaryAction(value);
+    private void OnSecondaryAction(InputValue value) => _currentState?.OnSecondaryAction(value);
     #endregion
 
     private void Awake()
@@ -32,10 +32,15 @@ public class Player : MonoBehaviour
         _playerData = playerDataObject.playerData;
         _playerData.defaultPlayerScaleY = transform.localScale.y;
     }
+
+    private void Start()
+    {
+        SwitchState<DefaultState>();
+    }
     
     public void SwitchState<T>() where T : BaseState, new()
     {
-        if (_currentState.GetType() == typeof(T)) return;
+        if (_currentState?.GetType() == typeof(T)) return;
         
         _currentState?.DisableState();
         

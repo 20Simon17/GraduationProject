@@ -27,15 +27,12 @@ public class BaseState
     
     public virtual void OnCrouch(InputValue value)
     {
-        /*if (value.isPressed)
-        {
-            Player.SwitchState<SlidingState>();
-        }*/
+        
     }
     
     public virtual void OnSlam(InputValue value)
     {
-        //Player.SwitchState<SlammingState>();
+        
     }
     
     public virtual void OnInteract(InputValue value)

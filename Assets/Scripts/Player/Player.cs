@@ -63,12 +63,29 @@ public class Player : MonoBehaviour
         GroundCheck();
         CheckVelocityCap();
         
-        _currentState?.UpdateState();
+        _currentState?.UpdateState(Time.fixedDeltaTime);
     }
 
     private void GroundCheck()
     {
         //make a better ground check
+    }
+    
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            _playerData.isGrounded = true;
+            _playerData.isSlamming = false;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            _playerData.isGrounded = false;
+        }
     }
 
     private void CheckVelocityCap()

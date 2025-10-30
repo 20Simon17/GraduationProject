@@ -15,8 +15,8 @@ public class PlayerJump
 
     public void Jump()
     {
-        float now = Time.time;
-
+        if (!_data.isGrounded) return;
+        
         // The most recent of the two special jumps takes priority
         if (_data.timeAtLastSlide > _data.timeAtLastSlam)
         {

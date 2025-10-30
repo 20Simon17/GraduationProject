@@ -17,6 +17,12 @@ public class PlayerSlide
     {
         if (_data.isSliding && _rb.linearVelocity.magnitude < _data.slideFallOfThreshold && _rb.linearVelocity.magnitude > _data.counterForceSpeedThreshold)
         {
+            if(_rb.linearVelocity.magnitude < 1f)
+            {
+                _rb.linearVelocity = new Vector3(0, _rb.linearVelocity.y, 0);
+                return;
+            }
+            
             Vector3 relativeVelocity = _transform.InverseTransformPoint(_rb.linearVelocity);
             _rb.AddForce(-relativeVelocity.normalized * _data.slideFallOfForce, ForceMode.Acceleration);
         }
@@ -30,7 +36,7 @@ public class PlayerSlide
 
         if (!_data.isGrounded) return;
             
-        _rb.AddForce(-_transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground //TODO: Ensure that this uses players transform
+        _rb.AddForce(-_rb.transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground //TODO: Ensure that this uses players transform
         _data.timeAtLastSlide = Time.time;
             
         if (_rb.linearVelocity.magnitude < _data.maxRunVelocity)

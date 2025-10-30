@@ -56,4 +56,8 @@ public class PlayerData
     public float maxRunVelocity = 10f;
     public float accelerationForce = 50f;
     public float decelerationForce = 50f;
+
+    public float forwardVelocity = 0.0f;
+    public float strafeVelocity = 0.0f;
+    public float initialVelocity = 4.0f;
 }

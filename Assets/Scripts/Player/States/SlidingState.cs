@@ -21,9 +21,9 @@ public class SlidingState : BaseState
         _playerSlide.StopSlide();
     }
     
-    public override void UpdateState()
+    public override void UpdateState(float fixedDeltaTime)
     {
-        base.UpdateState();
+        base.UpdateState(fixedDeltaTime);
         
         _playerSlide.UpdateSlide();
     }

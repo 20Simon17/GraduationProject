@@ -19,11 +19,11 @@ public class DefaultState : BaseState
         base.DisableState();
     }
     
-    public override void UpdateState()
+    public override void UpdateState(float fixedDeltaTime)
     {
-        base.UpdateState();
+        base.UpdateState(fixedDeltaTime);
         
-        _playerMovement.UpdateMovement();
+        _playerMovement.UpdateMovement(fixedDeltaTime);
     }
     
     public override void OnMove(InputValue value)

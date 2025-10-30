@@ -50,7 +50,7 @@ public class BaseState
         
     }
 
-    public virtual void UpdateState()
+    public virtual void UpdateState(float fixedDeltaTime)
     {
         
     }

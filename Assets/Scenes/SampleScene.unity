@@ -745,6 +745,7 @@ MonoBehaviour:
     forwardVelocity: 0
     strafeVelocity: 0
     initialVelocity: 5
+    trueVelocity: 0
   counterForceSpeedThreshold: 3
   defaultFriction: 0.8
   jumpForce: 3.5

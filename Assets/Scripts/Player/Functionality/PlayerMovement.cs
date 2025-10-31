@@ -27,32 +27,57 @@ public class PlayerMovement
         _moveDirection = direction;
     }
 
+    private void CounterMovement(float fixedDeltaTime)
+    {
+        if (_moveDirection.x == 0 && Mathf.Abs(strafeVelocity) > 1)
+        {
+            strafeVelocity -= strafeVelocity / Mathf.Abs(strafeVelocity) * _data.decelerationForce * fixedDeltaTime;
+        }
+
+        if (_moveDirection.y == 0 && Mathf.Abs(forwardVelocity) > 1)
+        {
+            forwardVelocity -= forwardVelocity / Mathf.Abs(forwardVelocity) * _data.decelerationForce * fixedDeltaTime;
+        }
+    }
+
     public void UpdateMovement(float fixedDeltaTime)
     {
+        if (_rb.linearVelocity.magnitude > 1)
+            CounterMovement(fixedDeltaTime);
+        
         Vector2 horizontalVelocity2D = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.z);
-        if (horizontalVelocity2D.magnitude < _data.maxRunVelocity)
+        _data.trueVelocity = horizontalVelocity2D.magnitude;
+        if (horizontalVelocity2D.magnitude < _data.maxRunVelocity && _moveDirection != Vector2.zero)
         {
             if (_moveDirection.y != 0)
             {
-                /*if (_moveDirection.y > 0) forwardVelocity += _data.accelerationForce * fixedDeltaTime;
-                else forwardVelocity -= _data.accelerationForce * fixedDeltaTime;*/
-
+                if (Mathf.Abs(forwardVelocity) < _data.initialVelocity) //this will break when decelerating, it will just go from initialVelocity to -initialVelocity immediately.
+                {
+                    forwardVelocity = _moveDirection.y < 0 ? -1 * _data.initialVelocity : _data.initialVelocity;
+                }
                 forwardVelocity += _moveDirection.y * _data.accelerationForce * fixedDeltaTime;
             }
-
+            
             if (_moveDirection.x != 0)              
             {
-                /*if (_moveDirection.x > 0) strafeVelocity += _data.accelerationForce * fixedDeltaTime;
-                else strafeVelocity -= _data.accelerationForce * fixedDeltaTime;*/
-                
+                if (strafeVelocity < _data.initialVelocity)
+                {
+                    strafeVelocity = _moveDirection.x < 0 ? -1 * _data.initialVelocity : _data.initialVelocity;
+                }
                 strafeVelocity += _moveDirection.x * _data.accelerationForce * fixedDeltaTime;
             }
         }
         
+        Vector3 horizontalVelocity = _moveDirection.y * forwardVelocity * _transform.forward +
+                                     _moveDirection.x * strafeVelocity  * _transform.right;
         if (_moveDirection != Vector2.zero) // change this to not happen if the new velocity is opposite of the other one
         {
-            Vector3 horizontalVelocity = _transform.forward * forwardVelocity + _transform.right * strafeVelocity;
             _rb.linearVelocity = new Vector3(horizontalVelocity.x, _rb.linearVelocity.y, horizontalVelocity.z);
+        }
+        else
+        {
+            Vector3 newVelocity = _rb.linearVelocity.normalized * horizontalVelocity.magnitude;
+            _rb.linearVelocity = new Vector3(newVelocity.x, _rb.linearVelocity.y, newVelocity.z);
         }
         
         _data.forwardVelocity = forwardVelocity;

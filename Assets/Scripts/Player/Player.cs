@@ -35,9 +35,12 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        _playerData.forwardVelocity = 0;
+        _playerData.strafeVelocity = 0;
+
         SwitchState<DefaultState>();
     }
-    
+
     public void SwitchState<T>() where T : BaseState, new()
     {
         if (_currentState?.GetType() == typeof(T)) return;

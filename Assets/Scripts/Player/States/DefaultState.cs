@@ -13,11 +13,6 @@ public class DefaultState : BaseState
         _playerMovement = new PlayerMovement(Player.rb, Player.transform, playerData);
         _playerJump = new PlayerJump(Player.rb, Player.transform, playerData);
     }
-
-    public override void DisableState()
-    {
-        base.DisableState();
-    }
     
     public override void UpdateState(float fixedDeltaTime)
     {
@@ -37,6 +32,8 @@ public class DefaultState : BaseState
     public override void OnJump(InputValue value)
     {
         base.OnJump(value);
+        
+        //check for wallrunning or walljumping first
         
         if (value.isPressed)
         {

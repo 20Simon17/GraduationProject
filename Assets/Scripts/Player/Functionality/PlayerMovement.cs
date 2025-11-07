@@ -42,10 +42,17 @@ public class PlayerMovement
 
     public void UpdateMovement(float fixedDeltaTime)
     {
-        if (_rb.linearVelocity.magnitude > 1)
-            CounterMovement(fixedDeltaTime);
-        
         Vector2 horizontalVelocity2D = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.z);
+        
+        if (horizontalVelocity2D.magnitude > 1)
+            CounterMovement(fixedDeltaTime);
+        else
+        {
+            strafeVelocity = 0;
+            forwardVelocity = 0;
+            _rb.linearVelocity = new Vector3(0, _rb.linearVelocity.y, 0);
+        }
+        
         _data.trueVelocity = horizontalVelocity2D.magnitude;
         if (horizontalVelocity2D.magnitude < _data.maxRunVelocity && _moveDirection != Vector2.zero)
         {

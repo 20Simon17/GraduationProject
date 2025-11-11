@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerInput))]
@@ -15,6 +16,10 @@ public class Player : MonoBehaviour
     private readonly Dictionary<Type, BaseState> _states = new();
     
     private BaseState _currentState;
+    
+    private TMP_Text _horizontalVelocityText;
+    private TMP_Text _forwardVelocityText;
+    private TMP_Text _strafeVelocityText;
     
     #region InputPassThrough
     private void OnMove(InputValue value) => _currentState?.OnMove(value);
@@ -31,6 +36,10 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         _playerData = playerDataObject.playerData;
         _playerData.defaultPlayerScaleY = transform.localScale.y;
+        
+        _horizontalVelocityText = GameObject.Find("HorizontalVelocity Text").GetComponent<TMP_Text>();
+        _forwardVelocityText = GameObject.Find("ForwardVelocity Text").GetComponent<TMP_Text>();
+        _strafeVelocityText = GameObject.Find("StrafeVelocity Text").GetComponent<TMP_Text>();
     }
 
     private void Start()
@@ -67,6 +76,11 @@ public class Player : MonoBehaviour
         CheckVelocityCap();
         
         _currentState?.UpdateState(Time.fixedDeltaTime);
+        
+        Vector2 horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
+        _horizontalVelocityText.text = "Horizontal Velocity: " + horizontalVelocity.magnitude;
+        _forwardVelocityText.text = "Forward Velocity: " + _playerData.forwardVelocity;
+        _strafeVelocityText.text = "Strafe Velocity: " + _playerData.strafeVelocity;
     }
 
     private void GroundCheck()

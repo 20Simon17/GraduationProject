@@ -41,8 +41,9 @@ MonoBehaviour:
     physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
     maxRunVelocity: 10
     accelerationForce: 7
-    decelerationForce: 5
-    forwardVelocity: 0.8
+    decelerationForce: 50
+    forwardVelocity: 0
     strafeVelocity: 0
+    maxStrafeVelocity: 3
     initialVelocity: 4
     trueVelocity: 0

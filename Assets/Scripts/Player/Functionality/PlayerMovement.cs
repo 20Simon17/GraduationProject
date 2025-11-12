@@ -111,6 +111,7 @@ public class PlayerMovement
     public void UpdateMovement(float fixedDeltaTime)
     {
         _horizontalVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.z);
+        _moveDirection = InputManager.Instance.moveDirection;
 
         if (_horizontalVelocity.magnitude != 0) CounterMovement(fixedDeltaTime);
         /*else

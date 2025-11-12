@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     private TMP_Text _forwardVelocityText;
     private TMP_Text _strafeVelocityText;
     
-    #region InputPassThrough
+    /*#region InputPassThrough
     private void OnMove(InputValue value) => _currentState?.OnMove(value);
     private void OnJump(InputValue value) => _currentState?.OnJump(value);
     private void OnCrouch(InputValue value) => _currentState?.OnCrouch(value);
@@ -29,7 +29,31 @@ public class Player : MonoBehaviour
     private void OnInteract(InputValue value) => _currentState?.OnInteract(value);
     private void OnPrimaryAction(InputValue value) => _currentState?.OnPrimaryAction(value);
     private void OnSecondaryAction(InputValue value) => _currentState?.OnSecondaryAction(value);
-    #endregion
+    #endregion*/
+
+    private void BindEvents()
+    {
+        InputManager inputManager = InputManager.Instance;
+        
+        inputManager.OnJumpEvent               += _currentState.OnJump;
+        inputManager.OnCrouchEvent             += _currentState.OnCrouch;
+        inputManager.OnSlamEvent               += _currentState.OnSlam;
+        inputManager.OnInteractEvent           += _currentState.OnInteract;
+        inputManager.OnPrimaryActionEvent      += _currentState.OnPrimaryAction;
+        inputManager.OnSecondaryActionEvent    += _currentState.OnSecondaryAction;
+    }
+
+    private void OnDisable()
+    {
+        InputManager inputManager = InputManager.Instance;
+        
+        inputManager.OnJumpEvent               -= _currentState.OnJump;
+        inputManager.OnCrouchEvent             -= _currentState.OnCrouch;
+        inputManager.OnSlamEvent               -= _currentState.OnSlam;
+        inputManager.OnInteractEvent           -= _currentState.OnInteract;
+        inputManager.OnPrimaryActionEvent      -= _currentState.OnPrimaryAction;
+        inputManager.OnSecondaryActionEvent    -= _currentState.OnSecondaryAction;
+    }
 
     private void Awake()
     {
@@ -48,6 +72,8 @@ public class Player : MonoBehaviour
         _playerData.strafeVelocity = 0;
 
         SwitchState<DefaultState>();
+        
+        BindEvents();
     }
 
     public void SwitchState<T>() where T : BaseState, new()

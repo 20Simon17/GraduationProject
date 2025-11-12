@@ -1,8 +1,9 @@
+using SR.Shared;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
-public class InputManager : MonoBehaviour
+public class InputManager : PersistentSingleton<InputManager>
 {
     public Vector2 moveDirection = Vector2.zero;
     
@@ -28,6 +29,12 @@ public class InputManager : MonoBehaviour
     public delegate void OnSecondaryActionDelegate(InputValue value);
     public OnSecondaryActionDelegate OnSecondaryActionEvent;
     #endregion
+    
+    private void Start() //TODO: Add "pressed" bool to the events so that it can differentiate between press and release..
+    {
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        playerInput.defaultActionMap = "Player";
+    }
 
     private void OnMove(InputValue value)
     {

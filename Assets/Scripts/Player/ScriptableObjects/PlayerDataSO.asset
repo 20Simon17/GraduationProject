@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerDataSO
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataSO
   playerData:
-    timeAtLastSlide: 0
+    timeAtLastSlide: 17.080845
     timeAtLastSlam: 0
     currentSpeed: 0
     isGrounded: 1
@@ -24,7 +24,7 @@ MonoBehaviour:
     jumpForceScaling: 100
     counterForceSpeedThreshold: 3
     defaultFriction: 0.6
-    jumpForce: 7.5
+    jumpForce: 5
     slamJumpTimeFrame: 0.2
     slideJumpTimeFrame: 0.2
     slideSpeedBoost: 1.2
@@ -40,8 +40,8 @@ MonoBehaviour:
     groundSlamGravityMultiplier: 3
     physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
     maxRunVelocity: 10
-    accelerationForce: 7
-    decelerationForce: 50
+    accelerationForce: 15
+    decelerationForce: 15
     forwardVelocity: 0
     strafeVelocity: 0
     maxStrafeVelocity: 3

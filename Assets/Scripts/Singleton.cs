@@ -4,6 +4,9 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+//This script is made by Ilyas Kaya, very grateful to him for sharing it with me :)
+//Ilyas github profile: https://github.com/AkiVonAkira 
+
 namespace SR.Shared
 {
     /// <summary>

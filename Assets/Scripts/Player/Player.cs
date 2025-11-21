@@ -21,6 +21,10 @@ public class Player : MonoBehaviour
     private TMP_Text _forwardVelocityText;
     private TMP_Text _strafeVelocityText;
     
+    //[SerializeField] private InputManager inputManager;
+
+    private bool _isDisabled;
+    
     /*#region InputPassThrough
     private void OnMove(InputValue value) => _currentState?.OnMove(value);
     private void OnJump(InputValue value) => _currentState?.OnJump(value);
@@ -31,9 +35,11 @@ public class Player : MonoBehaviour
     private void OnSecondaryAction(InputValue value) => _currentState?.OnSecondaryAction(value);
     #endregion*/
 
+    #region EventBinding
     private void BindEvents()
     {
-        InputManager inputManager = InputManager.Instance;
+        InputManager inputManager = InputManager.TryGetInstance();
+        if (inputManager is null) return;
         
         inputManager.OnJumpEvent               += _currentState.OnJump;
         inputManager.OnCrouchEvent             += _currentState.OnCrouch;
@@ -43,9 +49,10 @@ public class Player : MonoBehaviour
         inputManager.OnSecondaryActionEvent    += _currentState.OnSecondaryAction;
     }
 
-    private void OnDisable()
+    private void UnbindEvents()
     {
-        InputManager inputManager = InputManager.Instance;
+        InputManager inputManager = InputManager.TryGetInstance();
+        if (inputManager is null) return;
         
         inputManager.OnJumpEvent               -= _currentState.OnJump;
         inputManager.OnCrouchEvent             -= _currentState.OnCrouch;
@@ -54,6 +61,30 @@ public class Player : MonoBehaviour
         inputManager.OnPrimaryActionEvent      -= _currentState.OnPrimaryAction;
         inputManager.OnSecondaryActionEvent    -= _currentState.OnSecondaryAction;
     }
+    #endregion
+
+    private void EnablePlayer()
+    {
+        _isDisabled = false;
+        SwitchState<DefaultState>();
+        
+        BindEvents();
+        
+        gameObject.SetActive(true);
+    }
+    
+    private void DisablePlayer()
+    {
+        UnbindEvents();
+        
+        _isDisabled = true;
+        // set state to an idle type state
+        
+        gameObject.SetActive(false);
+    }
+
+    private void Start() => EnablePlayer();
+    private void OnDisable() => DisablePlayer();
 
     private void Awake()
     {
@@ -64,16 +95,8 @@ public class Player : MonoBehaviour
         _horizontalVelocityText = GameObject.Find("HorizontalVelocity Text").GetComponent<TMP_Text>();
         _forwardVelocityText = GameObject.Find("ForwardVelocity Text").GetComponent<TMP_Text>();
         _strafeVelocityText = GameObject.Find("StrafeVelocity Text").GetComponent<TMP_Text>();
-    }
-
-    private void Start()
-    {
-        _playerData.forwardVelocity = 0;
-        _playerData.strafeVelocity = 0;
-
-        SwitchState<DefaultState>();
         
-        BindEvents();
+        EnablePlayer();
     }
 
     public void SwitchState<T>() where T : BaseState, new()
@@ -98,6 +121,8 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_isDisabled) return;
+        
         GroundCheck();
         CheckVelocityCap();
         

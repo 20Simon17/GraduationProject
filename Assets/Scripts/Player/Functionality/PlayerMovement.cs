@@ -114,10 +114,6 @@ public class PlayerMovement
         _moveDirection = InputManager.Instance.moveDirection;
 
         if (_horizontalVelocity.magnitude != 0) CounterMovement(fixedDeltaTime);
-        /*else
-        {
-            _rb.linearVelocity = new Vector3(0, _rb.linearVelocity.y, 0);
-        }*/
 
         // Set our horizontal velocity to be our true velocity, excluding the vertical velocity.
         _data.trueVelocity = _horizontalVelocity.magnitude;

@@ -62,4 +62,10 @@ public class PlayerData
     public float maxStrafeVelocity = 3.0f;
     public float initialVelocity = 4.0f;
     public float trueVelocity = 0.0f;
+    
+    private void Start()
+    {
+        forwardVelocity = 0;
+        strafeVelocity = 0;
+    }
 }

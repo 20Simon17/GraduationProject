@@ -27,6 +27,8 @@ public class DefaultState : BaseState
         
         Vector2 moveInput = value.Get<Vector2>();
         _playerMovement.SetMoveDirection(moveInput);
+        
+        Debug.Log(moveInput);
     }
     
     public override void OnJump(InputValue value)

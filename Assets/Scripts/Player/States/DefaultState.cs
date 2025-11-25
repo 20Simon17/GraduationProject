@@ -21,7 +21,7 @@ public class DefaultState : BaseState
         _playerMovement.UpdateMovement(fixedDeltaTime);
     }
     
-    public override void OnMove(InputValue value)
+    /*public override void OnMove(InputValue value)
     {
         base.OnMove(value);
         
@@ -29,13 +29,14 @@ public class DefaultState : BaseState
         _playerMovement.SetMoveDirection(moveInput);
         
         Debug.Log(moveInput);
-    }
+    }*/
     
     public override void OnJump(InputValue value)
     {
         base.OnJump(value);
         
         //check for wallrunning or walljumping first
+        //raycast to the players right and -right to see if there is a wall there
         
         if (value.isPressed)
         {

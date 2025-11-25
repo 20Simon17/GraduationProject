@@ -20,8 +20,6 @@ public class Player : MonoBehaviour
     private TMP_Text _horizontalVelocityText;
     private TMP_Text _forwardVelocityText;
     private TMP_Text _strafeVelocityText;
-    
-    //[SerializeField] private InputManager inputManager;
 
     private bool _isDisabled;
     
@@ -61,8 +59,17 @@ public class Player : MonoBehaviour
         inputManager.OnPrimaryActionEvent      -= _currentState.OnPrimaryAction;
         inputManager.OnSecondaryActionEvent    -= _currentState.OnSecondaryAction;
     }
-    #endregion
+    #endregion EventBinding
+    
+    #region StateTransitions & Input PassThrough
 
+    private void OnJump(InputValue value)
+    {
+        //check for wallrunning or walljumping first
+    }
+    #endregion StateTransitions & Input PassThrough
+
+    #region PlayerEnabling
     private void EnablePlayer()
     {
         _isDisabled = false;
@@ -85,6 +92,7 @@ public class Player : MonoBehaviour
 
     private void Start() => EnablePlayer();
     private void OnDisable() => DisablePlayer();
+    #endregion PlayerEnabling
 
     private void Awake()
     {
@@ -101,7 +109,7 @@ public class Player : MonoBehaviour
 
     public void SwitchState<T>() where T : BaseState, new()
     {
-        if (_currentState?.GetType() == typeof(T)) return;
+        if (_currentState?.GetType() == typeof(T) || _isDisabled) return;
         
         _currentState?.DisableState();
         
@@ -137,8 +145,11 @@ public class Player : MonoBehaviour
     private void GroundCheck()
     {
         //make a better ground check
+        
+        //spherecast downwards at player y 0.4 with radius 0.5 to have the player size but placed a bit under it
     }
     
+    #region CollisionHandling
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -155,6 +166,7 @@ public class Player : MonoBehaviour
             _playerData.isGrounded = false;
         }
     }
+    #endregion CollisionHandling
 
     private void CheckVelocityCap()
     {

@@ -11,9 +11,7 @@ public class PlayerMovement
     private float strafeVelocity = 0;
     private float initialVelocity = 0;
     private Vector2 _horizontalVelocity = Vector2.zero;
-
     
-
     public PlayerMovement(Rigidbody inRb, Transform inTransform, PlayerData inData)
     {
         _rb = inRb;
@@ -30,6 +28,9 @@ public class PlayerMovement
         _moveDirection = direction;
     }
 
+    //TODO:
+    //if we press the input opposite of our move direction, we should decelerate faster / immediately
+    //for example, if we are moving forward and press backward, we should stop almost immediately
     private void CounterMovement(float fixedDeltaTime)
     {
         if (_moveDirection.x == 0)
@@ -75,16 +76,6 @@ public class PlayerMovement
         // Do we have strafe input and is our strafe velocity less than its max?
         if (_moveDirection.x != 0 && Mathf.Abs(strafeVelocity) < _data.maxStrafeVelocity)
         {
-            /*if (strafeVelocity < _data.initialVelocity && Mathf.Abs(strafeVelocity) < 0.5) //this will break when decelerating, it will just go from initialVelocity to -initialVelocity immediately.
-            {
-                strafeVelocity = _moveDirection.x < 0 ? -_data.initialVelocity : _data.initialVelocity;
-                
-                if (_horizontalVelocity.magnitude > _data.maxRunVelocity)
-                {
-                    forwardVelocity -= forwardVelocity / Mathf.Abs(forwardVelocity) * Mathf.Abs(strafeVelocity);
-                }
-            }*/
-            
             // Calculate the acceleration to add to our current strafe velocity
             float extraVelocity = _moveDirection.x * _data.accelerationForce * fixedDeltaTime;
             strafeVelocity += extraVelocity;

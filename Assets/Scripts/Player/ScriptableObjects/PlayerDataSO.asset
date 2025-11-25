@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerDataSO
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataSO
   playerData:
-    timeAtLastSlide: 17.080845
+    timeAtLastSlide: 0
     timeAtLastSlam: 0
     currentSpeed: 0
     isGrounded: 1
@@ -24,7 +24,7 @@ MonoBehaviour:
     jumpForceScaling: 100
     counterForceSpeedThreshold: 3
     defaultFriction: 0.6
-    jumpForce: 5
+    jumpForce: 2
     slamJumpTimeFrame: 0.2
     slideJumpTimeFrame: 0.2
     slideSpeedBoost: 1.2

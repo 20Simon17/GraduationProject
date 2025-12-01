@@ -28,6 +28,23 @@ public class PlayerMovement
         _moveDirection = direction;
     }
 
+	public void UpdateMovement(float fixedDeltaTime)
+    {
+        _horizontalVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.z);
+        _moveDirection = InputManager.Instance.moveDirection;
+
+        if (_horizontalVelocity.magnitude != 0) CounterMovement(fixedDeltaTime);
+
+        // Set our horizontal velocity to be our true velocity, excluding the vertical velocity.
+        _data.trueVelocity = _horizontalVelocity.magnitude;
+
+        // Handle all acceleration logic
+        HandleAcceleration(fixedDeltaTime);
+
+        // Apply our new velocities
+        SetVelocity();
+    }
+
     //TODO:
     //if we press the input opposite of our move direction, we should decelerate faster / immediately
     //for example, if we are moving forward and press backward, we should stop almost immediately
@@ -46,7 +63,15 @@ public class PlayerMovement
                     forwardVelocity += velocityLoss;
                 }
             }
-            else strafeVelocity = 0;
+            else 
+			{
+				if (_moveDirection.y != 0)
+				{
+					forwardVelocity += strafeVelocity;
+				}
+				
+				strafeVelocity = 0;
+			}
         }
 
         if (_moveDirection.y == 0)
@@ -97,23 +122,6 @@ public class PlayerMovement
         {
             strafeVelocity = strafeVelocity / Mathf.Abs(strafeVelocity) * _data.maxStrafeVelocity;
         }
-    }
-
-    public void UpdateMovement(float fixedDeltaTime)
-    {
-        _horizontalVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.z);
-        _moveDirection = InputManager.Instance.moveDirection;
-
-        if (_horizontalVelocity.magnitude != 0) CounterMovement(fixedDeltaTime);
-
-        // Set our horizontal velocity to be our true velocity, excluding the vertical velocity.
-        _data.trueVelocity = _horizontalVelocity.magnitude;
-
-        // Handle all acceleration logic
-        HandleAcceleration(fixedDeltaTime);
-
-        // Apply our new velocities
-        SetVelocity();
     }
 
     private void SetVelocity()

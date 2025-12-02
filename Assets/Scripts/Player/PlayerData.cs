@@ -63,7 +63,7 @@ public class PlayerData
     public float initialVelocity = 4.0f;
     public float trueVelocity = 0.0f;
     
-    private void Start()
+    private void Awake()
     {
         forwardVelocity = 0;
         strafeVelocity = 0;

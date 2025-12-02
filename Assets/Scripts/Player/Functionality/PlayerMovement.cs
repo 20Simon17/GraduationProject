@@ -12,6 +12,9 @@ public class PlayerMovement
     private float initialVelocity = 0;
     private Vector2 _horizontalVelocity = Vector2.zero;
     
+    private float NormalizedForward => forwardVelocity / Mathf.Abs(forwardVelocity);
+    private float NormalizedStrafe => strafeVelocity / Mathf.Abs(strafeVelocity);
+    
     public PlayerMovement(Rigidbody inRb, Transform inTransform, PlayerData inData)
     {
         _rb = inRb;
@@ -32,6 +35,7 @@ public class PlayerMovement
     {
         _horizontalVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.z);
         _moveDirection = InputManager.Instance.moveDirection;
+        Debug.Log(_moveDirection);
 
         if (_horizontalVelocity.magnitude != 0) CounterMovement(fixedDeltaTime);
 
@@ -54,7 +58,7 @@ public class PlayerMovement
         {
             if (Mathf.Abs(strafeVelocity) > 0.75)
             {
-                float velocityLoss = strafeVelocity / Mathf.Abs(strafeVelocity) * _data.decelerationForce * fixedDeltaTime;
+                float velocityLoss = NormalizedStrafe * _data.decelerationForce * fixedDeltaTime;
                 strafeVelocity -= velocityLoss;
 
                 //if horizontalVelocity > max speed and you're not strafing, add the strafe counter velocity to the forward velocity to keep the speed the same.
@@ -67,7 +71,7 @@ public class PlayerMovement
 			{
 				if (_moveDirection.y != 0)
 				{
-					forwardVelocity += strafeVelocity;
+					forwardVelocity += strafeVelocity; //this might be adding in the wrong direction if the player is moving backwards
 				}
 				
 				strafeVelocity = 0;
@@ -78,7 +82,7 @@ public class PlayerMovement
         {
             if (Mathf.Abs(forwardVelocity) > 0.75)
             {
-                forwardVelocity -= forwardVelocity / Mathf.Abs(forwardVelocity) * _data.decelerationForce * fixedDeltaTime;
+                forwardVelocity -= NormalizedForward * _data.decelerationForce * fixedDeltaTime;
             }
             else forwardVelocity = 0;
         }
@@ -87,7 +91,7 @@ public class PlayerMovement
     private void HandleAcceleration(float fixedDeltaTime)
     {
         // Do we have forward input and are we moving less than the max speed?
-        if (_moveDirection.y != 0 && _horizontalVelocity.magnitude < _data.maxRunVelocity)
+        if (_moveDirection.y != 0 /*&& _horizontalVelocity.magnitude < _data.maxRunVelocity*/)
         {
             if (Mathf.Abs(forwardVelocity) < _data.initialVelocity && Mathf.Abs(forwardVelocity) < 0.5) //this will break when decelerating, it will just go from initialVelocity to -initialVelocity immediately.
             {
@@ -99,7 +103,7 @@ public class PlayerMovement
         }
         
         // Do we have strafe input and is our strafe velocity less than its max?
-        if (_moveDirection.x != 0 && Mathf.Abs(strafeVelocity) < _data.maxStrafeVelocity)
+        if (_moveDirection.x != 0 /*&& Mathf.Abs(strafeVelocity) < _data.maxStrafeVelocity*/)
         {
             // Calculate the acceleration to add to our current strafe velocity
             float extraVelocity = _moveDirection.x * _data.accelerationForce * fixedDeltaTime;
@@ -109,25 +113,20 @@ public class PlayerMovement
             if (_horizontalVelocity.magnitude > _data.maxRunVelocity)
             {
                 // Remove the acceleration from the forward velocity to keep the magnitude of our velocity the same
-                forwardVelocity -= forwardVelocity / Mathf.Abs(forwardVelocity) * Mathf.Abs(extraVelocity);
+                forwardVelocity -= NormalizedForward * Mathf.Abs(extraVelocity);
             }
-        }
-
-        if (Mathf.Abs(forwardVelocity) > _data.maxRunVelocity)
-        {
-            //forwardVelocity = forwardVelocity / Mathf.Abs(forwardVelocity) * _data.maxRunVelocity;
         }
 
         if (Mathf.Abs(strafeVelocity) > _data .maxStrafeVelocity)
         {
-            strafeVelocity = strafeVelocity / Mathf.Abs(strafeVelocity) * _data.maxStrafeVelocity;
+            strafeVelocity = NormalizedStrafe * _data.maxStrafeVelocity;
         }
     }
 
     private void SetVelocity()
     {
-        Vector3 vForwardVelocity = /*_moveDirection.y **/ forwardVelocity * _transform.forward;
-        Vector3 vStrafeVelocity = /*_moveDirection.x **/ strafeVelocity * _transform.right;
+        Vector3 vForwardVelocity = forwardVelocity * _transform.forward;
+        Vector3 vStrafeVelocity = strafeVelocity * _transform.right;
         Vector3 vNewHorizontalVelocity = vForwardVelocity + vStrafeVelocity;
         
         if (_moveDirection != Vector2.zero)

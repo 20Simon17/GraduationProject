@@ -11,7 +11,7 @@ public class PlayerMovement
     private float strafeVelocity = 0;
     private float initialVelocity = 0;
     private Vector2 _horizontalVelocity = Vector2.zero;
-    
+
     private float NormalizedForward => forwardVelocity / Mathf.Abs(forwardVelocity);
     private float NormalizedStrafe => strafeVelocity / Mathf.Abs(strafeVelocity);
     
@@ -73,7 +73,7 @@ public class PlayerMovement
 				{
 					forwardVelocity += strafeVelocity; //this might be adding in the wrong direction if the player is moving backwards
 				}
-				
+
 				strafeVelocity = 0;
 			}
         }
@@ -90,30 +90,27 @@ public class PlayerMovement
 
     private void HandleAcceleration(float fixedDeltaTime)
     {
-        // Do we have forward input and are we moving less than the max speed?
-        if (_moveDirection.y != 0 /*&& _horizontalVelocity.magnitude < _data.maxRunVelocity*/)
+        if (_moveDirection.y != 0)
         {
-            if (Mathf.Abs(forwardVelocity) < _data.initialVelocity && Mathf.Abs(forwardVelocity) < 0.5) //this will break when decelerating, it will just go from initialVelocity to -initialVelocity immediately.
-            {
-                forwardVelocity = _moveDirection.y < 0 ? -_data.initialVelocity : _data.initialVelocity;
-            }
+            float accelerationValue = _moveDirection.y * _data.accelerationForce * fixedDeltaTime;
+            Vector2 hypotheticalVelocity = new Vector2(forwardVelocity + accelerationValue, strafeVelocity);
 
-            // Accelerate forwards
-            forwardVelocity += _moveDirection.y * _data.accelerationForce * fixedDeltaTime;
+            if (hypotheticalVelocity.magnitude < _data.maxRunVelocity)
+            {
+                forwardVelocity += accelerationValue;
+            }
         }
-        
-        // Do we have strafe input and is our strafe velocity less than its max?
-        if (_moveDirection.x != 0 /*&& Mathf.Abs(strafeVelocity) < _data.maxStrafeVelocity*/)
+
+        if (_moveDirection.x != 0)
         {
             // Calculate the acceleration to add to our current strafe velocity
-            float extraVelocity = _moveDirection.x * _data.accelerationForce * fixedDeltaTime;
-            strafeVelocity += extraVelocity;
+            float accelerationValue = _moveDirection.x * _data.accelerationForce * fixedDeltaTime;
+            strafeVelocity += accelerationValue;
 
-            // If we're moving faster than our max
             if (_horizontalVelocity.magnitude > _data.maxRunVelocity)
             {
                 // Remove the acceleration from the forward velocity to keep the magnitude of our velocity the same
-                forwardVelocity -= NormalizedForward * Mathf.Abs(extraVelocity);
+                forwardVelocity -= NormalizedForward * Mathf.Abs(accelerationValue);
             }
         }
 
@@ -128,7 +125,7 @@ public class PlayerMovement
         Vector3 vForwardVelocity = forwardVelocity * _transform.forward;
         Vector3 vStrafeVelocity = strafeVelocity * _transform.right;
         Vector3 vNewHorizontalVelocity = vForwardVelocity + vStrafeVelocity;
-        
+
         if (_moveDirection != Vector2.zero)
         {
             // Set the velocity towards our characters forward

@@ -17,7 +17,7 @@ MonoBehaviour:
     timeAtLastSlam: 0
     currentSpeed: 0
     isGrounded: 1
-    isSliding: 0
+    isSliding: 1
     isSlamming: 0
     velocityHardCap: 150
     defaultPlayerScaleY: 1
@@ -40,10 +40,10 @@ MonoBehaviour:
     groundSlamGravityMultiplier: 3
     physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
     maxRunVelocity: 10
-    accelerationForce: 15
-    decelerationForce: 15
+    accelerationForce: 40
+    decelerationForce: 40
     forwardVelocity: 0
     strafeVelocity: 0
-    maxStrafeVelocity: 3
+    maxStrafeVelocity: 7
     initialVelocity: 4
     trueVelocity: 0

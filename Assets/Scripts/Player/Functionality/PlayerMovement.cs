@@ -35,7 +35,6 @@ public class PlayerMovement
     {
         _horizontalVelocity = new Vector2(_rb.linearVelocity.x, _rb.linearVelocity.z);
         _moveDirection = InputManager.Instance.moveDirection;
-        Debug.Log(_moveDirection);
 
         if (_horizontalVelocity.magnitude != 0) CounterMovement(fixedDeltaTime);
 

@@ -99,20 +99,20 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         _playerData = playerDataObject.playerData;
         _playerData.defaultPlayerScaleY = transform.localScale.y;
-        
+
         _horizontalVelocityText = GameObject.Find("HorizontalVelocity Text").GetComponent<TMP_Text>();
         _forwardVelocityText = GameObject.Find("ForwardVelocity Text").GetComponent<TMP_Text>();
         _strafeVelocityText = GameObject.Find("StrafeVelocity Text").GetComponent<TMP_Text>();
-        
+
         EnablePlayer();
     }
 
     public void SwitchState<T>() where T : BaseState, new()
     {
         if (_currentState?.GetType() == typeof(T) || _isDisabled) return;
-        
+
         _currentState?.DisableState();
-        
+
         if(_states.ContainsKey(typeof(T)))
         {
             _currentState = _states[typeof(T)];
@@ -123,19 +123,19 @@ public class Player : MonoBehaviour
             _states.Add(typeof(T), newState);
             _currentState = newState;
         }
-        
+
         _currentState?.EnableState(this, playerDataObject.playerData);
     }
 
     private void FixedUpdate()
     {
         if (_isDisabled) return;
-        
+
         GroundCheck();
         CheckVelocityCap();
-        
+
         _currentState?.UpdateState(Time.fixedDeltaTime);
-        
+
         Vector2 horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
         _horizontalVelocityText.text = "Horizontal Velocity: " + horizontalVelocity.magnitude;
         _forwardVelocityText.text = "Forward Velocity: " + _playerData.forwardVelocity;
@@ -145,10 +145,10 @@ public class Player : MonoBehaviour
     private void GroundCheck()
     {
         //make a better ground check
-        
+
         //spherecast downwards at player y 0.4 with radius 0.5 to have the player size but placed a bit under it
     }
-    
+
     #region CollisionHandling
     private void OnCollisionEnter(Collision collision)
     {

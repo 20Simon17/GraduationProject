@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Android;
 
 public class Zipline : ProceduralMesh, IInteractable
 {
@@ -17,37 +15,48 @@ public class Zipline : ProceduralMesh, IInteractable
     {
         Mesh mesh = new Mesh();
         mesh.hideFlags = HideFlags.DontSave;
-        mesh.name = "Tracks";
+        mesh.name = "Zipline";
 
         List<Vector3> vertices = new List<Vector3>();
         List<Color> colors = new List<Color>();
         List<int> triangles = new List<int>();
         
-        Vector3 direction = (endPoint.AttachLocation - startPoint.AttachLocation).normalized;
+        Vector3 sP = startPoint.AttachLocation; //startPoint
+        Vector3 eP = endPoint.AttachLocation;   //endPoint
+        
+        Vector3 direction = (eP - sP).normalized;
+        Vector3 rightVector = -Vector3.Cross(direction, Vector3.up);
+        Vector3 upVector = Vector3.Cross(direction, rightVector);
 
-        Vector3 crossProduct = Vector3.Cross(direction, Vector3.up);
-        Debug.Log("Ziplines right vector:" + crossProduct);
+        float meshSize = 0.05f;
         
-        Debug.DrawRay(direction * Vector3.Distance(startPoint.AttachLocation, endPoint.AttachLocation) / 2, crossProduct.normalized, Color.red, 10f);
-        
-        //TODO: Find the zipline's right and up vector
-        // calculate the 4 vertex points from both the start and the end using the right and up vectors * size
-        // generate the zipline mesh triangles between the 8 vertices
+        vertices.AddRange(new Vector3[]
+        {
+            sP - rightVector * meshSize - upVector * meshSize, //0
+            sP - rightVector * meshSize + upVector * meshSize, //1
+            sP + rightVector * meshSize + upVector * meshSize, //2
+            sP + rightVector * meshSize - upVector * meshSize, //3
+            
+            eP - rightVector * meshSize - upVector * meshSize, //4
+            eP - rightVector * meshSize + upVector * meshSize, //5
+            eP + rightVector * meshSize + upVector * meshSize, //6
+            eP + rightVector * meshSize - upVector * meshSize  //7
+        });
         
         colors.AddRange(new Color[vertices.Count]);
         
         for (int i = 0; i < vertices.Count; i++) 
-            colors[i] = Color.black;
+            colors[i] = Color.red;
         
-        /*triangles.AddRange(new int[]
+        triangles.AddRange(new int[]
         {
-            0, 1, 3, 3, 1, 2,
-            4, 5, 1, 1, 0, 4,
-            1, 5, 2, 2, 5, 6,
-            3, 2, 7, 7, 2, 6,
-            3, 0, 4, 4, 7, 3,
-            6, 5, 7, 7, 5, 4
-        });*/
+            //0, 1, 3, 3, 1, 2, //front
+            4, 5, 1, 1, 0, 4, //left
+            1, 5, 2, 2, 5, 6, //top
+            3, 2, 7, 7, 2, 6, //right
+            0, 3, 4, 3, 7, 4 //bottom
+            //6, 5, 7, 7, 5, 4  //back
+        });
         
         // assign the mesh data
         mesh.vertices = vertices.ToArray();
@@ -56,7 +65,9 @@ public class Zipline : ProceduralMesh, IInteractable
 
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
-
+        
+        // TODO: Set the material of the mesh renderer to a zipline material
+        
         return mesh;
     }
 }

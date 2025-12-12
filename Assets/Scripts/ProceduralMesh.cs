@@ -45,6 +45,7 @@ public abstract class ProceduralMesh : MonoBehaviour
 
     public virtual void UpdateMesh()
     {
+        if(m_mesh) Cleanup();
         m_mesh = CreateMesh();
         GetComponent<MeshFilter>().mesh = m_mesh;
     }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -15,7 +16,12 @@ public abstract class ProceduralMesh : MonoBehaviour
 
     protected virtual void Start()
     {
-        UpdateMesh();
+        Cleanup();
+        
+        if (Application.isPlaying)
+        {
+            UpdateMesh();
+        }
     }
 
     protected virtual void OnDestroy()

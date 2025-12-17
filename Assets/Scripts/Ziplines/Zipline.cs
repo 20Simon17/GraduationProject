@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,10 +7,20 @@ public class Zipline : ProceduralMesh, IInteractable
 {
     public ZiplinePoint startPoint;
     public ZiplinePoint endPoint;
+    
+    private MeshRenderer _meshRenderer;
+
+    [SerializeField] private Material ghostMaterial;
+    [SerializeField] private Material defaultMaterial;
 
     public void Interact(GameObject interactor)
     {
         //TODO: Implement zipline interaction
+    }
+
+    private void OnEnable()
+    {
+        _meshRenderer = GetComponent<MeshRenderer>();
     }
 
     protected override Mesh CreateMesh()
@@ -109,5 +120,12 @@ public class Zipline : ProceduralMesh, IInteractable
             UpdateMesh();
         }
         #endif
+    }
+
+    public void ToggleZiplineGhostRendering(bool newGhost)
+    {
+        //TODO: Get the ziplines collider and toggle it here
+        //_collider.enabled = !newGhost;
+        _meshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;
     }
 }

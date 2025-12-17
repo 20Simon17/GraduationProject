@@ -6,8 +6,7 @@ public class PlayerCamera : MonoBehaviour
 {
     [HideInInspector] public Camera cameraComponent;
     
-    [SerializeField]
-    private GameObject playerObject;
+    [SerializeField] private GameObject playerObject;
     private CharacterMovement characterMovement;
     
     [SerializeField]
@@ -66,5 +65,17 @@ public class PlayerCamera : MonoBehaviour
         }
 
         return true;
+    }
+
+    public GameObject GetLookAtObject()
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+        return Physics.Raycast(ray, out RaycastHit hit, 100) ? hit.transform.gameObject : null;
+    }
+
+    public RaycastHit? GetLookAtHit()
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+        return Physics.Raycast(ray, out RaycastHit hit, 100) ? hit : null;
     }
 }

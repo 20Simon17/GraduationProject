@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -29,22 +28,15 @@ public abstract class ProceduralMesh : MonoBehaviour
         Cleanup();
     }
 
-    void Cleanup()
+    private void Cleanup()
     {
         // cleanup after ourselves
-        if (m_mesh != null)
-        {
-            if (Application.isPlaying)
-            {
-                Destroy(m_mesh);
-            }
-            else
-            {
-                DestroyImmediate(m_mesh);
-            }
+        if (m_mesh is null) return;
+        
+        if (Application.isPlaying) Destroy(m_mesh);
+        else DestroyImmediate(m_mesh);
 
-            m_mesh = null;
-        }
+        m_mesh = null;
     }
 
     protected abstract Mesh CreateMesh();

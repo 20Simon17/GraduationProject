@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -16,14 +17,35 @@ public class Zipline : ProceduralMesh, IInteractable
     {
         //TODO: Implement zipline interaction
     }
+    
+    private void LoadResources()
+    {
+        defaultMaterial = Resources.Load<Material>("Materials/ZiplineMaterial");
+        ghostMaterial = Resources.Load<Material>("Materials/ZiplineGhostMaterial");
+    }
 
     private void OnEnable()
     {
+        LoadResources();
+        
         _meshRenderer = GetComponent<MeshRenderer>();
+    }
+    
+    private new void Start()
+    {
+        base.Start();
+        
+        // Set default material
+        if (_meshRenderer && defaultMaterial)
+        {
+            _meshRenderer.material = defaultMaterial;
+        }
     }
 
     protected override Mesh CreateMesh()
     {
+        if (startPoint is null || endPoint is null) return null;
+        
         Mesh mesh = new Mesh();
         mesh.hideFlags = HideFlags.DontSave;
         mesh.name = "Zipline";
@@ -121,10 +143,17 @@ public class Zipline : ProceduralMesh, IInteractable
         #endif
     }
 
-    public void ToggleZiplineGhostRendering(bool newGhost)
+    public void ToggleGhostRendering(bool newGhost)
     {
         //TODO: Get the ziplines collider and toggle it here
         //_collider.enabled = !newGhost;
         _meshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;
+    }
+
+    public void DeleteZipline()
+    {
+        Destroy(startPoint);
+        Destroy(endPoint);
+        Destroy(gameObject);
     }
 }

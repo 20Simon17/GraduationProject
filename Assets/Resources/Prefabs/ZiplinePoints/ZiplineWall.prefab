@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2250271751092445388}
   - component: {fileID: 8529509519689829771}
   - component: {fileID: 5623874882832874789}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AttachPole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 553973641422463302}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.15, z: 0}
+  m_LocalPosition: {x: 0, y: -0.901, z: -1.894}
   m_LocalScale: {x: 0.15, y: 0.6, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -89,6 +89,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &5623874882832874789
 BoxCollider:
@@ -121,7 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6272493498083446463}
   - component: {fileID: 8648474537296400154}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ZiplineWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +138,7 @@ Transform:
   m_GameObject: {fileID: 630836423668894731}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.21, y: 0, z: 21.48}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -163,6 +164,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 5556483450292081919}
+  pointType: 1
+  ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
+  defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
 --- !u!1 &1285061487825507310
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,7 +179,7 @@ GameObject:
   - component: {fileID: 1362295768836323801}
   - component: {fileID: 4060494184123611381}
   - component: {fileID: 6716995161592806028}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +195,7 @@ Transform:
   m_GameObject: {fileID: 1285061487825507310}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 3.5, z: 0}
+  m_LocalPosition: {x: 0, y: -0.55, z: -2.9}
   m_LocalScale: {x: 0.25, y: 0.75, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -252,6 +256,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &6716995161592806028
 BoxCollider:
@@ -286,7 +291,7 @@ GameObject:
   - component: {fileID: 2609988850288020740}
   - component: {fileID: 1384588368339255715}
   - component: {fileID: 2233519093941387006}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -302,7 +307,7 @@ Transform:
   m_GameObject: {fileID: 1315479573002775198}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 3.5, z: 0}
+  m_LocalPosition: {x: 0, y: -0.55, z: -0.9}
   m_LocalScale: {x: 0.25, y: 0.75, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -363,6 +368,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &2233519093941387006
 BoxCollider:
@@ -397,7 +403,7 @@ GameObject:
   - component: {fileID: 5999535038206794433}
   - component: {fileID: 6798330253592191936}
   - component: {fileID: 8154115060556854727}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SupportBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -412,13 +418,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4413490473834994271}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.2588186, w: 0.965926}
-  m_LocalPosition: {x: -1.475, y: 2.95, z: 0}
+  m_LocalRotation: {x: 0.18301274, y: 0.6830127, z: 0.18301274, w: 0.6830127}
+  m_LocalPosition: {x: 0, y: -1.1, z: -0.42}
   m_LocalScale: {x: 1.25, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6272493498083446463}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 30}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 30}
 --- !u!33 &5999535038206794433
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -474,6 +480,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &8154115060556854727
 BoxCollider:
@@ -505,7 +512,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 71628837004277923}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Attachment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -521,7 +528,7 @@ Transform:
   m_GameObject: {fileID: 5556483450292081919}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: -1.0510001, z: -1.894}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -539,7 +546,7 @@ GameObject:
   - component: {fileID: 1114987248356827934}
   - component: {fileID: 2610511102267199336}
   - component: {fileID: 8228619437176868428}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -554,13 +561,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6975897284973824804}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.25, z: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
+  m_LocalPosition: {x: 0, y: -0.8, z: -1.9}
   m_LocalScale: {x: 1.75, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6272493498083446463}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 270, z: 0}
 --- !u!33 &1114987248356827934
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -616,6 +623,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &8228619437176868428
 BoxCollider:
@@ -650,7 +658,7 @@ GameObject:
   - component: {fileID: 3929298123466127654}
   - component: {fileID: 7973310078680551427}
   - component: {fileID: 2312932225934079286}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SupportBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -665,13 +673,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7687526164195025535}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4, z: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
+  m_LocalPosition: {x: 0, y: -0.05, z: -1.9}
   m_LocalScale: {x: 4, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6272493498083446463}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 270, z: 0}
 --- !u!33 &3929298123466127654
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -727,6 +735,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &2312932225934079286
 BoxCollider:

@@ -4,8 +4,17 @@ public class ZiplinePoint : MonoBehaviour
 {
     [SerializeField] private GameObject attachObject;
 
-    private MeshRenderer _meshRenderer;
-    private Collider _collider;
+    private MeshRenderer[] meshRenderers;
+    private Collider[] colliders;
+    
+    public EPointTypes pointType;
+    
+    public enum EPointTypes
+    {
+        Pole,
+        Wall,
+        Ceiling
+    }
 
     [SerializeField] private Material ghostMaterial;
     [SerializeField] private Material defaultMaterial;
@@ -18,13 +27,22 @@ public class ZiplinePoint : MonoBehaviour
     
     private void OnEnable()
     {
-        _meshRenderer = GetComponent<MeshRenderer>();
-        _collider = GetComponent<Collider>();
+        meshRenderers = transform.GetComponentsInChildren<MeshRenderer>();
+        colliders = transform.GetComponentsInChildren<Collider>();
     }
     
     public void ToggleGhostRendering(bool newGhost)
     {
-        _collider.enabled = !newGhost;
-        _meshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;
+        Owner.ToggleGhostRendering(newGhost);
+        
+        foreach (var aMeshRenderer in meshRenderers)
+        {
+            aMeshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;
+        }
+        
+        foreach (var aCollider in colliders)
+        {
+            aCollider.enabled = !newGhost;
+        }
     }
 }

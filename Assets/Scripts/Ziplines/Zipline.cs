@@ -9,6 +9,7 @@ public class Zipline : ProceduralMesh, IInteractable
     public ZiplinePoint endPoint;
     
     private MeshRenderer _meshRenderer;
+    private MeshCollider _meshCollider;
 
     [SerializeField] private Material ghostMaterial;
     [SerializeField] private Material defaultMaterial;
@@ -120,13 +121,16 @@ public class Zipline : ProceduralMesh, IInteractable
         mesh.subMeshCount = 2;
         mesh.SetTriangles(zipTriangles, 0);
         mesh.SetTriangles(colTriangles, 1);
-        
-        // TODO: Somehow generate the hitbox here
 
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
+
+        if (!_meshCollider)
+        {
+            _meshCollider = gameObject.AddComponent<MeshCollider>();
+        }
         
-        // TODO: Set the material of the mesh renderer to a zipline material
+        _meshCollider.sharedMesh = mesh;
         
         return mesh;
     }
@@ -155,5 +159,10 @@ public class Zipline : ProceduralMesh, IInteractable
         Destroy(startPoint);
         Destroy(endPoint);
         Destroy(gameObject);
+    }
+
+    public void AttachPlayer(Player player)
+    {
+        
     }
 }

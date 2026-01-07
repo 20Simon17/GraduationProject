@@ -42,7 +42,8 @@ public class Player : MonoBehaviour
         inputManager.OnJumpEvent               += _currentState.OnJump;
         inputManager.OnCrouchEvent             += _currentState.OnCrouch;
         inputManager.OnSlamEvent               += _currentState.OnSlam;
-        inputManager.OnInteractEvent           += _currentState.OnInteract;
+        //inputManager.OnInteractEvent           += _currentState.OnInteract;
+        inputManager.OnInteractEvent           += Interact;
         inputManager.OnPrimaryActionEvent      += _currentState.OnPrimaryAction;
         inputManager.OnSecondaryActionEvent    += _currentState.OnSecondaryAction;
     }
@@ -55,7 +56,8 @@ public class Player : MonoBehaviour
         inputManager.OnJumpEvent               -= _currentState.OnJump;
         inputManager.OnCrouchEvent             -= _currentState.OnCrouch;
         inputManager.OnSlamEvent               -= _currentState.OnSlam;
-        inputManager.OnInteractEvent           -= _currentState.OnInteract;
+        //inputManager.OnInteractEvent           -= _currentState.OnInteract;
+        inputManager.OnInteractEvent           -= Interact;
         inputManager.OnPrimaryActionEvent      -= _currentState.OnPrimaryAction;
         inputManager.OnSecondaryActionEvent    -= _currentState.OnSecondaryAction;
     }
@@ -63,10 +65,10 @@ public class Player : MonoBehaviour
     
     #region StateTransitions & Input PassThrough
 
-    private void OnJump(InputValue value)
+    /*private void OnJump(InputValue value)
     {
         //check for wallrunning or walljumping first
-    }
+    }*/
     #endregion StateTransitions & Input PassThrough
 
     #region PlayerEnabling
@@ -112,6 +114,7 @@ public class Player : MonoBehaviour
         if (_currentState?.GetType() == typeof(T) || _isDisabled) return;
 
         _currentState?.DisableState();
+        if (_currentState != null) UnbindEvents();
 
         if(_states.ContainsKey(typeof(T)))
         {
@@ -123,6 +126,8 @@ public class Player : MonoBehaviour
             _states.Add(typeof(T), newState);
             _currentState = newState;
         }
+        
+        BindEvents();
 
         _currentState?.EnableState(this, playerDataObject.playerData);
     }
@@ -147,6 +152,31 @@ public class Player : MonoBehaviour
         //make a better ground check
 
         //spherecast downwards at player y 0.4 with radius 0.5 to have the player size but placed a bit under it
+    }
+
+    private void Interact(InputValue value)
+    {
+        Ray interactionRay = new Ray(transform.position, transform.forward);
+        Physics.Raycast(interactionRay, out RaycastHit hit, 50f);
+
+        if (hit.collider is null) return;
+        
+        if (hit.transform.parent.TryGetComponent(out ZiplinePoint zipPoint))
+        {
+            Debug.Log("Found a zipline point");
+            SwitchState<ZiplineState>();
+            zipPoint.Owner.AttachPlayer(this);
+        }
+        else if (hit.transform.TryGetComponent(out Zipline zipline))
+        {
+            Debug.Log("Found a zipline");
+            SwitchState<ZiplineState>();
+            zipline.AttachPlayer(this);
+        }
+        else
+        {
+            Debug.Log("Found " + hit.transform.name);
+        }
     }
 
     #region CollisionHandling

@@ -160,7 +160,9 @@ public class Player : MonoBehaviour
         Physics.Raycast(interactionRay, out RaycastHit hit, 50f);
 
         if (hit.collider is null) return;
-        
+
+        //ZiplinePoint zipPoint = hit.transform.GetComponentInParent<ZiplinePoint>();
+        // TODO: when replacing the zipline point meshes with actual models, remove .parent here (hard coded due to currently using multiple objects to make a zipline point)
         if (hit.transform.parent.TryGetComponent(out ZiplinePoint zipPoint))
         {
             Debug.Log("Found a zipline point");

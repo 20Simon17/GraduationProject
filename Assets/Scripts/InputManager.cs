@@ -11,6 +11,9 @@ public class InputManager : PersistentSingleton<InputManager>
     public delegate void OnMoveDelegate(InputValue value);
     public OnMoveDelegate OnMoveEvent;
     
+    public delegate void OnLookDelegate(InputValue value);
+    public OnLookDelegate OnLookEvent;
+    
     public delegate void OnJumpDelegate(InputValue value);
     public OnJumpDelegate OnJumpEvent;
     
@@ -41,6 +44,8 @@ public class InputManager : PersistentSingleton<InputManager>
         OnMoveEvent?.Invoke(value);
         moveDirection = value.Get<Vector2>();
     }
+    
+    private void OnLook(InputValue value) => OnLookEvent?.Invoke(value);
     private void OnJump(InputValue value) => OnJumpEvent?.Invoke(value);
     private void OnCrouch(InputValue value) => OnCrouchEvent?.Invoke(value);
     private void OnSlam(InputValue value) => OnSlamEvent?.Invoke(value);

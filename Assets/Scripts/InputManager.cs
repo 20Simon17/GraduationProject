@@ -31,6 +31,9 @@ public class InputManager : PersistentSingleton<InputManager>
     
     public delegate void OnSecondaryActionDelegate(InputValue value);
     public OnSecondaryActionDelegate OnSecondaryActionEvent;
+    
+    public delegate void OnFreeCamDelegate(InputValue value);
+    public OnFreeCamDelegate OnFreeCamEvent;
     #endregion
     
     private void Start() //TODO: Add "pressed" bool to the events so that it can differentiate between press and release..
@@ -52,4 +55,5 @@ public class InputManager : PersistentSingleton<InputManager>
     private void OnInteract(InputValue value) => OnInteractEvent?.Invoke(value);
     private void OnPrimaryAction(InputValue value) => OnPrimaryActionEvent?.Invoke(value);
     private void OnSecondaryAction(InputValue value) => OnSecondaryActionEvent?.Invoke(value);
+    private void OnFreeCam(InputValue value) => OnFreeCamEvent?.Invoke(value);
 }

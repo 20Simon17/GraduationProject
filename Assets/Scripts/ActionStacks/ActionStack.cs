@@ -83,7 +83,7 @@ public class ActionStack : MonoBehaviour
 
     #endregion
 
-    public void PushAction(IAction action)
+    public virtual void PushAction(IAction action)
     {
         if (action == null) return;
         

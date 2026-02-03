@@ -135,6 +135,7 @@ public class ZiplineTool : MonoBehaviour
 
     private void CancelPlacement()
     {
+        if (selectedPoint == null) return;
         //selectedPoint.Owner.ToggleGhostRendering(false); // this is also called from the zipline point's ToggleGhostRendering()
         selectedPoint.ToggleGhostRendering(false);
         selectedPoint = null;

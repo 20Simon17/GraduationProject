@@ -1,12 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class DefaultCamera : ActionStack.ActionBehavior
+public class DefaultCameraAction : CameraActionStack.CameraAction
 {
-    private float _verticalRotation = 0f;
     private float _clampAngleMin = -90f;
     private float _clampAngleMax = 90f;
-    private float _mouseSensitivity = 2f;
+    private float _mouseSensitivity = 0.15f;
     private GameObject _playerObject;
 
     public override bool IsDone() => false;
@@ -15,32 +14,22 @@ public class DefaultCamera : ActionStack.ActionBehavior
     {
         if (bFirstTime)
         {
-            // get references to the settings for the camera
+            //TODO: Refactor the way this gets the camera reference
+            CameraTransform = Camera.main.transform;
+            _playerObject = CameraTransform.parent.gameObject;
         }
 
-        transform.localEulerAngles = _playerObject.transform.forward;
-
-        InputManager.Instance.OnLookEvent += OnLook;
-    }
-
-    public override void OnEnd()
-    {
-        InputManager.Instance.OnLookEvent -= OnLook;
-    }
-
-    public override void OnUpdate()
-    {
-        
+        VerticalRotation = 0f;
+        CameraTransform.localEulerAngles = Vector3.zero;
     }
     
-    private void OnLook(InputValue value)
+    public override void RotateCamera(Vector2 input)
     {
-        Vector2 lookVector = value.Get<Vector2>();
-        
-        _playerObject.transform.Rotate(Vector3.up, lookVector.x * _mouseSensitivity);
-        
-        _verticalRotation += -lookVector.y * _mouseSensitivity;
-        _verticalRotation = Mathf.Clamp(_verticalRotation, _clampAngleMin, _clampAngleMax);
-        transform.localEulerAngles = new Vector3(_verticalRotation, 0f, 0f);
+        Debug.Log("DefaultCameraAction looking...");
+        _playerObject.transform.Rotate(Vector3.up, input.x * _mouseSensitivity);
+
+        VerticalRotation += -input.y * _mouseSensitivity;
+        VerticalRotation = Mathf.Clamp(VerticalRotation, _clampAngleMin, _clampAngleMax);
+        CameraTransform.localEulerAngles = new Vector3(VerticalRotation, 0, 0);
     }
 }

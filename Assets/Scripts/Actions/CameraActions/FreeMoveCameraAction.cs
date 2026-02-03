@@ -1,47 +1,38 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class FreeMoveCameraAction : ActionStack.ActionBehavior
+public class FreeMoveCameraAction : CameraActionStack.CameraAction
 {
-    private float _verticalRotation;
-    private float _clampAngleMin = -90f;
-    private float _clampAngleMax = 90f;
-    private float _mouseSensitivity = 2f;
-    private GameObject _playerObject;
+    private float clampAngleMin = -85f;
+    private float clampAngleMax = 90f;
+    private float mouseSensitivity = 0.15f;
     
-    private bool _isDone = false;
+    private bool isDone;
 
-    public override bool IsDone() => _isDone;
+    public override bool IsDone() => isDone;
 
     public override void OnBegin(bool bFirstTime)
     {
         if (bFirstTime)
         {
-            
+            CameraTransform = Camera.main.transform;
         }
         
-        _verticalRotation = transform.localEulerAngles.x;
+        VerticalRotation = CameraTransform.localEulerAngles.x;
+    }
+    
+    public override void RotateCamera(Vector2 input)
+    {
+        Debug.Log("FreeMoveCameraAction looking...");
+        VerticalRotation += -input.y * mouseSensitivity;
+        VerticalRotation = Mathf.Clamp(VerticalRotation, clampAngleMin, clampAngleMax);
         
-        InputManager.Instance.OnLookEvent += OnLook;
+        CameraTransform.Rotate(Vector3.up, input.x * mouseSensitivity);
+        CameraTransform.localEulerAngles = new Vector3(VerticalRotation, CameraTransform.localEulerAngles.y, 0);
     }
 
-    public override void OnEnd()
+    public void SetIsDone(bool newDone)
     {
-        InputManager.Instance.OnLookEvent -= OnLook;
-    }
-
-    public override void OnUpdate()
-    {
-        // if toggle mode is on, only check value.isPressed in the input function.
-        // else, do and if else.
-    }
-
-    private void OnLook(InputValue value)
-    {
-        Vector2 lookVector = value.Get<Vector2>();
-        
-        _verticalRotation += -lookVector.y * _mouseSensitivity;
-        _verticalRotation = Mathf.Clamp(_verticalRotation, _clampAngleMin, _clampAngleMax);
-        transform.localEulerAngles = new Vector3(_verticalRotation, 0f, 0f);
+        isDone = newDone;
     }
 }

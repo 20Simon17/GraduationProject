@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class DefaultCameraAction : CameraActionStack.CameraAction
 {
@@ -25,7 +24,6 @@ public class DefaultCameraAction : CameraActionStack.CameraAction
     
     public override void RotateCamera(Vector2 input)
     {
-        Debug.Log("DefaultCameraAction looking...");
         _playerObject.transform.Rotate(Vector3.up, input.x * _mouseSensitivity);
 
         VerticalRotation += -input.y * _mouseSensitivity;

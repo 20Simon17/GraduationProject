@@ -62,7 +62,7 @@ public class ActionStack : MonoBehaviour
 
     public List<IAction> Stack => m_actionStack;
 
-    public IAction CurrentAction => m_currentAction;
+    public virtual IAction CurrentAction => m_currentAction;
 
     public bool IsEmpty => m_currentAction == null && m_actionStack.Count == 0;
 

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class FreeMoveCameraAction : CameraActionStack.CameraAction
 {
@@ -18,12 +17,13 @@ public class FreeMoveCameraAction : CameraActionStack.CameraAction
             CameraTransform = Camera.main.transform;
         }
         
-        VerticalRotation = CameraTransform.localEulerAngles.x;
+        VerticalRotation = CameraTransform.rotation.x;
     }
     
     public override void RotateCamera(Vector2 input)
     {
-        Debug.Log("FreeMoveCameraAction looking...");
+        if (CameraTransform == null) return;
+        
         VerticalRotation += -input.y * mouseSensitivity;
         VerticalRotation = Mathf.Clamp(VerticalRotation, clampAngleMin, clampAngleMax);
         

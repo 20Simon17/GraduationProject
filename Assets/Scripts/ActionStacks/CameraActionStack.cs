@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,12 +9,9 @@ public class CameraActionStack : ActionStack
         protected Transform CameraTransform;
         public virtual void RotateCamera(Vector2 input) { }
     }
-    // on scroll click pressed, switch to free move camera action
-    // on scroll click released, switch back to default camera action
     
     private CameraAction currentAction;
     
-
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -32,6 +28,17 @@ public class CameraActionStack : ActionStack
         currentAction = action as CameraAction;
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        // TODO: How can I make this less expensive?
+        if (currentAction != CurrentAction as CameraAction)
+        {
+            currentAction = (CameraAction) CurrentAction;
+        }
+    }
+
     private void OnDisable()
     {
         InputManager.Instance.OnFreeCamEvent -= FreeCamToggle;
@@ -40,8 +47,7 @@ public class CameraActionStack : ActionStack
 
     private void FreeCamToggle(InputValue value)
     {
-        if (!value.isPressed) return;
-        if (CurrentAction.ToString() != "FreeMoveCameraAction")
+        if (value.isPressed && CurrentAction.ToString() != "FreeMoveCameraAction")
         {
             PushAction(new FreeMoveCameraAction());
         }
@@ -53,7 +59,6 @@ public class CameraActionStack : ActionStack
 
     private void Look(InputValue value)
     {
-        if (currentAction == null) return;
-        currentAction.RotateCamera(value.Get<Vector2>());
+        currentAction?.RotateCamera(value.Get<Vector2>());
     }
 }

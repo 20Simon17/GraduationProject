@@ -1,24 +1,62 @@
+using System;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerActionStack : ActionStack
 {
     public abstract class PlayerAction : Action
     {
-        protected PlayerAction() {}
         protected PlayerAction(Rigidbody inRb, Transform inTransform, PlayerData inData)
         {
             rb = inRb;
             transform = inTransform;
             data = inData;
         }
-        
+
+        public virtual void CompleteAction() => actionCompleted = true;
+
+        public override bool IsDone() => actionCompleted;
+        protected bool actionCompleted;
+
         protected readonly Rigidbody rb;
         protected readonly PlayerData data;
         protected readonly Transform transform;
     }
     
+    [SerializeField] private PlayerDataSO playerDataObject;
+    private PlayerData playerData;
+    
+    private Rigidbody rb;
+    
     private PlayerAction currentAction;
     
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+
+        if (playerDataObject)
+        {
+            playerData = playerDataObject.playerData;
+        }
+        
+        PushAction(new DefaultMovementAction(rb, transform, playerData));
+        
+        BindEvents();
+    }
+
+    private void BindEvents()
+    {
+        InputManager.Instance.OnJumpEvent += AddJumpAction;
+        InputManager.Instance.OnCrouchEvent += AddSlideAction;
+    }
+
+    private void OnDisable()
+    {
+        InputManager.Instance.OnJumpEvent -= AddJumpAction;
+        InputManager.Instance.OnCrouchEvent -= AddSlideAction;
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -30,54 +68,31 @@ public class PlayerActionStack : ActionStack
         }
     }
 
-    protected override void UpdateActions()
+    private void AddJumpAction(InputValue value)
     {
-        // do we have actions?
-        if (IsEmpty) return;
-
-        // new action?
-        while (currentAction == null && m_actionStack.Count > 0)
+        if (!value.isPressed || currentAction is JumpAction) return;
+        
+        //clear every other action except for default movement action
+        foreach (IAction action in Stack.Where(action => action is not DefaultMovementAction))
         {
-            // set the current action
-            currentAction = m_actionStack[0];
-
-            // call OnBegin
-            bool bFirstTime = !m_firstTimeActions.Contains(currentAction);
-            m_firstTimeActions.Add(currentAction);
-            currentAction.OnBegin(bFirstTime);
-
-            // did OnBegin push or remove another action?
-            if (currentAction != null)
-            {
-                if (m_actionStack.Count > 0 && 
-                    currentAction != m_actionStack[0])
-                {
-                    currentAction = null;
-                    UpdateActions();
-                    return;
-                }
-            }
+            (action as PlayerAction)?.CompleteAction();
         }
+        
+        // if current action is zipline action, force a jump through jump action
+        // maybe a bool? data.forceJump = true; if (forceJump) perform jump regardless of other conditions.
+        
+        PushAction(new JumpAction(rb, transform, playerData));
+    }
 
-        // call OnUpdate
-        if (currentAction != null)
+    private void AddSlideAction(InputValue value)
+    {
+        if (value.isPressed && currentAction is not SlideAction)
         {
-            // update it!
-            currentAction.OnUpdate();
-
-            // are we still the current action?
-            if (m_actionStack.Count > 0 && currentAction == m_actionStack[0])
-            {
-                // are we done?
-                if (currentAction.IsDone())
-                {
-                    m_actionStack.RemoveAt(0);
-                    currentAction.OnEnd();
-                    m_firstTimeActions.Remove(currentAction);
-                    currentAction = null;
-                }
-            }
-            else currentAction = null;
+            PushAction(new SlideAction(rb, transform, playerData));
+        }
+        else if (!value.isPressed && currentAction is SlideAction)
+        {
+            currentAction.CompleteAction();
         }
     }
 }

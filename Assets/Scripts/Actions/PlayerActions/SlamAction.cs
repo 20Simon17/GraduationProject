@@ -17,7 +17,7 @@ public class SlamAction : ActionStack.Action
         
     }
 
-    public override void OnUpdate()
+    public override void OnUpdate(float deltaTime)
     {
         
     }

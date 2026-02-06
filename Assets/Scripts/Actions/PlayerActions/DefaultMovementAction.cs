@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class DefaultMovementAction : PlayerActionStack.PlayerAction
 {
+    public DefaultMovementAction(Rigidbody inRb, Transform inTransform, PlayerData inData) 
+        : base(inRb, inTransform, inData) { }
+    
     private Vector2 moveDirection;
     
-    private float forwardVelocity = 0;
-    private float strafeVelocity = 0;
+    private float forwardVelocity;
+    private float strafeVelocity;
     private Vector2 horizontalVelocity = Vector2.zero;
     
     private float NormalizedForward => forwardVelocity / Mathf.Abs(forwardVelocity);
@@ -13,19 +16,9 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
     
     public override bool IsDone() => false;
 
-    public override void OnBegin(bool bFirstTime)
+    public override void OnUpdate(float deltaTime)
     {
-        
-    }
-
-    public override void OnEnd()
-    {
-        
-    }
-
-    public override void OnUpdate()
-    {
-        //UpdateMovement();
+        UpdateMovement(deltaTime);
     }
     
     private void UpdateMovement(float fixedDeltaTime)

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using TMPro;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(PlayerInput))]
+//[RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
     [HideInInspector] public Rigidbody rb;
@@ -36,7 +36,7 @@ public class Player : MonoBehaviour
     #region EventBinding
     private void BindEvents()
     {
-        InputManager inputManager = InputManager.TryGetInstance();
+        InputManager inputManager = InputManager.Instance;
         if (inputManager is null) return;
         
         inputManager.OnJumpEvent               += _currentState.OnJump;
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
 
     private void UnbindEvents()
     {
-        InputManager inputManager = InputManager.TryGetInstance();
+        InputManager inputManager = InputManager.Instance;
         if (inputManager is null) return;
         
         inputManager.OnJumpEvent               -= _currentState.OnJump;

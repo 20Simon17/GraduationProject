@@ -1,9 +1,8 @@
-using SR.Shared;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
-public class InputManager : PersistentSingleton<InputManager>
+public class InputManager : Singleton<InputManager>
 {
     public Vector2 moveDirection = Vector2.zero;
     
@@ -36,7 +35,7 @@ public class InputManager : PersistentSingleton<InputManager>
     public OnFreeCamDelegate OnFreeCamEvent;
     #endregion
     
-    private void Start() //TODO: Add "pressed" bool to the events so that it can differentiate between press and release..
+    private void Start()
     {
         PlayerInput playerInput = GetComponent<PlayerInput>();
         playerInput.defaultActionMap = "Player";

@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class JumpAction : PlayerActionStack.PlayerAction
 {
-    private bool actionCompleted;
-    
-    public override bool IsDone() => actionCompleted;
+	public JumpAction(Rigidbody inRb, Transform inTransform, PlayerData inData) 
+        : base(inRb, inTransform, inData) {}
 
     public override void OnBegin(bool bFirstTime)
     {
@@ -13,6 +12,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
 
     private void CheckJumps()
     {
+        // TODO: if (forceJump) perform jump regardless of other conditions. (from zipline)
         // TODO: Do I want a way to combine slam and slide jump? slam -> land, slide + jump = forward + up boost
         if (CanDoubleJump())
         {
@@ -56,6 +56,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
     
     private void PerformSlideJump()
     {
+        Debug.Log("Performing slide jump");
         data.timeAtLastSlide = 0;
                 
         rb.AddForce(transform.forward * data.slideJumpSpeedMultiplier, ForceMode.Force); //Little speed boost when jumping from slide
@@ -65,6 +66,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
     
     private void PerformSlamJump()
     {
+        Debug.Log("Performing slam jump");
         data.timeAtLastSlam = 0;
                 
         rb.AddForce(transform.up * (data.jumpForce * data.slamJumpForceMultiplier * data.jumpForceScaling), ForceMode.Force); //Higher jump when jumping from slam
@@ -73,6 +75,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
     
     private void PerformDoubleJump()
     {
+        Debug.Log("Performing double jump");
         //Reset vertical velocity so we always get the same height from double jump
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); 
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
@@ -81,6 +84,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
     
     private void PerformJump()
     {
+        Debug.Log("Performing normal jump");
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
         data.CanJump = false;
     }

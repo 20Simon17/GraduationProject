@@ -7,7 +7,7 @@ public class ActionStack : MonoBehaviour
     public interface IAction
     {
         void OnBegin(bool bFirstTime);
-        void OnUpdate();
+        void OnUpdate(float deltaTime);
         void OnEnd();
         bool IsDone();
     }
@@ -17,7 +17,7 @@ public class ActionStack : MonoBehaviour
         public virtual bool IsDone() { return true; }
         public virtual void OnBegin(bool bFirstTime) { }
         public virtual void OnEnd() { }
-        public virtual void OnUpdate() { }
+        public virtual void OnUpdate(float deltaTime) { }
 
         public override string ToString()
         {
@@ -30,7 +30,7 @@ public class ActionStack : MonoBehaviour
         public virtual bool IsDone() { return true; }
         public virtual void OnBegin(bool bFirstTime) { }
         public virtual void OnEnd() { }
-        public virtual void OnUpdate() { }
+        public virtual void OnUpdate(float deltaTime) { }
 
         public override string ToString()
         {
@@ -43,7 +43,7 @@ public class ActionStack : MonoBehaviour
         public virtual bool IsDone() { return true; }
         public virtual void OnBegin(bool bFirstTime) { }
         public virtual void OnEnd() { }
-        public virtual void OnUpdate() { }
+        public virtual void OnUpdate(float deltaTime) { }
 
         public override string ToString()
         {
@@ -54,7 +54,7 @@ public class ActionStack : MonoBehaviour
     
     private List<IAction>       m_actionStack = new List<IAction>();
     private HashSet<IAction>    m_firstTimeActions = new HashSet<IAction>();
-    private IAction             m_currentAction;
+    private  IAction             m_currentAction;
 
     private static ActionStack  sm_main;
 
@@ -102,10 +102,10 @@ public class ActionStack : MonoBehaviour
 
     protected virtual void Update()
     {
-        UpdateActions();
+        UpdateActions(Time.deltaTime);
     }
 
-    protected virtual void UpdateActions()
+    protected virtual void UpdateActions(float deltaTime)
     {
         // do we have actions?
         if (IsEmpty) return;
@@ -128,7 +128,7 @@ public class ActionStack : MonoBehaviour
                     m_currentAction != m_actionStack[0])
                 {
                     m_currentAction = null;
-                    UpdateActions();
+                    UpdateActions(deltaTime);
                     return;
                 }
             }
@@ -138,7 +138,7 @@ public class ActionStack : MonoBehaviour
         if (m_currentAction != null)
         {
             // update it!
-            m_currentAction.OnUpdate();
+            m_currentAction.OnUpdate(deltaTime);
 
             // are we still the current action?
             if (m_actionStack.Count > 0 && m_currentAction == m_actionStack[0])

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SlideAction : PlayerActionStack.PlayerAction
 {
-    public SlideAction(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData) 
+    public SlideAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData) 
         : base(inRb, inTransform, inData) {}
 
     public override void OnBegin(bool bFirstTime)
@@ -37,11 +37,13 @@ public class SlideAction : PlayerActionStack.PlayerAction
         data.isSliding = false;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
         transform.localScale = new Vector3(transform.localScale.x, data.defaultPlayerScaleY, transform.localScale.z);
+        
+        base.OnEnd();
     }
 
     public override void OnUpdate(float deltaTime)
     {
-        if (data.isSliding && rb.linearVelocity.magnitude < data.slideFallOfThreshold && rb.linearVelocity.magnitude > data.counterForceSpeedThreshold)
+        if (rb.linearVelocity.magnitude < data.slideFallOfThreshold && rb.linearVelocity.magnitude > data.counterForceSpeedThreshold)
         {
             if(rb.linearVelocity.magnitude < 1f)
             {
@@ -52,7 +54,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
             Vector3 relativeVelocity = transform.InverseTransformPoint(rb.linearVelocity);
             rb.AddForce(-relativeVelocity.normalized * data.slideFallOfForce, ForceMode.Acceleration);
         }
-        else if (data.isSliding && rb.linearVelocity.magnitude <= 0)
+        else if (rb.linearVelocity.magnitude <= 0)
         {
             actionCompleted = true;
         }

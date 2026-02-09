@@ -7,11 +7,19 @@ public class PlayerActionStack : ActionStack
 {
     public abstract class PlayerAction : Action
     {
-        protected PlayerAction(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData)
+        protected PlayerAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData)
         {
             rb = inRb;
             transform = inTransform;
-            data = inData;
+            dataRecord = inData;
+            data = inData.dataStruct;
+        }
+
+        public override void OnEnd()
+        {
+            base.OnEnd();
+
+            dataRecord.dataStruct = data;
         }
 
         public void CompleteAction() => actionCompleted = true;
@@ -20,12 +28,14 @@ public class PlayerActionStack : ActionStack
         protected bool actionCompleted;
 
         protected readonly Rigidbody rb;
+        protected PlayerDataRecord dataRecord;
         protected PlayerDataStruct data;
         protected readonly Transform transform;
     }
     
     private PlayerData playerDataComponent;
-    private PlayerDataStruct playerData;
+    private PlayerDataRecord playerDataRecord;
+    private PlayerDataStruct playerDataStruct;
     
     private Rigidbody rb;
     
@@ -34,11 +44,11 @@ public class PlayerActionStack : ActionStack
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        playerDataComponent = GetComponent<PlayerData>();
-
-        playerData = playerDataComponent.PlayerDataStruct;
         
-        PushAction(new DefaultMovementAction(rb, transform, playerData));
+        playerDataComponent = GetComponent<PlayerData>();
+        playerDataRecord = playerDataComponent.dataRecord;
+        
+        PushAction(new DefaultMovementAction(rb, transform, playerDataRecord));
         
         BindEvents();
     }
@@ -63,8 +73,6 @@ public class PlayerActionStack : ActionStack
         
         GroundCheck();
         
-        Debug.Log(playerData.isGrounded);
-        
         // TODO: How can I make this less expensive?
         if (currentAction != CurrentAction as PlayerAction)
         {
@@ -74,22 +82,24 @@ public class PlayerActionStack : ActionStack
 
     private void GroundCheck()
     {
-        Ray ray = new Ray(transform.position, Vector3.down);
-        Physics.Raycast(ray, out RaycastHit hit, transform.localScale.y / 2 + 0.1f);
+        Ray ray = new Ray(transform.position, -transform.up);
+        if (Physics.Raycast(ray, out RaycastHit hit, transform.localScale.y / 2 + 0.1f))
+        {
+            if (hit.transform.CompareTag("Ground") && playerDataRecord.dataStruct.isTouchingGround)
+            {
+                playerDataRecord.dataStruct.isGrounded = true;
+            }
+        }
         
         Debug.DrawRay(ray.origin, ray.direction * (transform.localScale.y + 0.1f), Color.darkRed);
-        
-        if (hit.collider != null && hit.transform.CompareTag("Ground") && playerData.isTouchingGround)
-        {
-            playerData.isGrounded = true;
-        }
     }
 
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            playerData.isTouchingGround = true;
+            playerDataRecord.dataStruct.isTouchingGround = true;
+            playerDataRecord.dataStruct.isGrounded = true;
         }
     }
 
@@ -97,7 +107,8 @@ public class PlayerActionStack : ActionStack
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            playerData.isTouchingGround = false;
+            playerDataRecord.dataStruct.isTouchingGround = false;
+            playerDataRecord.dataStruct.isGrounded = false;
         }
     }
 
@@ -114,14 +125,14 @@ public class PlayerActionStack : ActionStack
         // if current action is zipline action, force a jump through jump action
         // maybe a bool? data.forceJump = true; if (forceJump) perform jump regardless of other conditions.
         
-        PushAction(new JumpAction(rb, transform, playerData));
+        PushAction(new JumpAction(rb, transform, playerDataRecord));
     }
 
     private void AddSlideAction(InputValue value)
     {
         if (value.isPressed && currentAction is not SlideAction)
         {
-            PushAction(new SlideAction(rb, transform, playerData));
+            PushAction(new SlideAction(rb, transform, playerDataRecord));
         }
         else if (!value.isPressed && currentAction is SlideAction)
         {
@@ -133,7 +144,7 @@ public class PlayerActionStack : ActionStack
     {
         if (value.isPressed && currentAction is not SlamAction)
         {
-            PushAction(new SlamAction(rb, transform, playerData));
+            PushAction(new SlamAction(rb, transform, playerDataRecord));
         }
         else if (!value.isPressed && currentAction is SlamAction)
         {

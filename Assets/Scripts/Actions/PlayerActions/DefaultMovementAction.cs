@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DefaultMovementAction : PlayerActionStack.PlayerAction
 {
-    public DefaultMovementAction(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData) 
+    public DefaultMovementAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData) 
         : base(inRb, inTransform, inData) { }
     
     private Vector2 moveDirection;

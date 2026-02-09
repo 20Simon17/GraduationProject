@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerData : MonoBehaviour
 {
     public PlayerDataSO scriptableObject;
-    public PlayerDataStruct PlayerDataStruct;
+    public PlayerDataRecord dataRecord;
 
     private void Awake()
     {
@@ -17,12 +17,9 @@ public class PlayerData : MonoBehaviour
     {
         if (scriptableObject)
         {
-            PlayerDataStruct = scriptableObject.playerData;
+            dataRecord.dataStruct = scriptableObject.dataRecord.dataStruct;
         }
-        else
-        {
-            Debug.LogError("No scriptable object assigned to player data!");
-        }
+        else throw new NullReferenceException("No scriptable object assigned to player data!");
     }
     
     [ContextMenu("Save Data")]
@@ -30,11 +27,8 @@ public class PlayerData : MonoBehaviour
     {
         if (scriptableObject)
         {
-            scriptableObject.playerData = PlayerDataStruct;
+            scriptableObject.dataRecord = dataRecord;
         }
-        else
-        {
-            Debug.LogError("No scriptable object assigned to player data!");
-        }
+        else throw new NullReferenceException("No scriptable object assigned to player data!");
     }
 }

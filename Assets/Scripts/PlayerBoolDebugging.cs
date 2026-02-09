@@ -8,15 +8,17 @@ public class PlayerBoolDebugging : MonoBehaviour
     public TMP_Text CanJumpText;
 
     private PlayerData playerData;
+    private PlayerDataRecord dataRecord;
     
     private void Start()
     {
         playerData = FindFirstObjectByType<PlayerData>();
+        dataRecord = playerData.dataRecord;
     }
 
     private void Update()
     {
-        PlayerDataStruct data = playerData.PlayerDataStruct;
+        PlayerDataStruct data = dataRecord.dataStruct;
         IsGroundedText.color = data.isGrounded ? Color.green : Color.red;
         CanJumpText.color = data.CanJump ? Color.green : Color.red;
     }

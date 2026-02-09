@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -20,7 +20,7 @@ public class GrappleGun : MonoBehaviour
     
     public bool isEquipped = false;
 
-    [Header("References")] 
+    [Header("References")]
     [SerializeField] private Image grapplePointIcon;
     [SerializeField] private float minIconScale = 0.75f;
     [SerializeField] private Transform gunTip;
@@ -239,4 +239,4 @@ public class GrappleGun : MonoBehaviour
             characterMovement.GetComponent<Rigidbody>().AddForce(pullForce, ForceMode.Force);
         }
     }
-}
+}*/

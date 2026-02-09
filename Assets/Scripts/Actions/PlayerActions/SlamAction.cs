@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class SlamAction : PlayerActionStack.PlayerAction
 {
-    public SlamAction(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData) 
+    public SlamAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData) 
         : base(inRb, inTransform, inData) {}
 
     public override bool IsDone()
     {
         if (actionCompleted) return actionCompleted;
-        return data.isSlamming && data.isGrounded;
+        return data is { isSlamming: true, isGrounded: true }; // pattern matching? (it's some form of pattern at least)
     }
 
     public override void OnBegin(bool bFirstTime)
@@ -18,7 +18,7 @@ public class SlamAction : PlayerActionStack.PlayerAction
         if (!data.isGrounded)
         {
             data.isSlamming = true;
-            rb.AddForce(-transform.up * (data.groundSlamForce * 100), ForceMode.VelocityChange);
+            rb.AddForce(-transform.up * data.groundSlamForce, ForceMode.VelocityChange);
         }
         else
         {
@@ -31,6 +31,8 @@ public class SlamAction : PlayerActionStack.PlayerAction
         Debug.Log("Exiting ground slam");
         data.isSlamming = false;
         //Start cooldown for when the next slam could be done?
+        
+        base.OnEnd();
     }
 }
 

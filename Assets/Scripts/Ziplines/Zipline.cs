@@ -160,9 +160,4 @@ public class Zipline : ProceduralMesh, IInteractable
         Destroy(endPoint);
         Destroy(gameObject);
     }
-
-    public void AttachPlayer(Player player)
-    {
-        
-    }
 }

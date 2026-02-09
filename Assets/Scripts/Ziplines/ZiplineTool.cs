@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -313,4 +313,4 @@ public class ZiplineTool : MonoBehaviour
 
         currentZiplines = 0;
     }
-}
+}*/

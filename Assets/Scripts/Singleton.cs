@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
@@ -30,4 +32,6 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             _instance = this as T;
         }
     }
+    
+    //TODO: Fix the error upon exiting play
 }

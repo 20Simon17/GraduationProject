@@ -805,9 +805,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
   cameraComponent: {fileID: 0}
   playerObject: {fileID: 429482157}
+  characterMovement: {fileID: 0}
   mouseSensitivity: 0.15
   clampAngleMin: -90
   clampAngleMax: 90
+  cameraVerticalRotation: 0
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1142,6 +1144,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cae6121bd3bfb14e9b6c754397a101b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterMovement
+  rb: {fileID: 0}
+  movementVector: {x: 0, y: 0}
+  defaultGravity: {x: 0, y: 0, z: 0}
+  defaultPlayerScaleY: 0
+  jumpForceScaling: 100
   timeAtLastSlide: 0
   timeAtLastSlam: 0
   currentSpeed: 0
@@ -1696,7 +1703,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9495d9c16cb1c1d4db33904578810dd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleGun
+  characterMovement: {fileID: 0}
+  playerCamera: {fileID: 0}
+  playerCameraComponent: {fileID: 0}
+  disableIcon: 0
   predictionPoint: {fileID: 1709899976}
+  currentGrapplePosition: {x: 0, y: 0, z: 0}
+  swingPoint: {x: 0, y: 0, z: 0}
+  joint: {fileID: 0}
   isEquipped: 1
   grapplePointIcon: {fileID: 1709584437}
   minIconScale: 0.75
@@ -1977,7 +1991,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9495d9c16cb1c1d4db33904578810dd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleGun
+  characterMovement: {fileID: 0}
+  playerCamera: {fileID: 0}
+  playerCameraComponent: {fileID: 0}
+  disableIcon: 0
   predictionPoint: {fileID: 1709899976}
+  currentGrapplePosition: {x: 0, y: 0, z: 0}
+  swingPoint: {x: 0, y: 0, z: 0}
+  joint: {fileID: 0}
   isEquipped: 1
   grapplePointIcon: {fileID: 1709584437}
   minIconScale: 0.75
@@ -3757,10 +3778,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1145f0840b00b46a5e02489a1358a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplineTool
+  polePrefab: {fileID: 0}
+  wallPrefab: {fileID: 0}
+  ceilingPrefab: {fileID: 0}
+  playerCamera: {fileID: 0}
+  player: {fileID: 0}
   maxZiplines: 3
   currentZiplines: 0
   ziplines: []
   bShowGhost: 1
+  bIsPlacing: 0
+  bIsMoving: 0
+  selectedPoint: {fileID: 0}
+  _ziplineObject: {fileID: 0}
+  _zipline: {fileID: 0}
+  _placementPoint: {fileID: 0}
 --- !u!1 &1362640249
 GameObject:
   m_ObjectHideFlags: 0
@@ -4001,6 +4033,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   rb: {fileID: 0}
   playerDataObject: {fileID: 11400000, guid: 17adbd51b4d4231469bce84669802677, type: 2}
+  _playerData:
+    timeAtLastSlide: 0
+    timeAtLastSlam: 0
+    currentSpeed: 0
+    isGrounded: 0
+    isTouchingGround: 0
+    canJump: 0
+    isSliding: 0
+    isSlamming: 0
+    velocityHardCap: 0
+    defaultPlayerScaleY: 0
+    jumpForceScaling: 0
+    counterForceSpeedThreshold: 0
+    defaultFriction: 0
+    jumpForce: 0
+    slamJumpTimeFrame: 0
+    slideJumpTimeFrame: 0
+    slideSpeedBoost: 0
+    slideSpeed: 0
+    slideJumpForceMultiplier: 0
+    slideJumpSpeedMultiplier: 0
+    slideFriction: 0
+    slidePlayerScaleY: 0
+    slideFallOfThreshold: 0
+    slideFallOfForce: 0
+    groundSlamForce: 0
+    slamJumpForceMultiplier: 0
+    groundSlamGravityMultiplier: 0
+    physicsMaterial: {fileID: 0}
+    maxRunVelocity: 0
+    accelerationForce: 0
+    decelerationForce: 0
+    forwardVelocity: 0
+    strafeVelocity: 0
+    maxStrafeVelocity: 0
+    initialVelocity: 0
+    trueVelocity: 0
+  _horizontalVelocityText: {fileID: 0}
+  _forwardVelocityText: {fileID: 0}
+  _strafeVelocityText: {fileID: 0}
+  _isDisabled: 0
 --- !u!54 &1484247451
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4170,10 +4243,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1145f0840b00b46a5e02489a1358a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplineTool
+  polePrefab: {fileID: 0}
+  wallPrefab: {fileID: 0}
+  ceilingPrefab: {fileID: 0}
+  playerCamera: {fileID: 0}
+  player: {fileID: 0}
   maxZiplines: 3
   currentZiplines: 0
   ziplines: []
   bShowGhost: 1
+  bIsPlacing: 0
+  bIsMoving: 0
+  selectedPoint: {fileID: 0}
+  _ziplineObject: {fileID: 0}
+  _zipline: {fileID: 0}
+  _placementPoint: {fileID: 0}
 --- !u!1 &1518478722
 GameObject:
   m_ObjectHideFlags: 0
@@ -4512,43 +4596,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d48bfb18d859034c903a8a2f06fc6ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
-  scriptableObject: {fileID: 11400000, guid: 17adbd51b4d4231469bce84669802677, type: 2}
-  PlayerDataStruct:
-    timeAtLastSlide: 0
-    timeAtLastSlam: 0
-    currentSpeed: 0
-    isGrounded: 0
-    isTouchingGround: 0
-    isSliding: 0
-    isSlamming: 0
-    velocityHardCap: 0
-    defaultPlayerScaleY: 0
-    jumpForceScaling: 0
-    counterForceSpeedThreshold: 0
-    defaultFriction: 0
-    jumpForce: 0
-    slamJumpTimeFrame: 0
-    slideJumpTimeFrame: 0
-    slideSpeedBoost: 0
-    slideSpeed: 0
-    slideJumpForceMultiplier: 0
-    slideJumpSpeedMultiplier: 0
-    slideFriction: 0
-    slidePlayerScaleY: 0
-    slideFallOfThreshold: 0
-    slideFallOfForce: 0
-    groundSlamForce: 0
-    slamJumpForceMultiplier: 0
-    groundSlamGravityMultiplier: 0
-    physicsMaterial: {fileID: 0}
-    maxRunVelocity: 0
-    accelerationForce: 0
-    decelerationForce: 0
-    forwardVelocity: 0
-    strafeVelocity: 0
-    maxStrafeVelocity: 0
-    initialVelocity: 0
-    trueVelocity: 0
+  scriptableObject: {fileID: 11400000, guid: 83bc7ce8dc662314c8579125033d97f0, type: 2}
+  dataRecord:
+    dataStruct:
+      timeAtLastSlide: 0
+      timeAtLastSlam: 0
+      currentSpeed: 0
+      isGrounded: 0
+      isTouchingGround: 0
+      isSliding: 0
+      isSlamming: 0
+      velocityHardCap: 0
+      defaultPlayerScaleY: 0
+      jumpForceScaling: 0
+      counterForceSpeedThreshold: 0
+      defaultFriction: 0
+      jumpForce: 0
+      slamJumpTimeFrame: 0
+      slideJumpTimeFrame: 0
+      slideSpeedBoost: 0
+      slideSpeed: 0
+      slideJumpForceMultiplier: 0
+      slideJumpSpeedMultiplier: 0
+      slideFriction: 0
+      slidePlayerScaleY: 0
+      slideFallOfThreshold: 0
+      slideFallOfForce: 0
+      groundSlamForce: 0
+      slamJumpForceMultiplier: 0
+      groundSlamGravityMultiplier: 0
+      physicsMaterial: {fileID: 0}
+      maxRunVelocity: 0
+      accelerationForce: 0
+      decelerationForce: 0
+      forwardVelocity: 0
+      strafeVelocity: 0
+      maxStrafeVelocity: 0
+      initialVelocity: 0
+      trueVelocity: 0
 --- !u!1 &1682176521
 GameObject:
   m_ObjectHideFlags: 0
@@ -5624,7 +5709,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9495d9c16cb1c1d4db33904578810dd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleGun
+  characterMovement: {fileID: 0}
+  playerCamera: {fileID: 0}
+  playerCameraComponent: {fileID: 0}
+  disableIcon: 0
   predictionPoint: {fileID: 1709899976}
+  currentGrapplePosition: {x: 0, y: 0, z: 0}
+  swingPoint: {x: 0, y: 0, z: 0}
+  joint: {fileID: 0}
   isEquipped: 1
   grapplePointIcon: {fileID: 1709584437}
   minIconScale: 0.75

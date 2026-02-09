@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class PlayerData
+public class PlayerData : MonoBehaviour
 {
     public PlayerDataSO scriptableObject;
     public PlayerDataStruct PlayerDataStruct;

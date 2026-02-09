@@ -1,8 +1,8 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerData))]
 public class PlayerActionStack : ActionStack
 {
     public abstract class PlayerAction : Action

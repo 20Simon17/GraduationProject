@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public Rigidbody rb;
     
     [SerializeField] private PlayerDataSO playerDataObject;
-    private PlayerData _playerData;
+    private PlayerDataStruct _playerData;
     
     private readonly Dictionary<Type, BaseState> _states = new();
     

@@ -7,25 +7,25 @@ public class PlayerActionStack : ActionStack
 {
     public abstract class PlayerAction : Action
     {
-        protected PlayerAction(Rigidbody inRb, Transform inTransform, PlayerData inData)
+        protected PlayerAction(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData)
         {
             rb = inRb;
             transform = inTransform;
             data = inData;
         }
 
-        public virtual void CompleteAction() => actionCompleted = true;
+        public void CompleteAction() => actionCompleted = true;
 
         public override bool IsDone() => actionCompleted;
         protected bool actionCompleted;
 
         protected readonly Rigidbody rb;
-        protected readonly PlayerData data;
+        protected PlayerDataStruct data;
         protected readonly Transform transform;
     }
     
-    [SerializeField] private PlayerDataSO playerDataObject;
-    private PlayerData playerData;
+    private PlayerData playerDataComponent;
+    private PlayerDataStruct playerData;
     
     private Rigidbody rb;
     
@@ -34,11 +34,9 @@ public class PlayerActionStack : ActionStack
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        playerDataComponent = GetComponent<PlayerData>();
 
-        if (playerDataObject)
-        {
-            playerData = playerDataObject.playerData;
-        }
+        playerData = playerDataComponent.PlayerDataStruct;
         
         PushAction(new DefaultMovementAction(rb, transform, playerData));
         
@@ -49,22 +47,57 @@ public class PlayerActionStack : ActionStack
     {
         InputManager.Instance.OnJumpEvent += AddJumpAction;
         InputManager.Instance.OnCrouchEvent += AddSlideAction;
+        InputManager.Instance.OnSlamEvent += AddSlamAction;
     }
 
     private void OnDisable()
     {
         InputManager.Instance.OnJumpEvent -= AddJumpAction;
         InputManager.Instance.OnCrouchEvent -= AddSlideAction;
+        InputManager.Instance.OnSlamEvent -= AddSlamAction;
     }
 
     protected override void Update()
     {
         base.Update();
-
+        
+        GroundCheck();
+        
+        Debug.Log(playerData.isGrounded);
+        
         // TODO: How can I make this less expensive?
         if (currentAction != CurrentAction as PlayerAction)
         {
             currentAction = (PlayerAction) CurrentAction;
+        }
+    }
+
+    private void GroundCheck()
+    {
+        Ray ray = new Ray(transform.position, Vector3.down);
+        Physics.Raycast(ray, out RaycastHit hit, transform.localScale.y / 2 + 0.1f);
+        
+        Debug.DrawRay(ray.origin, ray.direction * (transform.localScale.y + 0.1f), Color.darkRed);
+        
+        if (hit.collider != null && hit.transform.CompareTag("Ground") && playerData.isTouchingGround)
+        {
+            playerData.isGrounded = true;
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            playerData.isTouchingGround = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            playerData.isTouchingGround = false;
         }
     }
 
@@ -91,6 +124,18 @@ public class PlayerActionStack : ActionStack
             PushAction(new SlideAction(rb, transform, playerData));
         }
         else if (!value.isPressed && currentAction is SlideAction)
+        {
+            currentAction.CompleteAction();
+        }
+    }
+    
+    private void AddSlamAction(InputValue value)
+    {
+        if (value.isPressed && currentAction is not SlamAction)
+        {
+            PushAction(new SlamAction(rb, transform, playerData));
+        }
+        else if (!value.isPressed && currentAction is SlamAction)
         {
             currentAction.CompleteAction();
         }

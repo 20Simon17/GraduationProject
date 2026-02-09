@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35090904384042c4b7445516e969d23a, type: 3}
-  m_Name: PlayerDataSO
+  m_Name: PlayerData_DefaultPlayer
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataSO
   playerData:
     timeAtLastSlide: 0
     timeAtLastSlam: 0
     currentSpeed: 0
-    isGrounded: 1
-    isSliding: 1
+    isGrounded: 0
+    isTouchingGround: 0
+    isSliding: 0
     isSlamming: 0
     velocityHardCap: 150
     defaultPlayerScaleY: 1

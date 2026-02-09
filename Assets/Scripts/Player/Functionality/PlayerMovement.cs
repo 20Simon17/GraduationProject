@@ -4,7 +4,7 @@ public class PlayerMovement
 {
     private Vector2 _moveDirection;
     private readonly Rigidbody _rb;
-    private readonly PlayerData _data;
+    private PlayerDataStruct _data;
     private readonly Transform _transform;
 
     private float forwardVelocity = 0;
@@ -15,7 +15,7 @@ public class PlayerMovement
     private float NormalizedForward => forwardVelocity / Mathf.Abs(forwardVelocity);
     private float NormalizedStrafe => strafeVelocity / Mathf.Abs(strafeVelocity);
     
-    public PlayerMovement(Rigidbody inRb, Transform inTransform, PlayerData inData)
+    public PlayerMovement(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData)
     {
         _rb = inRb;
         _transform = inTransform;

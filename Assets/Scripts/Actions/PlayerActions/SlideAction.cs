@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SlideAction : PlayerActionStack.PlayerAction
 {
-    public SlideAction(Rigidbody inRb, Transform inTransform, PlayerData inData) 
+    public SlideAction(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData) 
         : base(inRb, inTransform, inData) {}
 
     public override void OnBegin(bool bFirstTime)

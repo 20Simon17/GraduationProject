@@ -6,7 +6,7 @@ public class DefaultState : BaseState
     private PlayerMovement _playerMovement;
     private PlayerJump _playerJump;
     
-    public override void EnableState(Player player, PlayerData playerData)
+    public override void EnableState(Player player, PlayerDataStruct playerData)
     {
         base.EnableState(player, playerData);
         

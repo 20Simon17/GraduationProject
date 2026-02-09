@@ -3,10 +3,10 @@ using UnityEngine;
 public class PlayerSlam
 {
     private readonly Rigidbody _rb;
-    private readonly PlayerData _data;
+    private PlayerDataStruct _data;
     private readonly Transform _transform;
     
-    public PlayerSlam(Rigidbody inRb, Transform inTransform, PlayerData inData)
+    public PlayerSlam(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData)
     {
         _rb = inRb;
         _transform = inTransform;

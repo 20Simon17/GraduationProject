@@ -5,7 +5,7 @@ public class BaseState
 {
     protected Player Player;
     
-    public virtual void EnableState(Player player, PlayerData playerData)
+    public virtual void EnableState(Player player, PlayerDataStruct playerData)
     {
         Player = player;
     }

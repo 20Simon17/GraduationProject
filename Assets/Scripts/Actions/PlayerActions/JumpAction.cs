@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class JumpAction : PlayerActionStack.PlayerAction
 {
-	public JumpAction(Rigidbody inRb, Transform inTransform, PlayerData inData) 
+	public JumpAction(Rigidbody inRb, Transform inTransform, PlayerDataStruct inData) 
         : base(inRb, inTransform, inData) {}
 
     public override void OnBegin(bool bFirstTime)
@@ -36,12 +36,12 @@ public class JumpAction : PlayerActionStack.PlayerAction
 
     private bool CanSlideJump()
     {
-        return data.timeAtLastSlide != 0 && Time.time - data.timeAtLastSlide <= data.slideJumpTimeFrame;
+        return data.timeAtLastSlide != 0 && Time.time - data.timeAtLastSlide <= data.slideJumpTimeFrame && CanJump();
     }
     
     private bool CanSlamJump()
     {
-        return data.timeAtLastSlam != 0 && Time.time - data.timeAtLastSlam <= data.slamJumpTimeFrame;
+        return data.timeAtLastSlam != 0 && Time.time - data.timeAtLastSlam <= data.slamJumpTimeFrame && CanJump();
     }
 
     private bool CanDoubleJump()
@@ -62,6 +62,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
         rb.AddForce(transform.forward * data.slideJumpSpeedMultiplier, ForceMode.Force); //Little speed boost when jumping from slide
         rb.AddForce(transform.up * (data.jumpForce * data.slideJumpForceMultiplier * data.jumpForceScaling), ForceMode.Force); //Weaker jump when sliding
         data.CanJump = false;
+        data.isGrounded = false;
     }
     
     private void PerformSlamJump()
@@ -71,6 +72,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
                 
         rb.AddForce(transform.up * (data.jumpForce * data.slamJumpForceMultiplier * data.jumpForceScaling), ForceMode.Force); //Higher jump when jumping from slam
         data.CanJump = false;
+        data.isGrounded = false;
     }
     
     private void PerformDoubleJump()
@@ -80,12 +82,13 @@ public class JumpAction : PlayerActionStack.PlayerAction
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); 
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
         data.CanJump = false;
+        data.isGrounded = false;
     }
     
     private void PerformJump()
     {
-        Debug.Log("Performing normal jump");
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
         data.CanJump = false;
+        data.isGrounded = false;
     }
 }

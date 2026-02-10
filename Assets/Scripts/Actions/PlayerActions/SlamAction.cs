@@ -7,14 +7,11 @@ public class SlamAction : PlayerActionStack.PlayerAction
 
     public override bool IsDone()
     {
-        if (actionCompleted) return actionCompleted;
-        return data is { isSlamming: true, isGrounded: true }; // pattern matching? (it's some form of pattern at least)
+        return actionCompleted ? actionCompleted : data.isGrounded;
     }
 
     public override void OnBegin(bool bFirstTime)
     {
-        Debug.Log("Performing ground slam");
-        
         if (!data.isGrounded)
         {
             data.isSlamming = true;
@@ -28,11 +25,8 @@ public class SlamAction : PlayerActionStack.PlayerAction
 
     public override void OnEnd()
     {
-        Debug.Log("Exiting ground slam");
         data.isSlamming = false;
         //Start cooldown for when the next slam could be done?
-        
-        base.OnEnd();
     }
 }
 

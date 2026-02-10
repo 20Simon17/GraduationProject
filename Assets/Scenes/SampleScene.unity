@@ -803,13 +803,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5689ab8aed20ee4a9c337029e80086f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
-  cameraComponent: {fileID: 0}
-  playerObject: {fileID: 429482157}
-  characterMovement: {fileID: 0}
-  mouseSensitivity: 0.15
-  clampAngleMin: -90
-  clampAngleMax: 90
-  cameraVerticalRotation: 0
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1144,40 +1137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cae6121bd3bfb14e9b6c754397a101b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterMovement
-  rb: {fileID: 0}
-  movementVector: {x: 0, y: 0}
-  defaultGravity: {x: 0, y: 0, z: 0}
-  defaultPlayerScaleY: 0
-  jumpForceScaling: 100
-  timeAtLastSlide: 0
-  timeAtLastSlam: 0
-  currentSpeed: 0
-  isGrounded: 0
-  canJump: 0
-  isSliding: 0
-  isSlamming: 0
-  velocityHardCap: 75
-  playerData: {fileID: 0}
-  counterForceSpeedThreshold: 3
-  defaultFriction: 0.8
-  jumpForce: 3.5
-  slamJumpTimeFrame: 0.2
-  slideJumpTimeFrame: 0.3
-  slideSpeedBoost: 1.2
-  slideSpeed: 12
-  slideJumpForceMultiplier: 0.9
-  slideJumpSpeedMultiplier: 1.4
-  slideFriction: 0.05
-  slidePlayerScaleY: 0.5
-  slideFallOfThreshold: 9
-  slideFallOfForce: 20
-  groundSlamForce: 1
-  slamJumpForceMultiplier: 1.5
-  groundSlamGravityMultiplier: 3
-  physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
-  maxRunVelocity: 10
-  accelerationForce: 50
-  decelerationForce: 250
 --- !u!54 &429482163
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1703,28 +1662,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9495d9c16cb1c1d4db33904578810dd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleGun
-  characterMovement: {fileID: 0}
-  playerCamera: {fileID: 0}
-  playerCameraComponent: {fileID: 0}
-  disableIcon: 0
-  predictionPoint: {fileID: 1709899976}
-  currentGrapplePosition: {x: 0, y: 0, z: 0}
-  swingPoint: {x: 0, y: 0, z: 0}
-  joint: {fileID: 0}
-  isEquipped: 1
-  grapplePointIcon: {fileID: 1709584437}
-  minIconScale: 0.75
-  gunTip: {fileID: 465665816}
-  grappleLineRenderer: {fileID: 510429133}
-  grappleRange: 30
-  predictionSphereCastRadius: 1
-  swapPrimarySecondary: 0
-  pullStrength: 25
-  springJointSpring: 4.5
-  springJointDamper: 1
-  springJointMassScale: 4.5
-  springJointMinDistance: 0.25
-  springJointMaxDistance: 0.7
 --- !u!65 &510429135
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1991,28 +1928,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9495d9c16cb1c1d4db33904578810dd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleGun
-  characterMovement: {fileID: 0}
-  playerCamera: {fileID: 0}
-  playerCameraComponent: {fileID: 0}
-  disableIcon: 0
-  predictionPoint: {fileID: 1709899976}
-  currentGrapplePosition: {x: 0, y: 0, z: 0}
-  swingPoint: {x: 0, y: 0, z: 0}
-  joint: {fileID: 0}
-  isEquipped: 1
-  grapplePointIcon: {fileID: 1709584437}
-  minIconScale: 0.75
-  gunTip: {fileID: 327389175}
-  grappleLineRenderer: {fileID: 564807915}
-  grappleRange: 30
-  predictionSphereCastRadius: 1
-  swapPrimarySecondary: 0
-  pullStrength: 25
-  springJointSpring: 4.5
-  springJointDamper: 1
-  springJointMassScale: 4.5
-  springJointMinDistance: 0.25
-  springJointMaxDistance: 0.7
 --- !u!65 &564807917
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2096,6 +2011,118 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5005094784140742936, guid: 263b7b571ee3cce44a225c7916b49919, type: 3}
   m_PrefabInstance: {fileID: 2030031994174715769}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &603820767
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 603820771}
+  - component: {fileID: 603820770}
+  - component: {fileID: 603820769}
+  - component: {fileID: 603820768}
+  m_Layer: 0
+  m_Name: Platform (2)
+  m_TagString: Ground
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &603820768
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603820767}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &603820769
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603820767}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a226d275d54dbd64ba965078be829bc0, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &603820770
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603820767}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &603820771
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603820767}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 100, y: 4.5, z: 0.5}
+  m_LocalScale: {x: 100, y: 1, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &622929210
 GameObject:
   m_ObjectHideFlags: 0
@@ -3233,6 +3260,118 @@ Transform:
   - {fileID: 622929214}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &907549401
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 907549405}
+  - component: {fileID: 907549404}
+  - component: {fileID: 907549403}
+  - component: {fileID: 907549402}
+  m_Layer: 0
+  m_Name: Platform (1)
+  m_TagString: Ground
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &907549402
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907549401}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &907549403
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907549401}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a226d275d54dbd64ba965078be829bc0, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &907549404
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907549401}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &907549405
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 907549401}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 100, y: -1, z: 0.5}
+  m_LocalScale: {x: 100, y: 1, z: 100}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &915526073
 GameObject:
   m_ObjectHideFlags: 0
@@ -3778,21 +3917,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1145f0840b00b46a5e02489a1358a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplineTool
-  polePrefab: {fileID: 0}
-  wallPrefab: {fileID: 0}
-  ceilingPrefab: {fileID: 0}
-  playerCamera: {fileID: 0}
-  player: {fileID: 0}
-  maxZiplines: 3
-  currentZiplines: 0
-  ziplines: []
-  bShowGhost: 1
-  bIsPlacing: 0
-  bIsMoving: 0
-  selectedPoint: {fileID: 0}
-  _ziplineObject: {fileID: 0}
-  _zipline: {fileID: 0}
-  _placementPoint: {fileID: 0}
 --- !u!1 &1362640249
 GameObject:
   m_ObjectHideFlags: 0
@@ -4031,49 +4155,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a07f75fe7753ee744af355433e80a62e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  rb: {fileID: 0}
-  playerDataObject: {fileID: 11400000, guid: 17adbd51b4d4231469bce84669802677, type: 2}
-  _playerData:
-    timeAtLastSlide: 0
-    timeAtLastSlam: 0
-    currentSpeed: 0
-    isGrounded: 0
-    isTouchingGround: 0
-    canJump: 0
-    isSliding: 0
-    isSlamming: 0
-    velocityHardCap: 0
-    defaultPlayerScaleY: 0
-    jumpForceScaling: 0
-    counterForceSpeedThreshold: 0
-    defaultFriction: 0
-    jumpForce: 0
-    slamJumpTimeFrame: 0
-    slideJumpTimeFrame: 0
-    slideSpeedBoost: 0
-    slideSpeed: 0
-    slideJumpForceMultiplier: 0
-    slideJumpSpeedMultiplier: 0
-    slideFriction: 0
-    slidePlayerScaleY: 0
-    slideFallOfThreshold: 0
-    slideFallOfForce: 0
-    groundSlamForce: 0
-    slamJumpForceMultiplier: 0
-    groundSlamGravityMultiplier: 0
-    physicsMaterial: {fileID: 0}
-    maxRunVelocity: 0
-    accelerationForce: 0
-    decelerationForce: 0
-    forwardVelocity: 0
-    strafeVelocity: 0
-    maxStrafeVelocity: 0
-    initialVelocity: 0
-    trueVelocity: 0
-  _horizontalVelocityText: {fileID: 0}
-  _forwardVelocityText: {fileID: 0}
-  _strafeVelocityText: {fileID: 0}
-  _isDisabled: 0
 --- !u!54 &1484247451
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4243,21 +4324,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1145f0840b00b46a5e02489a1358a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplineTool
-  polePrefab: {fileID: 0}
-  wallPrefab: {fileID: 0}
-  ceilingPrefab: {fileID: 0}
-  playerCamera: {fileID: 0}
-  player: {fileID: 0}
-  maxZiplines: 3
-  currentZiplines: 0
-  ziplines: []
-  bShowGhost: 1
-  bIsPlacing: 0
-  bIsMoving: 0
-  selectedPoint: {fileID: 0}
-  _ziplineObject: {fileID: 0}
-  _zipline: {fileID: 0}
-  _placementPoint: {fileID: 0}
 --- !u!1 &1518478722
 GameObject:
   m_ObjectHideFlags: 0
@@ -4439,7 +4505,7 @@ GameObject:
   - component: {fileID: 1625968165}
   - component: {fileID: 1625968164}
   - component: {fileID: 1625968162}
-  - component: {fileID: 1625968167}
+  - component: {fileID: 1625968170}
   - component: {fileID: 1625968169}
   - component: {fileID: 1625968168}
   m_Layer: 7
@@ -4550,28 +4616,6 @@ Transform:
   - {fileID: 1501249331}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1625968167
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1625968160}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &1625968168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4606,6 +4650,7 @@ MonoBehaviour:
       isTouchingGround: 0
       isSliding: 0
       isSlamming: 0
+      canWallrunJump: 0
       velocityHardCap: 0
       defaultPlayerScaleY: 0
       jumpForceScaling: 0
@@ -4634,6 +4679,34 @@ MonoBehaviour:
       maxStrafeVelocity: 0
       initialVelocity: 0
       trueVelocity: 0
+      wallRunCheckDistance: 0
+      wallRunJumpSpeedBoost: 0
+      wallRunCancelVerticalVelocity: 0
+      currentWallRuns: 0
+      maxWallRuns: 0
+--- !u!136 &1625968170
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625968160}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1682176521
 GameObject:
   m_ObjectHideFlags: 0
@@ -5709,28 +5782,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9495d9c16cb1c1d4db33904578810dd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrappleGun
-  characterMovement: {fileID: 0}
-  playerCamera: {fileID: 0}
-  playerCameraComponent: {fileID: 0}
-  disableIcon: 0
-  predictionPoint: {fileID: 1709899976}
-  currentGrapplePosition: {x: 0, y: 0, z: 0}
-  swingPoint: {x: 0, y: 0, z: 0}
-  joint: {fileID: 0}
-  isEquipped: 1
-  grapplePointIcon: {fileID: 1709584437}
-  minIconScale: 0.75
-  gunTip: {fileID: 253855853}
-  grappleLineRenderer: {fileID: 2065444807}
-  grappleRange: 30
-  predictionSphereCastRadius: 1
-  swapPrimarySecondary: 0
-  pullStrength: 25
-  springJointSpring: 4.5
-  springJointDamper: 1
-  springJointMassScale: 4.5
-  springJointMinDistance: 0.25
-  springJointMaxDistance: 0.7
 --- !u!114 &2065444809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5891,6 +5942,8 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 870387076}
+  - {fileID: 907549405}
+  - {fileID: 603820771}
   - {fileID: 429482161}
   - {fileID: 1484247455}
   - {fileID: 1625968166}

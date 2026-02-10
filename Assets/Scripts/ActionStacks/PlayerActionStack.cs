@@ -15,14 +15,7 @@ public class PlayerActionStack : ActionStack
             data = inData.dataStruct;
         }
 
-        public override void OnEnd()
-        {
-            base.OnEnd();
-
-            dataRecord.dataStruct = data;
-        }
-
-        public void CompleteAction() => actionCompleted = true;
+        public virtual void CompleteAction() => actionCompleted = true;
 
         public override bool IsDone() => actionCompleted;
         protected bool actionCompleted;
@@ -34,8 +27,7 @@ public class PlayerActionStack : ActionStack
     }
     
     private PlayerData playerDataComponent;
-    private PlayerDataRecord playerDataRecord;
-    private PlayerDataStruct playerDataStruct;
+    private PlayerDataRecord dataRecord;
     
     private Rigidbody rb;
     
@@ -46,23 +38,23 @@ public class PlayerActionStack : ActionStack
         rb = GetComponent<Rigidbody>();
         
         playerDataComponent = GetComponent<PlayerData>();
-        playerDataRecord = playerDataComponent.dataRecord;
+        dataRecord = playerDataComponent.dataRecord;
         
-        PushAction(new DefaultMovementAction(rb, transform, playerDataRecord));
+        PushAction(new DefaultMovementAction(rb, transform, dataRecord));
         
         BindEvents();
     }
 
     private void BindEvents()
     {
-        InputManager.Instance.OnJumpEvent += AddJumpAction;
+        InputManager.Instance.OnJumpEvent += CheckJumpActions;
         InputManager.Instance.OnCrouchEvent += AddSlideAction;
         InputManager.Instance.OnSlamEvent += AddSlamAction;
     }
 
     private void OnDisable()
     {
-        InputManager.Instance.OnJumpEvent -= AddJumpAction;
+        InputManager.Instance.OnJumpEvent -= CheckJumpActions;
         InputManager.Instance.OnCrouchEvent -= AddSlideAction;
         InputManager.Instance.OnSlamEvent -= AddSlamAction;
     }
@@ -72,6 +64,11 @@ public class PlayerActionStack : ActionStack
         base.Update();
         
         GroundCheck();
+        
+        /*Ray rRay = new Ray(transform.position, transform.right);
+        Ray lRay = new Ray(transform.position, -transform.right);
+        Debug.DrawRay(rRay.origin, rRay.direction * dataRecord.dataStruct.wallRunCheckDistance, Color.darkRed);
+        Debug.DrawRay(lRay.origin, lRay.direction * dataRecord.dataStruct.wallRunCheckDistance, Color.darkRed);*/
         
         // TODO: How can I make this less expensive?
         if (currentAction != CurrentAction as PlayerAction)
@@ -83,23 +80,16 @@ public class PlayerActionStack : ActionStack
     private void GroundCheck()
     {
         Ray ray = new Ray(transform.position, -transform.up);
-        if (Physics.Raycast(ray, out RaycastHit hit, transform.localScale.y / 2 + 0.1f))
-        {
-            if (hit.transform.CompareTag("Ground") && playerDataRecord.dataStruct.isTouchingGround)
-            {
-                playerDataRecord.dataStruct.isGrounded = true;
-            }
-        }
-        
-        Debug.DrawRay(ray.origin, ray.direction * (transform.localScale.y + 0.1f), Color.darkRed);
+        Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.1f);
+
+        dataRecord.dataStruct.isGrounded = hit.collider != null && hit.transform.CompareTag("Ground");
     }
 
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            playerDataRecord.dataStruct.isTouchingGround = true;
-            playerDataRecord.dataStruct.isGrounded = true;
+            dataRecord.dataStruct.isTouchingGround = true;
         }
     }
 
@@ -107,32 +97,79 @@ public class PlayerActionStack : ActionStack
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            playerDataRecord.dataStruct.isTouchingGround = false;
-            playerDataRecord.dataStruct.isGrounded = false;
+            dataRecord.dataStruct.isTouchingGround = false;
         }
+    }
+
+    private void CheckJumpActions(InputValue value)
+    {
+        if (currentAction is WallRunAction)
+        {
+            AddWallRunAction(value);
+            return;
+        }
+        
+        // Touching ground is true when touching walls as well
+        if (dataRecord.dataStruct.isGrounded)
+        {
+            AddJumpAction(value);
+        }
+        else
+        {
+            if (CanWallRun()) AddWallRunAction(value);
+            else
+            {
+                // buffer jump input? if isPressed is true
+            }
+        }
+    }
+
+    private bool CanWallRun()
+    {
+        Ray rRay = new Ray(transform.position, transform.right);
+        Ray lRay = new Ray(transform.position, -transform.right);
+            
+        return Physics.Raycast(rRay, out RaycastHit rHit, dataRecord.dataStruct.wallRunCheckDistance) && rHit.transform.CompareTag("Ground") ||
+               Physics.Raycast(lRay, out RaycastHit lHit, dataRecord.dataStruct.wallRunCheckDistance) && lHit.transform.CompareTag("Ground");
     }
 
     private void AddJumpAction(InputValue value)
     {
         if (!value.isPressed || currentAction is JumpAction) return;
         
-        //clear every other action except for default movement action
+        ForceAddJumpAction();
+    }
+
+    private void ForceAddJumpAction()
+    {
         foreach (IAction action in Stack.Where(action => action is not DefaultMovementAction))
         {
             (action as PlayerAction)?.CompleteAction();
         }
         
-        // if current action is zipline action, force a jump through jump action
-        // maybe a bool? data.forceJump = true; if (forceJump) perform jump regardless of other conditions.
-        
-        PushAction(new JumpAction(rb, transform, playerDataRecord));
+        PushAction(new JumpAction(rb, transform, dataRecord));
     }
 
+    private void AddWallRunAction(InputValue value)
+    {
+        if (value.isPressed && currentAction is not WallRunAction && !dataRecord.dataStruct.isGrounded)
+        {
+            PushAction(new WallRunAction(rb, transform, dataRecord));
+        }
+        else if (!value.isPressed && currentAction is WallRunAction)
+        {
+            Debug.Log("Completing wallrun and forcing a jump.");
+            dataRecord.dataStruct.canWallrunJump = true;
+            currentAction.CompleteAction();
+            ForceAddJumpAction();
+        }
+    }
+    
     private void AddSlideAction(InputValue value)
     {
         if (value.isPressed && currentAction is not SlideAction)
         {
-            PushAction(new SlideAction(rb, transform, playerDataRecord));
+            PushAction(new SlideAction(rb, transform, dataRecord));
         }
         else if (!value.isPressed && currentAction is SlideAction)
         {
@@ -144,7 +181,7 @@ public class PlayerActionStack : ActionStack
     {
         if (value.isPressed && currentAction is not SlamAction)
         {
-            PushAction(new SlamAction(rb, transform, playerDataRecord));
+            PushAction(new SlamAction(rb, transform, dataRecord));
         }
         else if (!value.isPressed && currentAction is SlamAction)
         {

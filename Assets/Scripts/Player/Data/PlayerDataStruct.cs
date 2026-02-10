@@ -16,6 +16,7 @@ public struct PlayerDataStruct
     private bool canJump;
     public bool isSliding;
     public bool isSlamming;
+    public bool canWallrunJump;
 
     public bool CanJump
     {
@@ -63,4 +64,10 @@ public struct PlayerDataStruct
     public float maxStrafeVelocity;
     public float initialVelocity;
     public float trueVelocity;
+
+    public float wallRunCheckDistance;
+    public float wallRunJumpSpeedBoost;
+    public float wallRunCancelVerticalVelocity;
+    public int currentWallRuns;
+    public int maxWallRuns;
 }

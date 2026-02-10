@@ -21,6 +21,7 @@ MonoBehaviour:
       isTouchingGround: 1
       isSliding: 0
       isSlamming: 0
+      canWallrunJump: 1
       velocityHardCap: 150
       defaultPlayerScaleY: 1
       jumpForceScaling: 32
@@ -49,3 +50,8 @@ MonoBehaviour:
       maxStrafeVelocity: 3
       initialVelocity: 4
       trueVelocity: 0
+      wallRunCheckDistance: 1.5
+      wallRunJumpSpeedBoost: 0
+      wallRunCancelVerticalVelocity: -8
+      currentWallRuns: 0
+      maxWallRuns: 0

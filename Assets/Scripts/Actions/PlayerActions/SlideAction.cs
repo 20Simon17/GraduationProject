@@ -7,6 +7,8 @@ public class SlideAction : PlayerActionStack.PlayerAction
 
     public override void OnBegin(bool bFirstTime)
     {
+        // TODO: Make the slide go in the direction of movement input, not just forward.
+        
         data.isSliding = true;
         data.physicsMaterial.dynamicFriction = data.slideFriction;
         transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
@@ -32,13 +34,9 @@ public class SlideAction : PlayerActionStack.PlayerAction
 
     public override void OnEnd()
     {
-        Debug.Log("Ended slide");
-        
         data.isSliding = false;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
         transform.localScale = new Vector3(transform.localScale.x, data.defaultPlayerScaleY, transform.localScale.z);
-        
-        base.OnEnd();
     }
 
     public override void OnUpdate(float deltaTime)

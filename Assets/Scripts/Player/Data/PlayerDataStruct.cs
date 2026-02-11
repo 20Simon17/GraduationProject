@@ -56,8 +56,9 @@ public struct PlayerDataStruct
     public float groundSlamForce;
     public float slamJumpForceMultiplier;
     public float groundSlamGravityMultiplier;
-    
-    [Header("Movement")]
+
+    [Header("Movement")] 
+    public Vector3 defaultGravity;
     public PhysicsMaterial physicsMaterial;
     public float maxRunVelocity;
     public float accelerationForce;
@@ -72,6 +73,7 @@ public struct PlayerDataStruct
     [Header("Wall Run")]
     public float wallRunCheckDistance;
     public float wallRunJumpSpeedBoost;
+    public float wallRunGravityMultiplier;
     public float wallRunCancelVerticalVelocity;
     public int currentWallRuns;
     public int maxWallRuns;

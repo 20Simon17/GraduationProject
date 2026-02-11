@@ -58,12 +58,13 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             }
             else moveDirection = -wallDirection;
         }
-        
+
+        Physics.gravity = data.defaultGravity * data.wallRunGravityMultiplier;
         Vector2 horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
         Vector3 movementVelocity = moveDirection.normalized * horizontalVelocity.magnitude;
-        rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y, movementVelocity.z);
+        rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y + 5, movementVelocity.z);
         
-        data.physicsMaterial.dynamicFriction = data.slideFriction;
+        data.physicsMaterial.dynamicFriction = 0;
         
         //if y velocity is less than a certain amount, leave unchanged, if it's within a range = set it to 0, if it's above the range, keep it
     }
@@ -72,5 +73,6 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     {
         if (data.currentWallRuns < data.maxWallRuns) data.currentWallRuns++;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
+        Physics.gravity = data.defaultGravity;
     }
 }

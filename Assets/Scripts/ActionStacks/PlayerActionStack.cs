@@ -64,6 +64,17 @@ public class PlayerActionStack : ActionStack
         base.Update();
         
         GroundCheck();
+
+        if (dataRecord.IsCoyoteTimeActive)
+        {
+            dataRecord.dataStruct.coyoteTime += Time.deltaTime;
+
+            if (dataRecord.dataStruct.coyoteTime >= dataRecord.dataStruct.coyoteTimeDuration)
+            {
+                dataRecord.IsCoyoteTimeActive = false;
+                dataRecord.dataStruct.coyoteTime = 0;
+            }
+        }
         
         /*Ray rRay = new Ray(transform.position, transform.right);
         Ray lRay = new Ray(transform.position, -transform.right);
@@ -80,9 +91,30 @@ public class PlayerActionStack : ActionStack
     private void GroundCheck()
     {
         Ray ray = new Ray(transform.position, -transform.up);
-        Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.1f);
+        Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.01f);
 
-        dataRecord.dataStruct.isGrounded = hit.collider != null && hit.transform.CompareTag("Ground");
+        if (hit.collider && hit.transform.CompareTag("Ground"))
+        {
+            dataRecord.IsGrounded = true;
+            
+            if (dataRecord.dataStruct.hasJumped && dataRecord.dataStruct.timeAtLastJump != 0 && Time.time - dataRecord.dataStruct.timeAtLastJump > 0.1f)
+            {
+                dataRecord.dataStruct.hasJumped = false;
+                dataRecord.dataStruct.timeAtLastJump = 0;
+            }
+
+            if (dataRecord.IsCoyoteTimeActive)
+            {
+                dataRecord.IsCoyoteTimeActive = false;
+                dataRecord.dataStruct.coyoteTime = 0;
+            }
+        }
+        else if (dataRecord.IsGrounded)
+        {
+            dataRecord.IsGrounded = false;
+            dataRecord.dataStruct.coyoteTime = 0;
+            dataRecord.IsCoyoteTimeActive = true;
+        }
     }
 
     private void OnCollisionEnter(Collision other)
@@ -110,7 +142,7 @@ public class PlayerActionStack : ActionStack
         }
         
         // Touching ground is true when touching walls as well
-        if (dataRecord.dataStruct.isGrounded)
+        if (dataRecord.dataStruct.CanJump)
         {
             AddJumpAction(value);
         }
@@ -159,7 +191,7 @@ public class PlayerActionStack : ActionStack
         else if (!value.isPressed && currentAction is WallRunAction)
         {
             Debug.Log("Completing wallrun and forcing a jump.");
-            dataRecord.dataStruct.canWallrunJump = true;
+            dataRecord.dataStruct.canWallRunJump = true;
             currentAction.CompleteAction();
             ForceAddJumpAction();
         }
@@ -182,10 +214,6 @@ public class PlayerActionStack : ActionStack
         if (value.isPressed && currentAction is not SlamAction)
         {
             PushAction(new SlamAction(rb, transform, dataRecord));
-        }
-        else if (!value.isPressed && currentAction is SlamAction)
-        {
-            currentAction.CompleteAction();
         }
     }
 }

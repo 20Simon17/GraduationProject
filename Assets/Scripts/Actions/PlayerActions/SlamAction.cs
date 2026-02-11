@@ -7,12 +7,18 @@ public class SlamAction : PlayerActionStack.PlayerAction
 
     public override bool IsDone()
     {
-        return actionCompleted ? actionCompleted : data.isGrounded;
+        if (dataRecord.IsGrounded)
+        {
+            return true;
+        }
+        return actionCompleted;
     }
 
     public override void OnBegin(bool bFirstTime)
     {
-        if (!data.isGrounded)
+        //check difference between Time.time and timeAtLastSlam, as a form of cooldown for the slam
+        
+        if (!dataRecord.IsGrounded)
         {
             data.isSlamming = true;
             rb.AddForce(-transform.up * data.groundSlamForce, ForceMode.VelocityChange);
@@ -26,7 +32,7 @@ public class SlamAction : PlayerActionStack.PlayerAction
     public override void OnEnd()
     {
         data.isSlamming = false;
-        //Start cooldown for when the next slam could be done?
+        data.timeAtLastSlam = Time.time;
     }
 }
 

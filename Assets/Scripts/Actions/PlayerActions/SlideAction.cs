@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class SlideAction : PlayerActionStack.PlayerAction
@@ -5,21 +6,43 @@ public class SlideAction : PlayerActionStack.PlayerAction
     public SlideAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData) 
         : base(inRb, inTransform, inData) {}
 
+    
+    private float slideTime;
+    
+    public override bool IsDone()
+    {
+        if (!dataRecord.IsGrounded && !dataRecord.IsCoyoteTimeActive)
+        {
+            Debug.Log("Exiting slide, player was not grounded");
+            return true;
+        }
+        if (rb.linearVelocity.magnitude <= 0)
+        {
+            return true;
+        }
+        return actionCompleted;
+    }
+
     public override void OnBegin(bool bFirstTime)
     {
         // TODO: Make the slide go in the direction of movement input, not just forward.
+
+        if (!dataRecord.IsGrounded) return;
         
         data.isSliding = true;
         data.physicsMaterial.dynamicFriction = data.slideFriction;
-        transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
-
-        if (!data.isGrounded)
+        
+        slideTime = 0;
+        
+        Ray ray = new Ray(transform.position, -transform.up);
+        Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.1f);
+        if (hit.collider != null && hit.transform.CompareTag("Ground"))
         {
-            actionCompleted = true;
-            return;
+            transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
+            rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
         }
-            
-        rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
+        else CompleteAction();
+        
         data.timeAtLastSlide = Time.time;
             
         if (rb.linearVelocity.magnitude < data.maxRunVelocity)
@@ -30,6 +53,8 @@ public class SlideAction : PlayerActionStack.PlayerAction
         {
             rb.linearVelocity = transform.forward * (rb.linearVelocity.magnitude * data.slideSpeedBoost);
         }
+        
+        Debug.Log("OnBegin finished");
     }
 
     public override void OnEnd()
@@ -41,20 +66,9 @@ public class SlideAction : PlayerActionStack.PlayerAction
 
     public override void OnUpdate(float deltaTime)
     {
-        if (rb.linearVelocity.magnitude < data.slideFallOfThreshold && rb.linearVelocity.magnitude > data.counterForceSpeedThreshold)
-        {
-            if(rb.linearVelocity.magnitude < 1f)
-            {
-                rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
-                return;
-            }
-            
-            Vector3 relativeVelocity = transform.InverseTransformPoint(rb.linearVelocity);
-            rb.AddForce(-relativeVelocity.normalized * data.slideFallOfForce, ForceMode.Acceleration);
-        }
-        else if (rb.linearVelocity.magnitude <= 0)
-        {
-            actionCompleted = true;
-        }
+        slideTime += deltaTime;
+        
+        float progress = Mathf.Min(slideTime / data.timeUntilMaxFriction, 1);
+        data.physicsMaterial.dynamicFriction = (float)(1 - Math.Sqrt(1 - Math.Pow(progress, 2))); // ease in circ
     }
 }

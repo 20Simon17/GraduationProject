@@ -1,10 +1,10 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ZiplineTool : MonoBehaviour
 {
-    #region Prefabs
+    /*#region Prefabs
     private GameObject polePrefab;
     private GameObject wallPrefab;
     private GameObject ceilingPrefab;
@@ -312,5 +312,5 @@ public class ZiplineTool : MonoBehaviour
         ziplines.Clear();
 
         currentZiplines = 0;
-    }
-}*/
+    }*/
+}

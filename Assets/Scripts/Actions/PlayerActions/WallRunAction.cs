@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class WallRunAction : PlayerActionStack.PlayerAction
@@ -10,21 +9,26 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     
     public override bool IsDone()
     {
-        if (rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity || data.isGrounded)
+        Vector2 horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
+        if (horizontalVelocity.magnitude <= 0)
         {
-            Debug.Log($"Exited wallrun, was velocity lower than fall velocity? {rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity}");
-            Debug.Log(rb.linearVelocity.y);
+            Debug.Log("No speed during wallrun, forcing jump");
+            // force jump here
             return true;
         }
-        Debug.Log("Wallrun was completed externally");
+        if (rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity || dataRecord.IsGrounded)
+        {
+            return true;
+        }
         return actionCompleted;
     }
     
     public override void OnBegin(bool bFirstTime)
     {
-        Debug.Log("Entered wallrun");
-        
-        if (data.currentWallRuns >= data.maxWallRuns || data.isGrounded) CompleteAction();
+        if (data.currentWallRuns >= data.maxWallRuns)
+        {
+            CompleteAction();
+        }
         
         Ray rRay = new Ray(transform.position, transform.right);
         Ray lRay = new Ray(transform.position, -transform.right);
@@ -66,7 +70,6 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     public override void OnEnd()
     {
-        Debug.Log("Exited wallrun");
         if (data.currentWallRuns < data.maxWallRuns) data.currentWallRuns++;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
     }

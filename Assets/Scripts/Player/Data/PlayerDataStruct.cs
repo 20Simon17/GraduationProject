@@ -7,6 +7,7 @@ public struct PlayerDataStruct
     [Header("Debugging - Values")] 
     public float timeAtLastSlide;
     public float timeAtLastSlam;
+    public float timeAtLastJump;
     public float currentSpeed;
     
     //TODO: convert all of these to properties and set "disableMovement" to true in the setters?
@@ -16,11 +17,12 @@ public struct PlayerDataStruct
     private bool canJump;
     public bool isSliding;
     public bool isSlamming;
-    public bool canWallrunJump;
+    public bool canWallRunJump;
+    public bool hasJumped;
 
     public bool CanJump
     {
-        get => isGrounded || canJump;
+        get => isGrounded || canJump || (isCoyoteTimeActive && !hasJumped);
         set => canJump = value;
     }
 
@@ -34,6 +36,9 @@ public struct PlayerDataStruct
     public float defaultFriction;
 
     [Header("Jump")]
+    public bool isCoyoteTimeActive;
+    public float coyoteTime;
+    public float coyoteTimeDuration;
     public float jumpForce;
     public float slamJumpTimeFrame;
     public float slideJumpTimeFrame;
@@ -45,8 +50,7 @@ public struct PlayerDataStruct
     public float slideJumpSpeedMultiplier;
     public float slideFriction;
     public float slidePlayerScaleY;
-    public float slideFallOfThreshold;
-    public float slideFallOfForce;
+    public float timeUntilMaxFriction;
 
     [Header("Ground Slam")]
     public float groundSlamForce;
@@ -65,6 +69,7 @@ public struct PlayerDataStruct
     public float initialVelocity;
     public float trueVelocity;
 
+    [Header("Wall Run")]
     public float wallRunCheckDistance;
     public float wallRunJumpSpeedBoost;
     public float wallRunCancelVerticalVelocity;

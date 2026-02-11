@@ -32,6 +32,8 @@ public class JumpAction : PlayerActionStack.PlayerAction
         }
         
         actionCompleted = true;
+        dataRecord.dataStruct.hasJumped = true;
+        dataRecord.dataStruct.timeAtLastJump = Time.time;
     }
 
     private bool CanSlideJump()
@@ -51,7 +53,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
 
     private bool CanJump()
     {
-        return data.CanJump;
+        return dataRecord.dataStruct.CanJump;
     }
     
     private void PerformSlideJump()

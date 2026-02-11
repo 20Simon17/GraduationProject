@@ -1,10 +1,11 @@
-/*using System;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class GrappleGun : MonoBehaviour
 {
+    /*
     private CharacterMovement characterMovement;
     private PlayerCamera playerCamera;
     private Camera playerCameraComponent;
@@ -239,4 +240,5 @@ public class GrappleGun : MonoBehaviour
             characterMovement.GetComponent<Rigidbody>().AddForce(pullForce, ForceMode.Force);
         }
     }
-}*/
+    */
+}

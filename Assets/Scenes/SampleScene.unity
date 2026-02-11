@@ -663,7 +663,6 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
-  - component: {fileID: 330585548}
   - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
@@ -791,18 +790,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &330585548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5689ab8aed20ee4a9c337029e80086f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerCamera
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1020,7 +1007,6 @@ GameObject:
   - component: {fileID: 429482159}
   - component: {fileID: 429482158}
   - component: {fileID: 429482163}
-  - component: {fileID: 429482162}
   - component: {fileID: 429482164}
   m_Layer: 0
   m_Name: Player
@@ -1125,18 +1111,6 @@ Transform:
   - {fileID: 330585546}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &429482162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 429482157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cae6121bd3bfb14e9b6c754397a101b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterMovement
 --- !u!54 &429482163
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4135,7 +4109,6 @@ GameObject:
   - component: {fileID: 1484247453}
   - component: {fileID: 1484247452}
   - component: {fileID: 1484247451}
-  - component: {fileID: 1484247449}
   m_Layer: 7
   m_Name: Player using states
   m_TagString: Untagged
@@ -4143,18 +4116,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1484247449
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1484247448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a07f75fe7753ee744af355433e80a62e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!54 &1484247451
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4607,8 +4568,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1625968160}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.073, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4645,17 +4606,22 @@ MonoBehaviour:
     dataStruct:
       timeAtLastSlide: 0
       timeAtLastSlam: 0
+      timeAtLastJump: 0
       currentSpeed: 0
       isGrounded: 0
       isTouchingGround: 0
       isSliding: 0
       isSlamming: 0
-      canWallrunJump: 0
+      canWallRunJump: 0
+      hasJumped: 0
       velocityHardCap: 0
       defaultPlayerScaleY: 0
       jumpForceScaling: 0
       counterForceSpeedThreshold: 0
       defaultFriction: 0
+      isCoyoteTimeActive: 0
+      coyoteTime: 0
+      coyoteTimeDuration: 0
       jumpForce: 0
       slamJumpTimeFrame: 0
       slideJumpTimeFrame: 0
@@ -4665,8 +4631,7 @@ MonoBehaviour:
       slideJumpSpeedMultiplier: 0
       slideFriction: 0
       slidePlayerScaleY: 0
-      slideFallOfThreshold: 0
-      slideFallOfForce: 0
+      timeUntilMaxFriction: 0
       groundSlamForce: 0
       slamJumpForceMultiplier: 0
       groundSlamGravityMultiplier: 0

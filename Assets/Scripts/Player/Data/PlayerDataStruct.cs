@@ -36,7 +36,7 @@ public struct PlayerDataStruct
     public float defaultFriction;
 
     [Header("Jump")]
-    public bool isCoyoteTimeActive;
+    public bool isCoyoteTimeActive; // get => coyoteTime != 0 && coyoteTime <= coyoteTimeDuration
     public float coyoteTime;
     public float coyoteTimeDuration;
     public float jumpForce;
@@ -51,11 +51,14 @@ public struct PlayerDataStruct
     public float slideFriction;
     public float slidePlayerScaleY;
     public float timeUntilMaxFriction;
+    public float slideCooldown;
+    public float slideSpeedRequirement;
 
     [Header("Ground Slam")]
     public float groundSlamForce;
     public float slamJumpForceMultiplier;
     public float groundSlamGravityMultiplier;
+    public float slamCooldown;
 
     [Header("Movement")] 
     public Vector3 defaultGravity;

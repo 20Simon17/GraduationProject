@@ -42,10 +42,13 @@ MonoBehaviour:
       slideFriction: 0.05
       slidePlayerScaleY: 0.5
       timeUntilMaxFriction: 5
+      slideCooldown: 0.2
+      slideSpeedRequirement: 7
       groundSlamForce: 10
       slamJumpForceMultiplier: 1.3
       groundSlamGravityMultiplier: 3
-      defaultGravity: {x: 0, y: 0, z: 0}
+      slamCooldown: 0.2
+      defaultGravity: {x: 0, y: -9.81, z: 0}
       physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
       maxRunVelocity: 10
       accelerationForce: 50

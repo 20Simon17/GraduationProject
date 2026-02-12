@@ -5,6 +5,8 @@ public class SlamAction : PlayerActionStack.PlayerAction
     public SlamAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData) 
         : base(inRb, inTransform, inData) {}
 
+    private bool exitedOnCooldown;
+
     public override bool IsDone()
     {
         if (dataRecord.IsGrounded)
@@ -16,7 +18,12 @@ public class SlamAction : PlayerActionStack.PlayerAction
 
     public override void OnBegin(bool bFirstTime)
     {
-        //check difference between Time.time and timeAtLastSlam, as a form of cooldown for the slam
+        if (Time.time - data.timeAtLastSlam < data.slamCooldown)
+        {
+            CompleteAction();
+            exitedOnCooldown = true;
+            return;
+        }
         
         if (!dataRecord.IsGrounded)
         {
@@ -31,6 +38,8 @@ public class SlamAction : PlayerActionStack.PlayerAction
 
     public override void OnEnd()
     {
+        if (exitedOnCooldown) return;
+        
         dataRecord.dataStruct.isSlamming = false;
         dataRecord.dataStruct.timeAtLastSlam = Time.time;
     }

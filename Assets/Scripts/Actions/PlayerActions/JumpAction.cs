@@ -59,22 +59,20 @@ public class JumpAction : PlayerActionStack.PlayerAction
     private void PerformSlideJump()
     {
         Debug.Log("Performing slide jump");
-        data.timeAtLastSlide = 0;
+        dataRecord.dataStruct.timeAtLastSlide = 0;
                 
         rb.AddForce(transform.forward * data.slideJumpSpeedMultiplier, ForceMode.Force); //Little speed boost when jumping from slide
         rb.AddForce(transform.up * (data.jumpForce * data.slideJumpForceMultiplier * data.jumpForceScaling), ForceMode.Force); //Weaker jump when sliding
-        data.CanJump = false;
-        data.isGrounded = false;
+        dataRecord.dataStruct.CanJump = false;
     }
     
     private void PerformSlamJump()
     {
         Debug.Log("Performing slam jump");
-        data.timeAtLastSlam = 0;
+        dataRecord.dataStruct.timeAtLastSlam = 0;
                 
         rb.AddForce(transform.up * (data.jumpForce * data.slamJumpForceMultiplier * data.jumpForceScaling), ForceMode.Force); //Higher jump when jumping from slam
-        data.CanJump = false;
-        data.isGrounded = false;
+        dataRecord.dataStruct.CanJump = false;
     }
     
     private void PerformDoubleJump()
@@ -83,14 +81,12 @@ public class JumpAction : PlayerActionStack.PlayerAction
         //Reset vertical velocity so we always get the same height from double jump
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); 
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
-        data.CanJump = false;
-        data.isGrounded = false;
+        dataRecord.dataStruct.CanJump = false;
     }
     
     private void PerformJump()
     {
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
-        data.CanJump = false;
-        data.isGrounded = false;
+        dataRecord.dataStruct.CanJump = false;
     }
 }

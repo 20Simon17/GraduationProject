@@ -20,19 +20,19 @@ public class SlamAction : PlayerActionStack.PlayerAction
         
         if (!dataRecord.IsGrounded)
         {
-            data.isSlamming = true;
+            dataRecord.dataStruct.isSlamming = true;
             rb.AddForce(-transform.up * data.groundSlamForce, ForceMode.VelocityChange);
         }
         else
         {
-            data.timeAtLastSlam = Time.time;
+            dataRecord.dataStruct.timeAtLastSlam = Time.time;
         }
     }
 
     public override void OnEnd()
     {
-        data.isSlamming = false;
-        data.timeAtLastSlam = Time.time;
+        dataRecord.dataStruct.isSlamming = false;
+        dataRecord.dataStruct.timeAtLastSlam = Time.time;
     }
 }
 

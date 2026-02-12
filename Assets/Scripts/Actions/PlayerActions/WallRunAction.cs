@@ -6,9 +6,16 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         : base(inRb, inTransform, inData) {}
 
     private Vector3 moveDirection;
+    private Vector3 directionToWall;
     
     public override bool IsDone()
     {
+        Ray wallRay = new Ray(transform.position, directionToWall);
+        if (!Physics.Raycast(wallRay, data.wallRunCheckDistance))
+        {
+            //return true;
+        }
+        
         Vector2 horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
         if (horizontalVelocity.magnitude <= 0)
         {
@@ -36,6 +43,8 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         if (Physics.Raycast(rRay, out RaycastHit rHit, transform.localScale.y / 2 + 0.1f) &&
             rHit.transform.CompareTag("Ground"))
         {
+            directionToWall = -rHit.normal;
+            
             Vector3 wallDirection = Vector3.Cross(rHit.normal, transform.up);
 
             if (Vector3.Dot(transform.forward, wallDirection) > 
@@ -49,6 +58,8 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         else if (Physics.Raycast(lRay, out RaycastHit lHit, transform.localScale.y / 2 + 0.1f) &&
             lHit.transform.CompareTag("Ground"))
         {
+            directionToWall = -lHit.normal;
+            
             Vector3 wallDirection = Vector3.Cross(rHit.normal, transform.up);
 
             if (Vector3.Dot(transform.forward, wallDirection) > 
@@ -71,7 +82,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     public override void OnEnd()
     {
-        if (data.currentWallRuns < data.maxWallRuns) data.currentWallRuns++;
+        if (data.currentWallRuns < data.maxWallRuns) dataRecord.dataStruct.currentWallRuns++;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
         Physics.gravity = data.defaultGravity;
     }

@@ -13,7 +13,6 @@ public class SlideAction : PlayerActionStack.PlayerAction
     {
         if (!dataRecord.IsGrounded && !dataRecord.IsCoyoteTimeActive)
         {
-            Debug.Log("Exiting slide, player was not grounded");
             return true;
         }
         if (rb.linearVelocity.magnitude <= 0)
@@ -29,21 +28,15 @@ public class SlideAction : PlayerActionStack.PlayerAction
 
         if (!dataRecord.IsGrounded) return;
         
-        data.isSliding = true;
+        dataRecord.dataStruct.isSliding = true;
         data.physicsMaterial.dynamicFriction = data.slideFriction;
         
         slideTime = 0;
         
-        Ray ray = new Ray(transform.position, -transform.up);
-        Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.1f);
-        if (hit.collider != null && hit.transform.CompareTag("Ground"))
-        {
-            transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
-            rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
-        }
-        else CompleteAction();
+        transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
+        rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
         
-        data.timeAtLastSlide = Time.time;
+        dataRecord.dataStruct.timeAtLastSlide = Time.time;
             
         if (rb.linearVelocity.magnitude < data.maxRunVelocity)
         {
@@ -53,13 +46,11 @@ public class SlideAction : PlayerActionStack.PlayerAction
         {
             rb.linearVelocity = transform.forward * (rb.linearVelocity.magnitude * data.slideSpeedBoost);
         }
-        
-        Debug.Log("OnBegin finished");
     }
 
     public override void OnEnd()
     {
-        data.isSliding = false;
+        dataRecord.dataStruct.isSliding = false;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
         transform.localScale = new Vector3(transform.localScale.x, data.defaultPlayerScaleY, transform.localScale.z);
     }

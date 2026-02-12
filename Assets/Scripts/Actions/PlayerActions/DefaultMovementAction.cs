@@ -29,7 +29,7 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
         if (horizontalVelocity.magnitude != 0) CounterMovement(fixedDeltaTime);
 
         // Set our horizontal velocity to be our true velocity, excluding the vertical velocity.
-        data.trueVelocity = horizontalVelocity.magnitude;
+        dataRecord.dataStruct.trueVelocity = horizontalVelocity.magnitude;
 
         // Handle all acceleration logic
         HandleAcceleration(fixedDeltaTime);
@@ -124,7 +124,7 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
             rb.linearVelocity = new Vector3(newVelocity.x, rb.linearVelocity.y, newVelocity.z);
         }
 
-        data.forwardVelocity = forwardVelocity;
-        data.strafeVelocity = strafeVelocity;
+        dataRecord.dataStruct.forwardVelocity = forwardVelocity;
+        dataRecord.dataStruct.strafeVelocity = strafeVelocity;
     }
 }

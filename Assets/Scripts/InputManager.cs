@@ -33,6 +33,9 @@ public class InputManager : Singleton<InputManager>
     
     public delegate void OnFreeCamDelegate(InputValue value);
     public OnFreeCamDelegate OnFreeCamEvent;
+    
+    public delegate void OnPauseDelegate(InputValue value);
+    public OnPauseDelegate OnPauseEvent;
     #endregion
     
     private void Start()
@@ -55,4 +58,5 @@ public class InputManager : Singleton<InputManager>
     private void OnPrimaryAction(InputValue value) => OnPrimaryActionEvent?.Invoke(value);
     private void OnSecondaryAction(InputValue value) => OnSecondaryActionEvent?.Invoke(value);
     private void OnFreeCam(InputValue value) => OnFreeCamEvent?.Invoke(value);
+    private void OnPause(InputValue value) => OnPauseEvent?.Invoke(value);
 }

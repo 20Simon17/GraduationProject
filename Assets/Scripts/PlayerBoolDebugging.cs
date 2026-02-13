@@ -18,8 +18,7 @@ public class PlayerBoolDebugging : MonoBehaviour
 
     private void Update()
     {
-        PlayerDataStruct data = dataRecord.dataStruct;
-        IsGroundedText.color = data.isGrounded ? Color.green : Color.red;
-        CanJumpText.color = data.CanJump ? Color.green : Color.red;
+        IsGroundedText.color = dataRecord.isGrounded ? Color.green : Color.red;
+        CanJumpText.color = dataRecord.CanJump ? Color.green : Color.red;
     }
 }

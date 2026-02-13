@@ -65,14 +65,14 @@ public class PlayerActionStack : ActionStack
         
         GroundCheck();
 
-        if (dataRecord.IsCoyoteTimeActive)
+        if (dataRecord.isCoyoteTimeActive)
         {
-            dataRecord.dataStruct.coyoteTime += Time.deltaTime;
+            dataRecord.coyoteTime += Time.deltaTime;
 
-            if (dataRecord.dataStruct.coyoteTime >= dataRecord.dataStruct.coyoteTimeDuration)
+            if (dataRecord.coyoteTime >= dataRecord.dataStruct.coyoteTimeDuration)
             {
-                dataRecord.IsCoyoteTimeActive = false;
-                dataRecord.dataStruct.coyoteTime = 0;
+                dataRecord.isCoyoteTimeActive = false;
+                dataRecord.coyoteTime = 0;
             }
         }
         
@@ -95,25 +95,25 @@ public class PlayerActionStack : ActionStack
 
         if (hit.collider && hit.transform.CompareTag("Ground"))
         {
-            dataRecord.IsGrounded = true;
+            dataRecord.isGrounded = true;
             
-            if (dataRecord.dataStruct.hasJumped && dataRecord.dataStruct.timeAtLastJump != 0 && Time.time - dataRecord.dataStruct.timeAtLastJump > 0.1f)
+            if (dataRecord.hasJumped && dataRecord.timeAtLastJump != 0 && Time.time - dataRecord.timeAtLastJump > 0.1f)
             {
-                dataRecord.dataStruct.hasJumped = false;
-                dataRecord.dataStruct.timeAtLastJump = 0;
+                dataRecord.hasJumped = false;
+                dataRecord.timeAtLastJump = 0;
             }
 
-            if (dataRecord.IsCoyoteTimeActive)
+            if (dataRecord.isCoyoteTimeActive)
             {
-                dataRecord.IsCoyoteTimeActive = false;
-                dataRecord.dataStruct.coyoteTime = 0;
+                dataRecord.isCoyoteTimeActive = false;
+                dataRecord.coyoteTime = 0;
             }
         }
-        else if (dataRecord.IsGrounded)
+        else if (dataRecord.isGrounded)
         {
-            dataRecord.IsGrounded = false;
-            dataRecord.dataStruct.coyoteTime = 0;
-            dataRecord.IsCoyoteTimeActive = true;
+            dataRecord.isGrounded = false;
+            dataRecord.coyoteTime = 0;
+            dataRecord.isCoyoteTimeActive = true;
         }
     }
 
@@ -121,7 +121,7 @@ public class PlayerActionStack : ActionStack
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            dataRecord.dataStruct.isTouchingGround = true;
+            dataRecord.isTouchingGround = true;
         }
     }
 
@@ -129,7 +129,7 @@ public class PlayerActionStack : ActionStack
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            dataRecord.dataStruct.isTouchingGround = false;
+            dataRecord.isTouchingGround = false;
         }
     }
 
@@ -142,7 +142,7 @@ public class PlayerActionStack : ActionStack
         }
         
         // Touching ground is true when touching walls as well
-        if (dataRecord.dataStruct.CanJump)
+        if (dataRecord.CanJump)
         {
             AddJumpAction(value);
         }
@@ -184,14 +184,14 @@ public class PlayerActionStack : ActionStack
 
     private void AddWallRunAction(InputValue value)
     {
-        if (value.isPressed && currentAction is not WallRunAction && !dataRecord.dataStruct.isGrounded)
+        if (value.isPressed && currentAction is not WallRunAction && !dataRecord.isGrounded)
         {
             PushAction(new WallRunAction(rb, transform, dataRecord));
         }
         else if (!value.isPressed && currentAction is WallRunAction)
         {
             Debug.Log("Completing wallrun and forcing a jump.");
-            dataRecord.dataStruct.canWallRunJump = true;
+            dataRecord.canWallRunJump = true;
             currentAction.CompleteAction();
             ForceAddJumpAction();
         }

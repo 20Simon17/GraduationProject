@@ -1,25 +1,39 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public record PlayerDataRecord
 {
-    public bool IsGrounded
+    [Header("Timestamps")]
+    public float timeAtLastSlide;
+    public float timeAtLastSlam;
+    public float timeAtLastJump;
+    
+    [Header("Active values")]
+    public bool isCoyoteTimeActive; // get => coyoteTime != 0 && coyoteTime <= coyoteTimeDuration
+    public float coyoteTime;
+    
+    [Space(5)]
+    public bool isGrounded;
+    public bool isTouchingGround;
+    
+    [Space(5)]
+    public bool hasJumped;
+    private bool canJump;
+    public bool CanJump
     {
-        get => dataStruct.isGrounded;
-        set => dataStruct.isGrounded = value;
-    }
-
-    public bool IsTouchingGround
-    {
-        get => dataStruct.isTouchingGround;
-        set => dataStruct.isTouchingGround = value;
+        get => isGrounded || canJump || (isCoyoteTimeActive && !hasJumped);
+        set => canJump = value;
     }
     
-    public bool IsCoyoteTimeActive
-    {
-        get => dataStruct.isCoyoteTimeActive;
-        set => dataStruct.isCoyoteTimeActive = value;
-    }
+    [Space(5)]
+    public bool isSliding;
+    public bool isSlamming;
     
+    [Space(5)]
+    public int currentWallRuns;
+    public bool canWallRunJump;
+    
+    [Header("Static Data")]
     public PlayerDataStruct dataStruct;
 }

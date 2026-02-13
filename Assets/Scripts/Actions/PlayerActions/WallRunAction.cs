@@ -23,7 +23,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             // force jump here
             return true;
         }
-        if (rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity || dataRecord.IsGrounded)
+        if (rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity || dataRecord.isGrounded)
         {
             return true;
         }
@@ -32,7 +32,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     
     public override void OnBegin(bool bFirstTime)
     {
-        if (data.currentWallRuns >= data.maxWallRuns)
+        if (dataRecord.currentWallRuns >= data.maxWallRuns)
         {
             CompleteAction();
         }
@@ -82,7 +82,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     public override void OnEnd()
     {
-        if (data.currentWallRuns < data.maxWallRuns) dataRecord.dataStruct.currentWallRuns++;
+        if (dataRecord.currentWallRuns < data.maxWallRuns) dataRecord.currentWallRuns++;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
         Physics.gravity = data.defaultGravity;
     }

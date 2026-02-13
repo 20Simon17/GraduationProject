@@ -11,7 +11,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
     
     public override bool IsDone()
     {
-        if (!dataRecord.IsGrounded && !dataRecord.IsCoyoteTimeActive)
+        if (!dataRecord.isGrounded && !dataRecord.isCoyoteTimeActive)
         {
             return true;
         }
@@ -24,9 +24,9 @@ public class SlideAction : PlayerActionStack.PlayerAction
 
     public override void OnBegin(bool bFirstTime)
     {
-        if (!dataRecord.IsGrounded) return;
+        if (!dataRecord.isGrounded) return;
         
-        if (Time.time - data.timeAtLastSlide < data.slideCooldown ||
+        if (Time.time - dataRecord.timeAtLastSlide < data.slideCooldown ||
             rb.linearVelocity.magnitude < data.slideSpeedRequirement)
         {
             CompleteAction();
@@ -34,7 +34,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
             return;
         }
         
-        dataRecord.dataStruct.isSliding = true;
+        dataRecord.isSliding = true;
         data.physicsMaterial.dynamicFriction = data.slideFriction;
         
         slideTime = 0;
@@ -42,7 +42,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
         transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
         rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
         
-        dataRecord.dataStruct.timeAtLastSlide = Time.time;
+        dataRecord.timeAtLastSlide = Time.time;
 
         Vector2 moveInput = InputManager.Instance.moveDirection;
         Vector3 slideDirection = transform.rotation * new Vector3(moveInput.x, 0, moveInput.y); //replaced transform.forward with this for directional slide
@@ -61,7 +61,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
     {
         if (exitedEarly) return;
         
-        dataRecord.dataStruct.isSliding = false;
+        dataRecord.isSliding = false;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
         transform.localScale = new Vector3(transform.localScale.x, data.defaultPlayerScaleY, transform.localScale.z);
     }

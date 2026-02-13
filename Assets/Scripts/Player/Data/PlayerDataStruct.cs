@@ -5,27 +5,8 @@ using UnityEngine;
 public struct PlayerDataStruct
 {
     [Header("Debugging - Values")] 
-    public float timeAtLastSlide;
-    public float timeAtLastSlam;
-    public float timeAtLastJump;
-    public float currentSpeed;
+    public float currentSpeed; //unused currently
     
-    //TODO: convert all of these to properties and set "disableMovement" to true in the setters?
-    [Header("Debugging - Bools")] 
-    public bool isGrounded;
-    public bool isTouchingGround;
-    private bool canJump;
-    public bool isSliding;
-    public bool isSlamming;
-    public bool canWallRunJump;
-    public bool hasJumped;
-
-    public bool CanJump
-    {
-        get => isGrounded || canJump || (isCoyoteTimeActive && !hasJumped);
-        set => canJump = value;
-    }
-
     [Header("General Settings")]
     public float velocityHardCap;
     public float defaultPlayerScaleY;
@@ -36,8 +17,6 @@ public struct PlayerDataStruct
     public float defaultFriction;
 
     [Header("Jump")]
-    public bool isCoyoteTimeActive; // get => coyoteTime != 0 && coyoteTime <= coyoteTimeDuration
-    public float coyoteTime;
     public float coyoteTimeDuration;
     public float jumpForce;
     public float slamJumpTimeFrame;
@@ -78,6 +57,5 @@ public struct PlayerDataStruct
     public float wallRunJumpSpeedBoost;
     public float wallRunGravityMultiplier;
     public float wallRunCancelVerticalVelocity;
-    public int currentWallRuns;
     public int maxWallRuns;
 }

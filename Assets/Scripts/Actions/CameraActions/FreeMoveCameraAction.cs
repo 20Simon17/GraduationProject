@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class FreeMoveCameraAction : CameraActionStack.CameraAction
 {
+    public FreeMoveCameraAction(Transform player, Transform camera)
+        : base(player, camera) {}
+    
     private float clampAngleMin = -85f;
     private float clampAngleMax = 90f;
     private float mouseSensitivity = 0.15f;

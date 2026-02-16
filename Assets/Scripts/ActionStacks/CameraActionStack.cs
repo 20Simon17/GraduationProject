@@ -5,12 +5,24 @@ public class CameraActionStack : ActionStack
 {
     public abstract class CameraAction : Action
     {
+        protected CameraAction(Transform player, Transform camera)
+        {
+            PlayerTransform = player;
+            CameraTransform = camera;
+        }
+        
         protected float VerticalRotation;
         protected Transform CameraTransform;
+        protected Transform PlayerTransform;
+        
         public virtual void RotateCamera(Vector2 input) { }
     }
     
     private CameraAction currentAction;
+
+    private Transform playerTransform;
+    private Transform cameraTransform;
+    
     
     private void Start()
     {
@@ -18,8 +30,11 @@ public class CameraActionStack : ActionStack
         
         InputManager.Instance.OnFreeCamEvent += FreeCamToggle;
         InputManager.Instance.OnLookEvent += Look;
+
+        cameraTransform = transform;
+        playerTransform = FindFirstObjectByType<PlayerActionStack>().transform;
         
-        PushAction(new DefaultCameraAction());
+        PushAction(new DefaultCameraAction(playerTransform, cameraTransform));
     }
 
     public override void PushAction(IAction action)
@@ -49,7 +64,7 @@ public class CameraActionStack : ActionStack
     {
         if (value.isPressed && CurrentAction.ToString() != "FreeMoveCameraAction")
         {
-            PushAction(new FreeMoveCameraAction());
+            PushAction(new FreeMoveCameraAction(playerTransform, cameraTransform));
         }
         else
         {

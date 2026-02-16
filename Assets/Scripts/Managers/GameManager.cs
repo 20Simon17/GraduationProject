@@ -1,5 +1,3 @@
-using System;
-using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -21,11 +19,9 @@ public class GameManager : Singleton<GameManager>
         if (gameIsPaused)
         {
             //uiActionStack.Update();
-            Debug.Log("Game is paused");
         }
         else
         {
-            Debug.Log("Game is not paused");
             playerActionStack.UpdateActionStack();
             cameraActionStack.UpdateActionStack();
         }

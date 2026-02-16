@@ -753,7 +753,7 @@ RectTransform:
   m_GameObject: {fileID: 330921422}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2.15, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1250542225}
@@ -828,7 +828,7 @@ RectTransform:
   m_GameObject: {fileID: 332411454}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2.15, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1250542225}
@@ -1011,10 +1011,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 954bba3c861d034468dd34386712e641, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenu
-  animateMenuOpening: 0
-  animateMenuClosing: 0
+  buttonOneActivation: 0.08
+  buttonTwoActivation: 0.24
+  buttonThreeActivation: 0.4
+  buttonFourActivation: 0.56
+  titleActivation: 0.58
   imagesHolder: {fileID: 1250542224}
-  imagesScaleTime: 0.5
+  imagesScaleTime: 0.2
+  smallImagesFillTime: 0.1
+  bigImageFillTime: 0.1
   textHolder: {fileID: 361222779}
   buttonsHolder: {fileID: 1856094950}
   images: []
@@ -2070,7 +2075,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &693081029
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2243,7 +2248,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &702301169
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2898,7 +2903,7 @@ RectTransform:
   m_GameObject: {fileID: 803655408}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2.15, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1250542225}
@@ -3044,7 +3049,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &840723694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4156,7 +4161,7 @@ RectTransform:
   m_GameObject: {fileID: 1392580430}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2.15, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1250542225}
@@ -5906,7 +5911,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2015053329
 RectTransform:
   m_ObjectHideFlags: 0

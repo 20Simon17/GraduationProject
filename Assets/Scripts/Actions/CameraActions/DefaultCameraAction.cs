@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class DefaultCameraAction : CameraActionStack.CameraAction
 {
-    private float _clampAngleMin = -90f;
-    private float _clampAngleMax = 90f;
-    private float _mouseSensitivity = 0.15f;
-    private GameObject _playerObject;
+    public DefaultCameraAction(Transform player, Transform camera)
+        : base(player, camera) {}
+
+    private float clampAngleMin = -90f;
+    private float clampAngleMax = 90f;
+    private float mouseSensitivity = 0.15f;
+    private GameObject playerObject;
 
     public override bool IsDone() => false;
 
@@ -13,9 +16,7 @@ public class DefaultCameraAction : CameraActionStack.CameraAction
     {
         if (bFirstTime)
         {
-            //TODO: Refactor the way this gets the camera reference
-            CameraTransform = Camera.main.transform;
-            _playerObject = CameraTransform.parent.gameObject;
+            playerObject = PlayerTransform.gameObject;
         }
 
         VerticalRotation = 0f;
@@ -24,10 +25,10 @@ public class DefaultCameraAction : CameraActionStack.CameraAction
     
     public override void RotateCamera(Vector2 input)
     {
-        _playerObject.transform.Rotate(Vector3.up, input.x * _mouseSensitivity);
+        playerObject?.transform.Rotate(Vector3.up, input.x * mouseSensitivity);
 
-        VerticalRotation += -input.y * _mouseSensitivity;
-        VerticalRotation = Mathf.Clamp(VerticalRotation, _clampAngleMin, _clampAngleMax);
+        VerticalRotation += -input.y * mouseSensitivity;
+        VerticalRotation = Mathf.Clamp(VerticalRotation, clampAngleMin, clampAngleMax);
         CameraTransform.localEulerAngles = new Vector3(VerticalRotation, 0, 0);
     }
 }

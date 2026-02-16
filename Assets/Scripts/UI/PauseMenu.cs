@@ -1,18 +1,23 @@
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    private float verticalScaleMin = 0.01f;
-
-    public bool animateMenuOpening = false;
-    public bool animateMenuClosing = false;
+    private bool animateMenuOpening = false;
+    private bool animateMenuClosing = false;
     private bool pauseMenuClosed = true;
+
+    [SerializeField] private float buttonOneActivation;
+    [SerializeField] private float buttonTwoActivation;
+    [SerializeField] private float buttonThreeActivation;
+    [SerializeField] private float buttonFourActivation;
+    [SerializeField] private float titleActivation;
 
     [SerializeField] private GameObject imagesHolder;
     [SerializeField] private float imagesScaleTime;
+    [SerializeField] private float smallImagesFillTime;
+    [SerializeField] private float bigImageFillTime;
     private float imageTime = 0;
 
     [SerializeField] private GameObject textHolder;
@@ -20,6 +25,8 @@ public class PauseMenu : MonoBehaviour
 
     public Image[] images;
     private int currentImage;
+
+    private bool doOnce = false;
     
     private void Start()
     {
@@ -35,6 +42,11 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        InputManager.Instance.OnPauseEvent += TogglePauseMenu;
+    }
+
     private void Update()
     {
         if (animateMenuOpening)
@@ -44,7 +56,8 @@ public class PauseMenu : MonoBehaviour
             {
                 if (images[currentImage].fillAmount < 1)
                 {
-                    float newFill = Mathf.Lerp(0, 1, GetDividedProgress(imageTime));
+                    float progress = currentImage == images.Length - 1 ? GetBigFillProgress(imageTime) : GetSmallFillProgress(imageTime);
+                    float newFill = Mathf.Lerp(0, 1, progress);
                     images[currentImage].fillAmount = newFill;
                 }
                 else
@@ -55,13 +68,38 @@ public class PauseMenu : MonoBehaviour
             }
             else if (imagesHolder.transform.localScale.y < 1)
             {
-                float newScaleY = Mathf.Lerp(0.01f, 1, GetTotalProgress(imageTime));
+                float progress = GetScaleProgress(imageTime);
+                float newScaleY = Mathf.Lerp(0.01f, 1, progress);
                 imagesHolder.transform.localScale = new Vector3(1, newScaleY, 1);
+
+                if (newScaleY >= buttonOneActivation)
+                {
+                    buttonsHolder.transform.GetChild(0).gameObject.SetActive(true);
+                }
+                
+                if (newScaleY >= buttonTwoActivation)
+                {
+                    buttonsHolder.transform.GetChild(1).gameObject.SetActive(true);
+                }
+                
+                if (newScaleY >= buttonThreeActivation)
+                {
+                    buttonsHolder.transform.GetChild(2).gameObject.SetActive(true);
+                }
+                
+                if (newScaleY >= buttonFourActivation)
+                {
+                    buttonsHolder.transform.GetChild(3).gameObject.SetActive(true);
+                }
+                
+                if (newScaleY >= titleActivation)
+                {
+                    textHolder.SetActive(true);
+                }
             }
             else
             {
                 textHolder.SetActive(true);
-                buttonsHolder.SetActive(true);
                 animateMenuOpening = false;
                 imageTime = 0;
             }
@@ -72,19 +110,46 @@ public class PauseMenu : MonoBehaviour
             imageTime += Time.deltaTime;
             if (imagesHolder.transform.localScale.y > 0.01f)
             {
-                float newScaleY = Mathf.Lerp(1, 0.01f, GetTotalProgress(imageTime));
+                float progress = GetScaleProgress(imageTime);
+                float newScaleY = Mathf.Lerp(1, 0.01f, progress);
                 imagesHolder.transform.localScale = new Vector3(1, newScaleY, 1);
-                //reset imageTime to 0 here when this is done
+                
+                if (newScaleY <= buttonFourActivation)
+                {
+                    buttonsHolder.transform.GetChild(3).gameObject.SetActive(false);
+                }
+                
+                if (newScaleY <= buttonThreeActivation)
+                {
+                    buttonsHolder.transform.GetChild(2).gameObject.SetActive(false);
+                }
+                
+                if (newScaleY <= buttonTwoActivation)
+                {
+                    buttonsHolder.transform.GetChild(1).gameObject.SetActive(false);
+                }
+                
+                if (newScaleY <= buttonOneActivation)
+                {
+                    buttonsHolder.transform.GetChild(0).gameObject.SetActive(false);
+                }
+                
+                if (newScaleY <= titleActivation)
+                {
+                    textHolder.SetActive(false);
+                }
             }
             else if (currentImage >= 0)
             {
-                if (currentImage == 3 && GetDividedProgress(imageTime) >= 1 && images[currentImage].fillAmount > 0.3)
+                if (!doOnce)
                 {
                     imageTime = 0;
+                    doOnce = true;
                 }
-                else if (images[currentImage].fillAmount > 0)
+                if (images[currentImage].fillAmount > 0)
                 {
-                    float newFill = Mathf.Lerp(1, 0, GetDividedProgress(imageTime));
+                    float progress = currentImage == images.Length - 1 ? GetBigFillProgress(imageTime) : GetSmallFillProgress(imageTime);
+                    float newFill = Mathf.Lerp(1, 0, progress);
                     images[currentImage].fillAmount = newFill;
                 }
                 else
@@ -98,18 +163,25 @@ public class PauseMenu : MonoBehaviour
                 animateMenuClosing = false;
                 imageTime = 0;
                 pauseMenuClosed = true;
+                doOnce = false;
                 
+                buttonsHolder.SetActive(false);
                 imagesHolder.SetActive(false);
             }
         }
     }
 
-    private float GetDividedProgress(float time)
+    private float GetSmallFillProgress(float time)
     {
-        return time / (imagesScaleTime / images.Length);
+        return time / (smallImagesFillTime / (images.Length - 1));
     }
-
-    private float GetTotalProgress(float time)
+    
+    private float GetBigFillProgress(float time)
+    {
+        return time / bigImageFillTime;
+    }
+    
+    private float GetScaleProgress(float time)
     {
         return time / imagesScaleTime;
     }
@@ -135,6 +207,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenuClosed = false;
         animateMenuOpening = true;
         imagesHolder.SetActive(true);
+        buttonsHolder.SetActive(true);
         currentImage = 0;
         
         GameManager.Instance.Pause();
@@ -144,8 +217,6 @@ public class PauseMenu : MonoBehaviour
     {
         imageTime = 0;
         Cursor.lockState = CursorLockMode.Locked;
-        textHolder.SetActive(false);
-        buttonsHolder.SetActive(false);
             
         animateMenuOpening = false;
         animateMenuClosing = true;

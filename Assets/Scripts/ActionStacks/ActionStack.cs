@@ -100,7 +100,7 @@ public class ActionStack : MonoBehaviour
         }
     }
 
-    protected virtual void Update()
+    protected void UpdateStack()
     {
         UpdateActions(Time.deltaTime);
     }

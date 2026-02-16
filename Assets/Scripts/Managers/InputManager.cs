@@ -5,6 +5,10 @@ using UnityEngine.InputSystem;
 public class InputManager : Singleton<InputManager>
 {
     public Vector2 moveDirection = Vector2.zero;
+
+    private PlayerInput playerInput;
+
+    private bool isPaused;
     
     #region Delegates and Events
     public delegate void OnMoveDelegate(InputValue value);
@@ -40,7 +44,7 @@ public class InputManager : Singleton<InputManager>
     
     private void Start()
     {
-        PlayerInput playerInput = GetComponent<PlayerInput>();
+        playerInput = GetComponent<PlayerInput>();
         playerInput.defaultActionMap = "Player";
     }
 
@@ -49,7 +53,7 @@ public class InputManager : Singleton<InputManager>
         OnMoveEvent?.Invoke(value);
         moveDirection = value.Get<Vector2>();
     }
-    
+
     private void OnLook(InputValue value) => OnLookEvent?.Invoke(value);
     private void OnJump(InputValue value) => OnJumpEvent?.Invoke(value);
     private void OnCrouch(InputValue value) => OnCrouchEvent?.Invoke(value);
@@ -59,4 +63,14 @@ public class InputManager : Singleton<InputManager>
     private void OnSecondaryAction(InputValue value) => OnSecondaryActionEvent?.Invoke(value);
     private void OnFreeCam(InputValue value) => OnFreeCamEvent?.Invoke(value);
     private void OnPause(InputValue value) => OnPauseEvent?.Invoke(value);
+
+    public void Pause()
+    {
+        playerInput.SwitchCurrentActionMap("UI");
+    }
+
+    public void Resume()
+    {
+        playerInput.SwitchCurrentActionMap("Player");
+    }
 }

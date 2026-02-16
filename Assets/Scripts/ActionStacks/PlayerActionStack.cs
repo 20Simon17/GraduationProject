@@ -59,9 +59,9 @@ public class PlayerActionStack : ActionStack
         InputManager.Instance.OnSlamEvent -= AddSlamAction;
     }
 
-    protected override void Update()
+    public void UpdateActionStack()
     {
-        base.Update();
+        base.UpdateStack();
         
         GroundCheck();
 

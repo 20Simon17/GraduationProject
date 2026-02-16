@@ -28,9 +28,9 @@ public class CameraActionStack : ActionStack
         currentAction = action as CameraAction;
     }
 
-    protected override void Update()
+    public void UpdateActionStack()
     {
-        base.Update();
+        base.UpdateStack();
 
         // TODO: How can I make this less expensive?
         if (currentAction != CurrentAction as CameraAction)

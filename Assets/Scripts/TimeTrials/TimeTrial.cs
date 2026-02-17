@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class TimeTrial : MonoBehaviour, IHoldInteractable
 {
-    public float InteractionTime { get; }
+    public float InteractionDuration { get; set; }
     private bool isInteracting;
     private float interactionStart;
     private GameObject currentInteractor;
 
     private void FixedUpdate()
     {
-        if (isInteracting && Time.time - interactionStart > InteractionTime)
+        if (isInteracting && Time.time - interactionStart > InteractionDuration)
         {
             Interact(currentInteractor);
         }
@@ -19,6 +19,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     {
         StartTimeTrial();
     }
+
 
     public void StartHoldInteract(GameObject interactor)
     {

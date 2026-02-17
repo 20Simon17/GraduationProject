@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 [RequireComponent(typeof(PlayerInput))]
 public class InputManager : Singleton<InputManager>
@@ -7,6 +9,7 @@ public class InputManager : Singleton<InputManager>
     public Vector2 moveDirection = Vector2.zero;
 
     private PlayerInput playerInput;
+    private AsyncOperationHandle<InputActionAsset> inputActionHandle;
 
     private bool isPaused;
     
@@ -46,6 +49,23 @@ public class InputManager : Singleton<InputManager>
     {
         playerInput = GetComponent<PlayerInput>();
         playerInput.defaultActionMap = "Player";
+        
+        inputActionHandle = Addressables.LoadAssetAsync<InputActionAsset>("Assets/Inputs/PlayerInputMapping.inputactions");
+        inputActionHandle.Completed += InputActionsLoaded;
+    }
+
+    private void OnDisable()
+    {
+        inputActionHandle.Completed -= InputActionsLoaded;
+    }
+
+    private void InputActionsLoaded(AsyncOperationHandle<InputActionAsset> inputActionHandle)
+    {
+        if (inputActionHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            playerInput.actions = inputActionHandle.Result;
+        }
+        else Debug.LogWarning("Failed to load input actions asset");
     }
 
     private void OnMove(InputValue value)

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: InputAsset
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: InputAsset
+  m_GUID: e7d835b6b10c0bf42b553c84ea1704b1
+  m_SerializeEntries:
+  - m_GUID: 86854b41b24c15b499f2d84adbbe7925
+    m_Address: Assets/Inputs/PlayerInputMapping.inputactions
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 4bafbd5472adaf64f869c6a615c551a4, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 5ee3174b58c90614f9a0f5ba3495c296, type: 2}
+    - {fileID: 11400000, guid: bf8a3e7cb82ceb84ca6e7d03580908b2, type: 2}

@@ -5,7 +5,7 @@ public class GameManager : Singleton<GameManager>
     CameraActionStack cameraActionStack;
     //UIActionStack uiActionStack
 
-    private bool gameIsPaused;
+    public bool gameIsPaused = false;
     public bool IsGamePaused => gameIsPaused;
     
     private void Start()

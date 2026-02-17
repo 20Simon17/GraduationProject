@@ -15,11 +15,6 @@ public class FreeMoveCameraAction : CameraActionStack.CameraAction
 
     public override void OnBegin(bool bFirstTime)
     {
-        if (bFirstTime)
-        {
-            CameraTransform = Camera.main.transform;
-        }
-        
         VerticalRotation = CameraTransform.rotation.x;
     }
     

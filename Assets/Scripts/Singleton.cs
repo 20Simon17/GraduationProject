@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
@@ -12,7 +10,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             if (_instance == null && Application.isPlaying)
             {
                 GameObject go = new GameObject("Singleton_" + typeof(T).Name);
-                //DontDestroyOnLoad(go);
+                DontDestroyOnLoad(go);
                 _instance = go.AddComponent<T>();
             }
 

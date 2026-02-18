@@ -43,6 +43,9 @@ public class InputManager : Singleton<InputManager>
     
     public delegate void OnPauseDelegate(InputValue value);
     public OnPauseDelegate OnPauseEvent;
+    
+    public delegate void OnCancelDelegate(InputValue value);
+    public OnCancelDelegate OnCancelEvent;
     #endregion
     
     private void Start()
@@ -83,6 +86,8 @@ public class InputManager : Singleton<InputManager>
     private void OnSecondaryAction(InputValue value) => OnSecondaryActionEvent?.Invoke(value);
     private void OnFreeCam(InputValue value) => OnFreeCamEvent?.Invoke(value);
     private void OnPause(InputValue value) => OnPauseEvent?.Invoke(value);
+    
+    private void OnCancel(InputValue value) => OnCancelEvent?.Invoke(value);
 
     public void Pause()
     {

@@ -139,7 +139,7 @@ public class PlayerActionStack : ActionStack
 
     private void CheckJumpActions(InputValue value)
     {
-        if (currentAction is WaitingAction) return;
+        if (currentAction is WaitAction) return;
         
         if (currentAction is WallRunAction)
         {
@@ -202,7 +202,7 @@ public class PlayerActionStack : ActionStack
     
     private void AddSlideAction(InputValue value)
     {
-        if (currentAction is WaitingAction) return;
+        if (currentAction is WaitAction) return;
         if (value.isPressed && currentAction is not SlideAction)
         {
             PushAction(new SlideAction(rb, transform, dataRecord));
@@ -215,7 +215,7 @@ public class PlayerActionStack : ActionStack
     
     private void AddSlamAction(InputValue value)
     {
-        if (currentAction is WaitingAction) return;
+        if (currentAction is WaitAction) return;
         if (value.isPressed && currentAction is not SlamAction)
         {
             PushAction(new SlamAction(rb, transform, dataRecord));
@@ -246,7 +246,7 @@ public class PlayerActionStack : ActionStack
 
     public void AddWaitingAction()
     {
-        PushAction(new WaitingAction(rb, transform, dataRecord));
+        PushAction(new WaitAction(rb, transform, dataRecord));
     }
     
     public void CompleteCurrentAction() => currentAction.CompleteAction();

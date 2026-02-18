@@ -76,6 +76,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     public void StartTimeTrial()
     {
         playerObject.transform.position = transform.position;
+        playerObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         
         spawnedEndObject = Instantiate(endObjectPrefab);
         spawnedEndObject.transform.position = timeTrialData.EndLocation;

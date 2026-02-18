@@ -32,6 +32,9 @@ public class PlayerActionStack : ActionStack
     private Rigidbody rb;
     
     private PlayerAction currentAction;
+
+    private Vector3 velocityOnPause;
+    private Vector3 gravityOnPause;
     
     private void Start()
     {
@@ -76,7 +79,8 @@ public class PlayerActionStack : ActionStack
             }
         }
         
-        /*Ray rRay = new Ray(transform.position, transform.right);
+        /* Wall run check rays
+        Ray rRay = new Ray(transform.position, transform.right);
         Ray lRay = new Ray(transform.position, -transform.right);
         Debug.DrawRay(rRay.origin, rRay.direction * dataRecord.dataStruct.wallRunCheckDistance, Color.darkRed);
         Debug.DrawRay(lRay.origin, lRay.direction * dataRecord.dataStruct.wallRunCheckDistance, Color.darkRed);*/
@@ -215,5 +219,19 @@ public class PlayerActionStack : ActionStack
         {
             PushAction(new SlamAction(rb, transform, dataRecord));
         }
+    }
+
+    public void Pause()
+    {
+        gravityOnPause = Physics.gravity;
+        velocityOnPause = rb.linearVelocity;
+        rb.linearVelocity = Vector3.zero;
+        Physics.gravity = Vector3.zero;
+    }
+
+    public void Resume()
+    {
+        rb.linearVelocity = velocityOnPause;
+        Physics.gravity = gravityOnPause;
     }
 }

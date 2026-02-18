@@ -4,6 +4,7 @@ public class GameManager : Singleton<GameManager>
     PlayerActionStack playerActionStack;
     CameraActionStack cameraActionStack;
     //UIActionStack uiActionStack
+    InteractionManager interactionManager;
 
     public bool gameIsPaused = false;
     public bool IsGamePaused => gameIsPaused;
@@ -12,6 +13,7 @@ public class GameManager : Singleton<GameManager>
     {
         playerActionStack = FindFirstObjectByType<PlayerActionStack>();
         cameraActionStack = FindFirstObjectByType<CameraActionStack>();
+        interactionManager = playerActionStack.GetComponent<InteractionManager>();
     }
 
     private void Update()
@@ -30,12 +32,16 @@ public class GameManager : Singleton<GameManager>
     public void Pause()
     {
         InputManager.Instance.Pause();
+        playerActionStack.Pause();
+        interactionManager.Pause();
         gameIsPaused = true;
     }
 
     public void Resume()
     {
         InputManager.Instance.Resume();
+        playerActionStack.Resume();
+        interactionManager.Resume();
         gameIsPaused = false;
     }
 }

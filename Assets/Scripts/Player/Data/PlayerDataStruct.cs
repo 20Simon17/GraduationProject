@@ -58,4 +58,6 @@ public struct PlayerDataStruct
     public float wallRunGravityMultiplier;
     public float wallRunCancelVerticalVelocity;
     public int maxWallRuns;
+
+    public float maxInteractionDistance;
 }

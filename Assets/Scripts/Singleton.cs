@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
@@ -12,6 +13,8 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 GameObject go = new GameObject("Singleton_" + typeof(T).Name);
                 DontDestroyOnLoad(go);
                 _instance = go.AddComponent<T>();
+                //T component = FindAnyObjectByType<T>();
+                //_instance = component ? component : go.AddComponent<T>();
             }
 
             return _instance;

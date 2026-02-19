@@ -181,6 +181,12 @@ public class PlayerActionStack : ActionStack
     private void ForceAddJumpAction()
     {
         //ClearAllActions();
+
+        if (currentAction is ZiplineAction)
+        {
+            Debug.Log("Completed zipline action");
+            currentAction.CompleteAction();
+        }
         
         PushAction(new JumpAction(rb, transform, dataRecord));
     }
@@ -250,4 +256,9 @@ public class PlayerActionStack : ActionStack
     }
     
     public void CompleteCurrentAction() => currentAction.CompleteAction();
+    
+    public void AddZiplineAction(Zipline zipline)
+    {
+        PushAction(new ZiplineAction(rb, transform, dataRecord, zipline));
+    }
 }

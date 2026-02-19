@@ -4,12 +4,12 @@ using UnityEngine.UI;
 public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
 {
     private UserInterfaceActionStack stack;
-    
+
     private Button resumeButton;
     private Button optionsButton;
     private Button controlsButton;
     private Button mainMenuButton;
-    
+
     public override void OnBegin(bool bFirstTime)
     {
         if (bFirstTime)
@@ -20,7 +20,7 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
             optionsButton = buttonsMenu.GetChild(1).GetComponent<Button>();
             controlsButton = buttonsMenu.GetChild(2).GetComponent<Button>();
             mainMenuButton = buttonsMenu.GetChild(3).GetComponent<Button>();
-            
+
             BindEvents();
         }
     }
@@ -60,6 +60,6 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
     {
         stack.GoToMainMenu();
     }
-    
+
     public void SetStackReference(UserInterfaceActionStack actionStack) => stack = actionStack;
 }

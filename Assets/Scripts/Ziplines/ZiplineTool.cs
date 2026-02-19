@@ -4,14 +4,14 @@ using UnityEngine.InputSystem;
 
 public class ZiplineTool : MonoBehaviour
 {
-    /*#region Prefabs
+    #region Prefabs
     private GameObject polePrefab;
     private GameObject wallPrefab;
     private GameObject ceilingPrefab;
     #endregion
     
-    private PlayerCamera playerCamera;
-    private Player player;
+    private Transform playerCamera;
+    private PlayerActionStack player;
 
     //TODO: make use of these
     public int maxZiplines = 3;
@@ -37,8 +37,8 @@ public class ZiplineTool : MonoBehaviour
     private void OnEnable()
     {
         LoadResources();
-        playerCamera = FindFirstObjectByType<PlayerCamera>();
-        player = FindFirstObjectByType<Player>();
+        playerCamera = FindFirstObjectByType<CameraActionStack>().transform;
+        player = FindFirstObjectByType<PlayerActionStack>();
         
         InputManager.Instance.OnPrimaryActionEvent += PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent += SecondaryAction;
@@ -56,7 +56,7 @@ public class ZiplineTool : MonoBehaviour
 
     private void FixedUpdate()
     {
-        RaycastHit? rayHit = playerCamera.GetLookAtHit();
+        RaycastHit? rayHit = GetLookAtHit();
 
         if (rayHit is null) return;
         RaycastHit hit = rayHit.Value;
@@ -69,12 +69,19 @@ public class ZiplineTool : MonoBehaviour
             selectedPoint.transform.forward = GetSuitableRotation(player.transform.forward);
         }
     }
+    
+    private RaycastHit? GetLookAtHit()
+    {
+        Ray ray = new Ray(playerCamera.position, playerCamera.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100)) return hit;
+        else return null;
+    }
 
     private void PrimaryAction(InputValue value)
     {
         if (!value.isPressed) return;
 
-        RaycastHit? rayHit = playerCamera.GetLookAtHit();
+        RaycastHit? rayHit = GetLookAtHit();
 
         if (rayHit is null) return;
         RaycastHit hit = rayHit.Value;
@@ -115,7 +122,7 @@ public class ZiplineTool : MonoBehaviour
     {
         if (!value.isPressed) return;
 
-        RaycastHit? rayHit = playerCamera.GetLookAtHit();
+        RaycastHit? rayHit = GetLookAtHit();
 
         if (rayHit is null) return;
         RaycastHit hit = rayHit.Value;
@@ -312,5 +319,5 @@ public class ZiplineTool : MonoBehaviour
         ziplines.Clear();
 
         currentZiplines = 0;
-    }*/
+    }
 }

@@ -1263,7 +1263,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -4863,7 +4863,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1501249331
 Transform:
   m_ObjectHideFlags: 0
@@ -4892,6 +4892,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1145f0840b00b46a5e02489a1358a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplineTool
+  maxZiplines: 3
+  currentZiplines: 0
+  ziplines: []
+  bShowGhost: 1
 --- !u!1 &1501559953
 GameObject:
   m_ObjectHideFlags: 0
@@ -5463,6 +5467,7 @@ MonoBehaviour:
       wallRunCancelVerticalVelocity: 0
       maxWallRuns: 0
       maxInteractionDistance: 50
+      ziplineAutoDropVelocity: 0
 --- !u!136 &1625968170
 CapsuleCollider:
   m_ObjectHideFlags: 0

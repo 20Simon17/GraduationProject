@@ -98,4 +98,14 @@ public class InputManager : Singleton<InputManager>
     {
         playerInput.SwitchCurrentActionMap("Player");
     }
+    
+    public void SwitchActionMap(string actionMapName)
+    {
+        playerInput.SwitchCurrentActionMap(actionMapName);
+    }
+    
+    public void SwitchToDefaultActionMap()
+    {
+        playerInput.SwitchCurrentActionMap(playerInput.defaultActionMap);
+    }
 }

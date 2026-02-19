@@ -60,4 +60,6 @@ public struct PlayerDataStruct
     public int maxWallRuns;
 
     public float maxInteractionDistance;
+
+    public float ziplineAutoDropVelocity;
 }

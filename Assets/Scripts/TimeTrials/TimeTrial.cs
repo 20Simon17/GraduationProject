@@ -6,6 +6,8 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 {
     public float InteractionDuration { get => interactionDuration; set => interactionDuration = value; }
     [SerializeField] private float interactionDuration;
+    
+    private MeshRenderer meshRenderer;
 
     private bool countDownActive;
     private float countDownTime;
@@ -25,7 +27,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     [SerializeField] private TimeTrialData timeTrialData;
 
     private GameObject spawnedEndObject;
-    
+
     #region Interactions
     public void Interact(GameObject interactor)
     {
@@ -42,6 +44,11 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     {
     }
     #endregion
+
+    private void Start()
+    {
+        meshRenderer = GetComponent<MeshRenderer>();
+    }
 
     private void FixedUpdate()
     {
@@ -62,7 +69,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
             }
         }
 
-        if (timeTrialActive)
+        if (timeTrialActive && !GameManager.Instance.IsGamePaused)
         {
             timeElapsed += Time.fixedDeltaTime;
 
@@ -75,6 +82,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
     public void StartTimeTrial()
     {
+        meshRenderer.enabled = false;
         playerObject.transform.position = transform.position;
         playerObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         
@@ -100,17 +108,20 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
     public void EndTimeTrial(bool completed)
     {
+        meshRenderer.enabled = true;
         string timeText = System.TimeSpan.FromSeconds(timeElapsed).ToString("mm':'ss'.'fff");
-        Debug.Log($"Your time was: {timeText}");
+        //Debug.Log($"Your time was: {timeText}");
         ToggleTimeTrialUI(false);
         timeTrialActive = false;
-        timeElapsed = 0;
         Destroy(spawnedEndObject);
         
-        if (completed && timeElapsed > playerBestTime)
+        if (completed && (playerBestTime == 0 || timeElapsed < playerBestTime))
         {
+            //Debug.Log("New best time!");
             HandleNewBest(timeElapsed);
         }
+        
+        timeElapsed = 0;
     }
 
     private void ToggleTimeTrialUI(bool newActiveState)

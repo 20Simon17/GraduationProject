@@ -16,7 +16,7 @@ public class Zipline : ProceduralMesh, IInteractable
 
     public void Interact(GameObject interactor)
     {
-        //TODO: Implement zipline interaction
+        interactor.GetComponent<PlayerActionStack>()?.AddZiplineAction(this);
     }
     
     private void LoadResources()
@@ -128,6 +128,8 @@ public class Zipline : ProceduralMesh, IInteractable
         if (!_meshCollider)
         {
             _meshCollider = gameObject.AddComponent<MeshCollider>();
+            _meshCollider.convex = true;
+            _meshCollider.isTrigger = true;
         }
         
         _meshCollider.sharedMesh = mesh;
@@ -159,5 +161,60 @@ public class Zipline : ProceduralMesh, IInteractable
         Destroy(startPoint);
         Destroy(endPoint);
         Destroy(gameObject);
+    }
+
+    public Vector3 GetClosestPointOnZipline(Vector3 position)
+    {
+        Vector3 directionToPosition = position - startPoint.AttachLocation;
+        Vector3 ziplineDirection = endPoint.AttachLocation - startPoint.AttachLocation;
+        
+        float squaredMagnitude = ziplineDirection.sqrMagnitude;
+        
+        float dotProduct = Vector3.Dot(directionToPosition, ziplineDirection);
+        
+        float normalizedDistance = dotProduct / squaredMagnitude;
+        
+        Vector3 closestPoint = new Vector3(
+            startPoint.AttachLocation.x + ziplineDirection.x * normalizedDistance,
+            startPoint.AttachLocation.y + ziplineDirection.y * normalizedDistance,
+            startPoint.AttachLocation.z + ziplineDirection.z * normalizedDistance);
+        
+        return closestPoint;
+    }
+
+    public Vector3 GetZiplineDirection()
+    {
+        if (Mathf.Approximately(startPoint.AttachLocation.y, endPoint.AttachLocation.y)) return Vector3.zero;
+        return GetZiplineDirectionNonZero();
+    }
+
+    public Vector3 GetZiplineDirectionNonZero()
+    {
+        Vector3 highestPoint, lowestPoint;
+
+        if (startPoint.AttachLocation.y > endPoint.AttachLocation.y)
+        {
+            highestPoint = startPoint.AttachLocation;
+            lowestPoint = endPoint.AttachLocation;
+        }
+        else
+        {
+            highestPoint = endPoint.AttachLocation;
+            lowestPoint = startPoint.AttachLocation;
+        }
+        
+        return (highestPoint - lowestPoint).normalized;
+    }
+
+    public bool IsPointOnZipline(Vector3 point)
+    {
+        Vector3 ziplineDirection = endPoint.AttachLocation - startPoint.AttachLocation;
+        Vector3 pointDirection = point - startPoint.AttachLocation;
+        
+        float dot = Vector3.Dot(ziplineDirection, pointDirection);
+        if (dot < 0) return false;
+        
+        if (dot > ziplineDirection.sqrMagnitude) return false;
+        return true;
     }
 }

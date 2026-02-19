@@ -15,10 +15,10 @@ public class PlayerActionStack : ActionStack
             data = inData.dataStruct;
         }
 
-        public virtual void CompleteAction() => actionCompleted = true;
+        public virtual void CompleteAction() => ActionCompleted = true;
 
-        public override bool IsDone() => actionCompleted;
-        protected bool actionCompleted;
+        public override bool IsDone() => ActionCompleted;
+        protected bool ActionCompleted;
 
         protected readonly Rigidbody rb;
         protected PlayerDataRecord dataRecord;
@@ -97,7 +97,7 @@ public class PlayerActionStack : ActionStack
         Ray ray = new Ray(transform.position, -transform.up);
         Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.01f);
 
-        if (hit.collider && hit.transform.CompareTag("Ground"))
+        if (hit.collider && hit.transform.CompareTag("Ground") && currentAction is not ZiplineAction)
         {
             dataRecord.isGrounded = true;
             

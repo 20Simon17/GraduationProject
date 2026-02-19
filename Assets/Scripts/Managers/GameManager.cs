@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    PlayerActionStack playerActionStack;
-    CameraActionStack cameraActionStack;
-    //UIActionStack uiActionStack
-    InteractionManager interactionManager;
+    private PlayerActionStack playerActionStack;
+    private CameraActionStack cameraActionStack;
+    private UserInterfaceActionStack userInterfaceActionStack;
+    private InteractionManager interactionManager;
 
     public bool gameIsPaused = false;
     public bool IsGamePaused => gameIsPaused;
@@ -15,16 +15,15 @@ public class GameManager : Singleton<GameManager>
     {
         playerActionStack = FindFirstObjectByType<PlayerActionStack>();
         cameraActionStack = FindFirstObjectByType<CameraActionStack>();
+        userInterfaceActionStack = FindFirstObjectByType<UserInterfaceActionStack>();
         interactionManager = playerActionStack.GetComponent<InteractionManager>();
     }
 
     private void Update()
     {
-        if (gameIsPaused)
-        {
-            //uiActionStack.Update();
-        }
-        else
+        userInterfaceActionStack.UpdateActionStack();
+        
+        if (!gameIsPaused)
         {
             playerActionStack.UpdateActionStack();
             cameraActionStack.UpdateActionStack();

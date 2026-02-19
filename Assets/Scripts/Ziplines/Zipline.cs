@@ -174,11 +174,7 @@ public class Zipline : ProceduralMesh, IInteractable
         
         float normalizedDistance = dotProduct / squaredMagnitude;
         
-        Vector3 closestPoint = new Vector3(
-            startPoint.AttachLocation.x + ziplineDirection.x * normalizedDistance,
-            startPoint.AttachLocation.y + ziplineDirection.y * normalizedDistance,
-            startPoint.AttachLocation.z + ziplineDirection.z * normalizedDistance);
-        
+        Vector3 closestPoint = startPoint.AttachLocation + ziplineDirection * normalizedDistance;
         return closestPoint;
     }
 
@@ -210,10 +206,10 @@ public class Zipline : ProceduralMesh, IInteractable
     {
         Vector3 ziplineDirection = endPoint.AttachLocation - startPoint.AttachLocation;
         Vector3 pointDirection = point - startPoint.AttachLocation;
-        
+
         float dot = Vector3.Dot(ziplineDirection, pointDirection);
         if (dot < 0) return false;
-        
+
         if (dot > ziplineDirection.sqrMagnitude) return false;
         return true;
     }

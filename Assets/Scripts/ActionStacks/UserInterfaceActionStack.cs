@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class UserInterfaceActionStack : ActionStack
@@ -9,18 +10,24 @@ public class UserInterfaceActionStack : ActionStack
             
         }
 
-        public virtual void CompleteAction() => actionCompleted = true;
+        public virtual void CompleteAction() => ActionCompleted = true;
 
-        public override bool IsDone() => actionCompleted;
-        protected bool actionCompleted;
+        public override bool IsDone() => ActionCompleted;
+        protected bool ActionCompleted;
         
         public virtual void Cancel() => CompleteAction();
     }
+    
+    private PauseMenu pauseMenu;
+
+    private UserInterfaceAction currentAction;
 
     private void Start()
     {
         PushAction(new DefaultUserInterfaceAction());
 
+        pauseMenu = FindAnyObjectByType<PauseMenu>();
+        
         BindEvents();
     }
 
@@ -36,22 +43,36 @@ public class UserInterfaceActionStack : ActionStack
         InputManager.Instance.OnCancelEvent -= CancelAction;
     }
 
+    public void UpdateActionStack()
+    {
+        base.UpdateStack();
+        
+        if (currentAction != CurrentAction as UserInterfaceAction)
+        {
+            currentAction = (UserInterfaceAction) CurrentAction;
+        }
+    }
+
     private void AddPauseMenuAction(InputValue value)
     {
-        PushAction(new PauseMenuAction());
-        (CurrentAction as PauseMenuAction)?.SetStackReference(this);
+        if (!value.isPressed || GameManager.Instance.IsGamePaused) return;
+        if (currentAction is not DefaultUserInterfaceAction) return;
+        
+        PushAction(new PauseMenuAction(this, pauseMenu));
     }
 
     private void CancelAction(InputValue value)
     {
+        if (!value.isPressed || !GameManager.Instance.IsGamePaused) return;
+        
         (CurrentAction as UserInterfaceAction)?.Cancel();
     }
 
     public void GoToMainMenu()
     {
-        while (!(CurrentAction is DefaultUserInterfaceAction))
+        while (currentAction is not DefaultUserInterfaceAction)
         {
-            (CurrentAction as UserInterfaceAction)?.CompleteAction();
+            currentAction?.CompleteAction();
         }
         PushAction(new MainMenuAction());
     }

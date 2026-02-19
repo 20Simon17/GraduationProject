@@ -23,9 +23,9 @@ public class ZiplineTool : MonoBehaviour
     private bool bIsMoving;
     
     private ZiplinePoint selectedPoint;
-    private GameObject _ziplineObject;
-    private Zipline _zipline;
-    private ZiplinePoint _placementPoint;
+    private GameObject ziplineObject;
+    private Zipline zipline;
+    //private ZiplinePoint _placementPoint;
 
     private void LoadResources()
     {
@@ -108,13 +108,13 @@ public class ZiplineTool : MonoBehaviour
         }
 
         bIsPlacing = true;
-        if (_ziplineObject is null)
+        if (ziplineObject is null)
         {
-            _ziplineObject = new GameObject { name = "Zipline" };
-            _zipline = _ziplineObject.AddComponent<Zipline>();
+            ziplineObject = new GameObject { name = "Zipline" };
+            zipline = ziplineObject.AddComponent<Zipline>();
         }
         
-        CreateZiplinePoint(hit.point, hit.normal, _zipline);
+        CreateZiplinePoint(hit.point, hit.normal, zipline);
         CheckPlacement();
     }
 
@@ -142,20 +142,20 @@ public class ZiplineTool : MonoBehaviour
 
     private void CancelPlacement()
     {
-        if (selectedPoint == null) return;
-        //selectedPoint.Owner.ToggleGhostRendering(false); // this is also called from the zipline point's ToggleGhostRendering()
+        if (selectedPoint is null) return;
+        
         selectedPoint.ToggleGhostRendering(false);
         selectedPoint = null;
-
+        
         if (!bIsPlacing) return;
         
         bIsPlacing = false;
-        Destroy(_ziplineObject);
+        Destroy(ziplineObject);
     }
 
     private void CheckPlacement()
     {
-        if (_zipline.endPoint is null || !ValidatePlacement()) return;
+        if (zipline.endPoint is null || !ValidatePlacement()) return;
         
         if (ziplines.Count == maxZiplines)
         {
@@ -163,7 +163,7 @@ public class ZiplineTool : MonoBehaviour
             ziplines.RemoveAt(0);
         }
         
-        ziplines.Add(_zipline);
+        ziplines.Add(zipline);
         currentZiplines = ziplines.Count;
         
         ResetValues();
@@ -179,9 +179,9 @@ public class ZiplineTool : MonoBehaviour
     private void ResetValues()
     {
         bIsPlacing = false;
-        _ziplineObject = null;
-        _zipline = null;
-        _placementPoint = null;
+        ziplineObject = null;
+        zipline = null;
+        //_placementPoint = null;
     }
 
     private void CreateZiplinePoint(Vector3 inPosition, Vector3 inNormal, Zipline ownerZipline)
@@ -312,12 +312,12 @@ public class ZiplineTool : MonoBehaviour
 
     private void ClearAllZiplines()
     {
-        foreach (var zipline in ziplines)
+        foreach (var aZipline in ziplines)
         {
-            zipline.DeleteZipline();
+            aZipline.DeleteZipline();
         }
         ziplines.Clear();
-
+        
         currentZiplines = 0;
     }
 }

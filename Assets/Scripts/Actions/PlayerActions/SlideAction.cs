@@ -19,7 +19,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
         {
             return true;
         }
-        return actionCompleted;
+        return ActionCompleted;
     }
 
     public override void OnBegin(bool bFirstTime)
@@ -39,6 +39,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
         
         slideTime = 0;
         
+        //TODO: Only collider gets scaled down, model / capsule gets rotated to be flat instead
         transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
         rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
         

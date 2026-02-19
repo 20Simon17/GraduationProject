@@ -3,18 +3,31 @@ using UnityEngine.UI;
 
 public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
 {
-    private UserInterfaceActionStack stack;
+    public PauseMenuAction(UserInterfaceActionStack inStack, PauseMenu inPauseMenu)
+    {
+        stack = inStack;
+        pauseMenu = inPauseMenu;
+    }
+    
+    private readonly UserInterfaceActionStack stack;
+    private readonly PauseMenu pauseMenu;
 
     private Button resumeButton;
     private Button optionsButton;
     private Button controlsButton;
     private Button mainMenuButton;
 
+    public override bool IsDone()
+    {
+        return base.IsDone();
+    }
+
     public override void OnBegin(bool bFirstTime)
     {
         if (bFirstTime)
         {
-            GameObject pauseMenu = GameObject.Find("PauseMenu");
+            Cursor.lockState = CursorLockMode.None;
+            
             Transform buttonsMenu = pauseMenu.transform.GetChild(2);
             resumeButton = buttonsMenu.GetChild(0).GetComponent<Button>();
             optionsButton = buttonsMenu.GetChild(1).GetComponent<Button>();
@@ -22,12 +35,20 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
             mainMenuButton = buttonsMenu.GetChild(3).GetComponent<Button>();
 
             BindEvents();
+            
+            pauseMenu.AnimateMenuOpening();
+            GameManager.Instance.Pause();
         }
     }
 
     public override void OnEnd()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        
         UnbindEvents();
+        
+        pauseMenu.AnimateMenuClosing();
+        GameManager.Instance.Resume();
     }
 
     private void BindEvents()
@@ -46,6 +67,11 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
         mainMenuButton.onClick.RemoveListener(GoToMainMenu);
     }
 
+    public override void Cancel()
+    {
+        CompleteAction();
+    }
+
     private void AddOptionsMenu()
     {
         stack.PushAction(new OptionsMenuAction());
@@ -60,6 +86,4 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
     {
         stack.GoToMainMenu();
     }
-
-    public void SetStackReference(UserInterfaceActionStack actionStack) => stack = actionStack;
 }

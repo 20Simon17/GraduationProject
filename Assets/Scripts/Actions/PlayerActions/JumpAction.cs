@@ -31,7 +31,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
             PerformJump();
         }
         
-        actionCompleted = true;
+        ActionCompleted = true;
         dataRecord.hasJumped = true;
         dataRecord.timeAtLastJump = Time.time;
     }

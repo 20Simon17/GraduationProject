@@ -27,7 +27,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         {
             return true;
         }
-        return actionCompleted;
+        return ActionCompleted;
     }
     
     public override void OnBegin(bool bFirstTime)

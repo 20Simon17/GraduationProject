@@ -1,51 +1,49 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    private bool animateMenuOpening;
-    private bool animateMenuClosing;
-    private bool pauseMenuClosed = true;
-
+    [Header("References")]
+    [SerializeField] private GameObject imagesHolder;
+    [SerializeField] private GameObject textHolder;
+    [SerializeField] private GameObject buttonsHolder;
+    
+    [Header("Durations")]
+    [SerializeField] private float imagesScaleTime;
+    [SerializeField] private float smallImagesFillTime;
+    [SerializeField] private float bigImageFillTime;
+    [SerializeField] private float buttonTogglingRate;
+    
+    [Header("Activation Points")]
     [SerializeField] private float buttonOneActivation;
     [SerializeField] private float buttonTwoActivation;
     [SerializeField] private float buttonThreeActivation;
     [SerializeField] private float buttonFourActivation;
     [SerializeField] private float titleActivation;
+    
+    private bool animateMenuOpening;
+    private bool animateMenuClosing;
+    private float animationTime;
 
-    [SerializeField] private GameObject imagesHolder;
-    [SerializeField] private float imagesScaleTime;
-    [SerializeField] private float smallImagesFillTime;
-    [SerializeField] private float bigImageFillTime;
-
-    [SerializeField] private GameObject textHolder;
-    [SerializeField] private GameObject buttonsHolder;
-
-    private float imageTime;
+    private bool animateButtonsAppearing;
+    private bool animateButtonsDisappearing;
+    private float timeOfButtonToggling;
     
     private Image[] images;
     private int currentImage;
 
     private bool doOnce;
-    
+
     private void Start()
     {
-        //InputManager.Instance.OnPauseEvent += TogglePauseMenu;
-        
         Image[] tempImages = imagesHolder.GetComponentsInChildren<Image>();
         images = new Image[tempImages.Length];
-        
+
         for (int i = 0; i < tempImages.Length; i++)
         {
             int reverseIndex = i + 1;
             images[i] = tempImages[^reverseIndex];
         }
-    }
-
-    private void OnDisable()
-    {
-        //InputManager.Instance.OnPauseEvent += TogglePauseMenu;
     }
 
     // I should maybe separate this from unity's update and handle it through pause menu actions update
@@ -59,28 +57,37 @@ public class PauseMenu : MonoBehaviour
         {
             AnimateClosing();
         }
+
+        if (animateButtonsAppearing)
+        {
+            AnimateButtonsAppearing();
+        }
+        else if (animateButtonsDisappearing)
+        {
+            AnimateButtonsDisappearing();
+        }
     }
 
     private void AnimateOpening()
     {
-        imageTime += Time.deltaTime;
+        animationTime += Time.deltaTime;
         if (currentImage < images.Length)
         {
             if (images[currentImage].fillAmount < 1)
             {
-                float progress = currentImage == images.Length - 1 ? GetBigFillProgress(imageTime) : GetSmallFillProgress(imageTime);
+                float progress = currentImage == images.Length - 1 ? GetBigFillProgress(animationTime) : GetSmallFillProgress(animationTime);
                 float newFill = Mathf.Lerp(0, 1, progress);
                 images[currentImage].fillAmount = newFill;
             }
             else
             {
                 currentImage++;
-                imageTime = 0;
+                animationTime = 0;
             }
         }
         else if (imagesHolder.transform.localScale.y < 1)
         {
-            float progress = GetScaleProgress(imageTime);
+            float progress = GetScaleProgress(animationTime);
             float newScaleY = Mathf.Lerp(0.01f, 1, progress);
             imagesHolder.transform.localScale = new Vector3(1, newScaleY, 1);
 
@@ -113,16 +120,16 @@ public class PauseMenu : MonoBehaviour
         {
             textHolder.SetActive(true);
             animateMenuOpening = false;
-            imageTime = 0;
+            animationTime = 0;
         }
     }
 
     private void AnimateClosing()
     {
-        imageTime += Time.deltaTime;
+        animationTime += Time.deltaTime;
         if (imagesHolder.transform.localScale.y > 0.01f)
         {
-            float progress = GetScaleProgress(imageTime);
+            float progress = GetScaleProgress(animationTime);
             float newScaleY = Mathf.Lerp(1, 0.01f, progress);
             imagesHolder.transform.localScale = new Vector3(1, newScaleY, 1);
             
@@ -155,30 +162,63 @@ public class PauseMenu : MonoBehaviour
         {
             if (!doOnce)
             {
-                imageTime = 0;
+                animationTime = 0;
                 doOnce = true;
             }
             if (images[currentImage].fillAmount > 0)
             {
-                float progress = currentImage == images.Length - 1 ? GetBigFillProgress(imageTime) : GetSmallFillProgress(imageTime);
+                float progress = currentImage == images.Length - 1 ? GetBigFillProgress(animationTime) : GetSmallFillProgress(animationTime);
                 float newFill = Mathf.Lerp(1, 0, progress);
                 images[currentImage].fillAmount = newFill;
             }
             else
             {
                 currentImage--;
-                imageTime = 0;
+                animationTime = 0;
             }
         }
         else
         {
             animateMenuClosing = false;
-            imageTime = 0;
-            pauseMenuClosed = true;
+            animationTime = 0;
             doOnce = false;
             
             buttonsHolder.SetActive(false);
             imagesHolder.SetActive(false);
+        }
+    }
+    
+    private void AnimateButtonsAppearing()
+    {
+        if (Time.time - timeOfButtonToggling > buttonTogglingRate)
+        {
+            timeOfButtonToggling += buttonTogglingRate;
+
+            for (int i = 0; i < buttonsHolder.transform.childCount; i++)
+            {
+                if (buttonsHolder.transform.GetChild(i).gameObject.activeSelf) continue;
+                buttonsHolder.transform.GetChild(i).gameObject.SetActive(true);
+                return;
+            }
+            
+            animateButtonsAppearing = false;
+        }
+    }
+
+    private void AnimateButtonsDisappearing()
+    {
+        if (Time.time - timeOfButtonToggling > buttonTogglingRate)
+        {
+            timeOfButtonToggling += buttonTogglingRate;
+            
+            for (int i = 0; i < buttonsHolder.transform.childCount; i++)
+            {
+                if (!buttonsHolder.transform.GetChild(i).gameObject.activeSelf) continue;
+                buttonsHolder.transform.GetChild(i).gameObject.SetActive(false);
+                return;
+            }
+            
+            animateButtonsDisappearing = false;
         }
     }
 
@@ -197,51 +237,10 @@ public class PauseMenu : MonoBehaviour
         return time / imagesScaleTime;
     }
 
-    // private void TogglePauseMenu(InputValue value)
-    // {
-    //     if (!value.isPressed) return;
-    //
-    //     if (pauseMenuClosed)
-    //     {
-    //         Pause();
-    //     }
-    //     else
-    //     {
-    //         Resume();
-    //     }
-    // }
-
-    // private void Pause()
-    // {
-    //     Cursor.lockState = CursorLockMode.None;
-    //     imagesHolder.transform.localScale = new Vector3(1, 0.01f, 1);
-    //     pauseMenuClosed = false;
-    //     animateMenuOpening = true;
-    //     imagesHolder.SetActive(true);
-    //     buttonsHolder.SetActive(true);
-    //     currentImage = 0;
-    //     
-    //     GameManager.Instance.Pause();
-    // }
-
-    // public void Resume()
-    // {
-    //     imageTime = 0;
-    //     Cursor.lockState = CursorLockMode.Locked;
-    //         
-    //     animateMenuOpening = false;
-    //     animateMenuClosing = true;
-    //     
-    //     currentImage = images.Length - 1;
-    //     
-    //     GameManager.Instance.Resume();
-    // }
-
-    public void AnimateMenuOpening()
+    public void OpenMenu()
     {
         imagesHolder.transform.localScale = new Vector3(1, 0.01f, 1);
         
-        pauseMenuClosed = false;
         animateMenuOpening = true;
         
         imagesHolder.SetActive(true);
@@ -250,13 +249,31 @@ public class PauseMenu : MonoBehaviour
         currentImage = 0;
     }
     
-    public void AnimateMenuClosing()
+    public void CloseMenu()
     {
-        imageTime = 0;
+        animationTime = 0;
             
         animateMenuOpening = false;
         animateMenuClosing = true;
         
+        buttonsHolder.SetActive(true);
+        
         currentImage = images.Length - 1;
+    }
+
+    public void ShowButtons()
+    {
+        timeOfButtonToggling = Time.time;
+        
+        animateButtonsAppearing = true;
+        animateButtonsDisappearing = false;
+    }
+
+    public void HideButtons()
+    {
+        timeOfButtonToggling = Time.time;
+        
+        animateButtonsAppearing = false;
+        animateButtonsDisappearing = true;
     }
 }

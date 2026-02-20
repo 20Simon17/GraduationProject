@@ -8,6 +8,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     [SerializeField] private float interactionDuration;
     
     private MeshRenderer meshRenderer;
+    private Collider selfCollider;
 
     private bool countDownActive;
     private float countDownTime;
@@ -18,6 +19,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     [SerializeField] private float playerBestTime;
 
     private GameObject playerObject;
+    private PlayerData playerData;
     
     [SerializeField] private TMP_Text countDownText;
     [SerializeField] private TMP_Text timeTrialTimerText;
@@ -48,6 +50,14 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     private void Start()
     {
         meshRenderer = GetComponent<MeshRenderer>();
+        selfCollider = GetComponent<Collider>();
+        
+        TimeTrialManager.Instance.AddTimeTrial(this);
+    }
+
+    private void OnDisable()
+    {
+        TimeTrialManager.Instance.RemoveTimeTrial(this);
     }
 
     private void FixedUpdate()
@@ -73,7 +83,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
         {
             timeElapsed += Time.fixedDeltaTime;
 
-            string timeText = System.TimeSpan.FromSeconds(timeElapsed).ToString("mm':'ss'.'fff");
+            string timeText = TimeTrialManager.Instance.TimeToString(timeElapsed);
             timeTrialTimerText.text = timeText;
             
             if (timeElapsed > 3600) EndTimeTrial(false);
@@ -82,9 +92,13 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
     public void StartTimeTrial()
     {
-        meshRenderer.enabled = false;
+        TimeTrialManager.Instance.HideAllTimeTrials();
+        
         playerObject.transform.position = transform.position;
         playerObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+        
+        playerData = playerObject.GetComponent<PlayerData>();
+        playerData.dataRecord.isInTimeTrial = true;
         
         spawnedEndObject = Instantiate(endObjectPrefab);
         spawnedEndObject.transform.position = timeTrialData.EndLocation;
@@ -108,12 +122,14 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
     public void EndTimeTrial(bool completed)
     {
-        meshRenderer.enabled = true;
-        string timeText = System.TimeSpan.FromSeconds(timeElapsed).ToString("mm':'ss'.'fff");
-        //Debug.Log($"Your time was: {timeText}");
+        TimeTrialManager.Instance.ShowAllTimeTrials();
+        
         ToggleTimeTrialUI(false);
         timeTrialActive = false;
         Destroy(spawnedEndObject);
+
+        playerData.dataRecord.isInTimeTrial = true;
+        // Do I have to clear my reference to the player data here? If you enter multiple time trials, would it cause more memory usage?
         
         if (completed && (playerBestTime == 0 || timeElapsed < playerBestTime))
         {
@@ -133,5 +149,17 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     private void HandleNewBest(float newBest)
     {
         playerBestTime = newBest;
+    }
+
+    public void HideTimeTrial()
+    {
+        meshRenderer.enabled = false;
+        selfCollider.enabled = false;
+    }
+
+    public void ShowTimeTrial()
+    {
+        meshRenderer.enabled = true;
+        selfCollider.enabled = true;
     }
 }

@@ -19,6 +19,8 @@ public class UserInterfaceActionStack : ActionStack
     }
     
     private PauseMenu pauseMenu;
+    private OptionsMenu optionsMenu;
+    private ControlsMenu controlsMenu;
 
     private UserInterfaceAction currentAction;
 
@@ -27,6 +29,8 @@ public class UserInterfaceActionStack : ActionStack
         PushAction(new DefaultUserInterfaceAction());
 
         pauseMenu = FindAnyObjectByType<PauseMenu>();
+        optionsMenu = FindAnyObjectByType<OptionsMenu>();
+        controlsMenu = FindAnyObjectByType<ControlsMenu>();
         
         BindEvents();
     }
@@ -59,6 +63,16 @@ public class UserInterfaceActionStack : ActionStack
         if (currentAction is not DefaultUserInterfaceAction) return;
         
         PushAction(new PauseMenuAction(this, pauseMenu));
+    }
+
+    public void AddOptionsMenuAction()
+    {
+        PushAction(new OptionsMenuAction(optionsMenu));
+    }
+
+    public void AddControlsMenuAction()
+    {
+        PushAction(new ControlsMenuAction());
     }
 
     private void CancelAction(InputValue value)

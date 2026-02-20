@@ -17,6 +17,9 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
     private Button controlsButton;
     private Button mainMenuButton;
 
+    private bool closingMenu;
+    private bool addButtonsOnBegin;
+
     public override bool IsDone()
     {
         return base.IsDone();
@@ -36,19 +39,31 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
 
             BindEvents();
             
-            pauseMenu.AnimateMenuOpening();
+            pauseMenu.OpenMenu();
             GameManager.Instance.Pause();
+        }
+        else if (addButtonsOnBegin)
+        {
+            addButtonsOnBegin = false;
+            pauseMenu.ShowButtons();
         }
     }
 
     public override void OnEnd()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        
         UnbindEvents();
         
-        pauseMenu.AnimateMenuClosing();
-        GameManager.Instance.Resume();
+        if (closingMenu)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            
+            pauseMenu.CloseMenu();
+            GameManager.Instance.Resume();
+        }
+        else
+        {
+            // animate buttons disappearing here
+        }
     }
 
     private void BindEvents()
@@ -61,25 +76,28 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
 
     private void UnbindEvents()
     {
-        resumeButton.onClick.RemoveListener(Cancel);
-        optionsButton.onClick.RemoveListener(AddOptionsMenu);
-        controlsButton.onClick.RemoveListener(AddControlsMenu);
-        mainMenuButton.onClick.RemoveListener(GoToMainMenu);
+        resumeButton.onClick.RemoveAllListeners();
+        optionsButton.onClick.RemoveAllListeners();
+        controlsButton.onClick.RemoveAllListeners();
+        mainMenuButton.onClick.RemoveAllListeners();
     }
 
     public override void Cancel()
     {
+        closingMenu = true;
         CompleteAction();
     }
 
     private void AddOptionsMenu()
     {
-        stack.PushAction(new OptionsMenuAction());
+        addButtonsOnBegin = true;
+        pauseMenu.HideButtons();
+        stack.AddOptionsMenuAction();
     }
 
     private void AddControlsMenu()
     {
-        stack.PushAction(new ControlsMenuAction());
+        stack.AddControlsMenuAction();
     }
 
     private void GoToMainMenu()

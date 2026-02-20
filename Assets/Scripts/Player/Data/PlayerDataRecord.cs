@@ -33,6 +33,9 @@ public record PlayerDataRecord
     [Space(5)]
     public int currentWallRuns;
     public bool canWallRunJump;
+
+    [Space(5)] 
+    public bool isInTimeTrial;
     
     [Header("Static Data")]
     public PlayerDataStruct dataStruct;

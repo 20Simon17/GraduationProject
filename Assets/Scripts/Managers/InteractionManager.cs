@@ -62,6 +62,11 @@ public class InteractionManager : MonoBehaviour
 
         if (interactable is IHoldInteractable holdInteractable)
         {
+            if (interactable is TimeTrial && playerData.isInTimeTrial)
+            {
+                Debug.Log("TimeTrial can't be interacted with when you're in a time trial");
+                return;
+            }
             if (value.isPressed)
             {
                 isInteracting = true;

@@ -2,14 +2,61 @@ using UnityEngine;
 
 public class ControlsMenu : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("References")]
+    [SerializeField] private GameObject imagesHolder;
+    [SerializeField] private GameObject textHolder;
+    [SerializeField] private GameObject buttonsHolder;
+    
+    [Header("Durations")]
+    
+    private bool animateMenuOpening;
+    private bool animateMenuClosing;
+    
+    private float animationTime;
+    
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
+    {
+        if (animateMenuOpening)
+        {
+            AnimateOpening();
+        }
+        else if (animateMenuClosing)
+        {
+            AnimateClosing();
+        }
+    }
+
+    private void AnimateOpening()
+    {
+        animationTime += Time.deltaTime;
+    }
+
+    private void AnimateClosing()
+    {
+        animationTime += Time.deltaTime;
+    }
+    
+    public void OpenMenu()
+    {
+        
+    }
+    
+    public void CloseMenu()
+    {
+        
+    }
+    
+    public void AnimateButtonsAppearing()
+    {
+        // button.setactive(true) one after the other
+    }
+
+    public void AnimateButtonsDisappearing()
     {
         
     }

@@ -17,6 +17,8 @@ public class InteractionManager : MonoBehaviour
     private bool isPaused;
     private IHoldInteractable interactionHoldInterface;
 
+    public LayerMask interactionLayerMask;
+
     private float pauseTime;
     
     void Start()
@@ -86,7 +88,7 @@ public class InteractionManager : MonoBehaviour
     private RaycastHit GetLookingAt()
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
-        Physics.Raycast(ray, out RaycastHit hit, playerData.dataStruct.maxInteractionDistance);
+        Physics.Raycast(ray, out RaycastHit hit, playerData.dataStruct.maxInteractionDistance, interactionLayerMask);
         return hit;
     }
 

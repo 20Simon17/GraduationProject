@@ -36,6 +36,8 @@ public class Zipline : ProceduralMesh, IInteractable
     {
         base.Start();
         
+        gameObject.layer = LayerMask.NameToLayer("Zipline");
+        
         // Set default material
         if (_meshRenderer && defaultMaterial)
         {

@@ -7197,6 +7197,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionManager
   interactionUI: {fileID: 131452465}
   interactionFillImage: {fileID: 1090341905}
+  interactionLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1645233824
 GameObject:
   m_ObjectHideFlags: 0

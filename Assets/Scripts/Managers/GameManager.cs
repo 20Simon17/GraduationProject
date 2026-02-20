@@ -3,6 +3,12 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    public delegate void OnGamePausedDelegate();
+    public OnGamePausedDelegate OnGamePausedEvent;
+    
+    public delegate void OnGameResumedDelegate();
+    public OnGameResumedDelegate OnGameResumedEvent;
+    
     private PlayerActionStack playerActionStack;
     private CameraActionStack cameraActionStack;
     private UserInterfaceActionStack userInterfaceActionStack;
@@ -36,6 +42,8 @@ public class GameManager : Singleton<GameManager>
         playerActionStack.Pause();
         interactionManager.Pause();
         gameIsPaused = true;
+        
+        OnGamePausedEvent?.Invoke();
     }
 
     public void Resume()
@@ -44,5 +52,7 @@ public class GameManager : Singleton<GameManager>
         playerActionStack.Resume();
         interactionManager.Resume();
         gameIsPaused = false;
+        
+        OnGameResumedEvent?.Invoke();
     }
 }

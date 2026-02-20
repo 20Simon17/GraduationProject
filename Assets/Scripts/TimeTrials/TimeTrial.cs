@@ -79,6 +79,8 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
             }
         }
 
+        //perhaps move this to void update instead for greater accuracy?
+        //or use Time.time and get the difference + pause buffer and see if that is even more accurate (more performant too)
         if (timeTrialActive && !GameManager.Instance.IsGamePaused)
         {
             timeElapsed += Time.fixedDeltaTime;

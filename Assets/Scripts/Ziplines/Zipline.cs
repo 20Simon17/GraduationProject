@@ -8,8 +8,8 @@ public class Zipline : ProceduralMesh, IInteractable
     public ZiplinePoint startPoint;
     public ZiplinePoint endPoint;
     
-    private MeshRenderer _meshRenderer;
-    private MeshCollider _meshCollider;
+    private MeshRenderer meshRenderer;
+    private MeshCollider meshCollider;
 
     [SerializeField] private Material ghostMaterial;
     [SerializeField] private Material defaultMaterial;
@@ -18,7 +18,12 @@ public class Zipline : ProceduralMesh, IInteractable
     {
         interactor.GetComponent<PlayerActionStack>()?.AddZiplineAction(this);
     }
-    
+
+    public void ToggleLookAt(GameObject interactor, bool newToggle)
+    {
+        // implement e to interact with zipline ui message
+    }
+
     private void LoadResources()
     {
         defaultMaterial = Resources.Load<Material>("Materials/ZiplineMaterial");
@@ -29,7 +34,7 @@ public class Zipline : ProceduralMesh, IInteractable
     {
         LoadResources();
         
-        _meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer = GetComponent<MeshRenderer>();
     }
     
     private new void Start()
@@ -39,9 +44,9 @@ public class Zipline : ProceduralMesh, IInteractable
         gameObject.layer = LayerMask.NameToLayer("Zipline");
         
         // Set default material
-        if (_meshRenderer && defaultMaterial)
+        if (meshRenderer && defaultMaterial)
         {
-            _meshRenderer.material = defaultMaterial;
+            meshRenderer.material = defaultMaterial;
         }
     }
 
@@ -127,14 +132,14 @@ public class Zipline : ProceduralMesh, IInteractable
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
-        if (!_meshCollider)
+        if (!meshCollider)
         {
-            _meshCollider = gameObject.AddComponent<MeshCollider>();
-            _meshCollider.convex = true;
-            _meshCollider.isTrigger = true;
+            meshCollider = gameObject.AddComponent<MeshCollider>();
+            meshCollider.convex = true;
+            meshCollider.isTrigger = true;
         }
         
-        _meshCollider.sharedMesh = mesh;
+        meshCollider.sharedMesh = mesh;
         
         return mesh;
     }
@@ -153,9 +158,8 @@ public class Zipline : ProceduralMesh, IInteractable
 
     public void ToggleGhostRendering(bool newGhost)
     {
-        //TODO: Get the ziplines collider and toggle it here
-        //_collider.enabled = !newGhost;
-        _meshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;
+        if (meshCollider) meshCollider.enabled = !newGhost;
+        meshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;
     }
 
     public void DeleteZipline()

@@ -19,6 +19,8 @@ public class InteractionManager : MonoBehaviour
 
     public LayerMask interactionLayerMask;
 
+    private GameObject previousLookingAt;
+
     private float pauseTime;
     
     void Start()
@@ -36,9 +38,11 @@ public class InteractionManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //HandleLookingAt();
+        
         if (!isPaused && isInteracting)
         {
-            RaycastHit hit = GetLookingAt();
+            RaycastHit hit = GetInteractingWith();
             if (!hit.collider || hit.transform.gameObject != interactionObject)
             {
                 StopHoldInteraction();
@@ -59,7 +63,7 @@ public class InteractionManager : MonoBehaviour
 
     private void Interact(InputValue value)
     {
-        RaycastHit hit = GetLookingAt();
+        RaycastHit hit = GetInteractingWith();
         if (!hit.transform || !hit.transform.TryGetComponent(out IInteractable interactable)) return;
 
         if (interactable is IHoldInteractable holdInteractable)
@@ -84,12 +88,38 @@ public class InteractionManager : MonoBehaviour
 
         if (value.isPressed) interactable.Interact(gameObject);
     }
-
-    private RaycastHit GetLookingAt()
+    
+    private RaycastHit GetInteractingWith()
     {
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
         Physics.Raycast(ray, out RaycastHit hit, playerData.dataStruct.maxInteractionDistance, interactionLayerMask);
         return hit;
+    }
+
+    private void HandleLookingAt()
+    {
+        Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        Physics.Raycast(ray, out RaycastHit hit, playerData.dataStruct.maxInteractionDistance, interactionLayerMask);
+
+        if (hit.collider)
+        {
+            if (!previousLookingAt)
+            {
+                previousLookingAt = hit.transform.gameObject;
+                previousLookingAt.GetComponent<IInteractable>()?.ToggleLookAt(gameObject, true);
+            }
+            else if (previousLookingAt != hit.transform.gameObject)
+            {
+                previousLookingAt.GetComponent<IInteractable>()?.ToggleLookAt(gameObject, false);
+                hit.transform.GetComponent<IInteractable>()?.ToggleLookAt(gameObject, true);
+                previousLookingAt = hit.transform.gameObject;
+            }
+        }
+        else if (previousLookingAt)
+        {
+            previousLookingAt.GetComponent<IInteractable>()?.ToggleLookAt(gameObject, false);
+            previousLookingAt = null;
+        }
     }
 
     private void StopHoldInteraction()

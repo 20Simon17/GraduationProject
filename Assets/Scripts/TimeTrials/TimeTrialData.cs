@@ -1,11 +1,27 @@
 using System;
-using UnityEngine;
 
 [Serializable]
 public record TimeTrialData
 {
-    public Vector3 EndLocation;
+    public string timeTrialName;
+    public TimeTrialDifficulty timeTrialDifficulty;
+    public bool hasBeenCompleted;
     
-    //time trial difficulty
+    public float playerPersonalBest;
+    public int numberOfCompletions;
+    public int numberOfAttempts;
     
+    public float firstCompletionReward;
+    public float repeatCompletionReward;
+}
+
+[Serializable]
+public enum TimeTrialDifficulty
+{
+    Easy,
+    Medium,
+    Hard,
+    Expert,
+    Insane,
+    Impossible
 }

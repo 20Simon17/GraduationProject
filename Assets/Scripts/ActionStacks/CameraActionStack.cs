@@ -47,7 +47,6 @@ public class CameraActionStack : ActionStack
     {
         base.UpdateStack();
 
-        // TODO: How can I make this less expensive?
         if (currentAction != CurrentAction as CameraAction)
         {
             currentAction = (CameraAction) CurrentAction;

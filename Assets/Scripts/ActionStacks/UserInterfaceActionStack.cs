@@ -72,22 +72,22 @@ public class UserInterfaceActionStack : ActionStack
 
     public void AddControlsMenuAction()
     {
-        PushAction(new ControlsMenuAction());
+        PushAction(new ControlsMenuAction(controlsMenu));
     }
 
     private void CancelAction(InputValue value)
     {
         if (!value.isPressed || !GameManager.Instance.IsGamePaused) return;
         
-        (CurrentAction as UserInterfaceAction)?.Cancel();
+        currentAction?.Cancel();
     }
 
     public void GoToMainMenu()
     {
-        while (currentAction is not DefaultUserInterfaceAction)
+        /*while (currentAction is not DefaultUserInterfaceAction)
         {
             currentAction?.CompleteAction();
-        }
+        }*/
         PushAction(new MainMenuAction());
     }
 }

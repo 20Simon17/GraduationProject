@@ -13,7 +13,6 @@ public class ZiplineTool : MonoBehaviour
     private Transform playerCamera;
     private PlayerActionStack player;
 
-    //TODO: make use of these
     public int maxZiplines = 3;
     public int currentZiplines = 0;
     public List<Zipline> ziplines;
@@ -27,8 +26,11 @@ public class ZiplineTool : MonoBehaviour
     private Zipline zipline;
     //private ZiplinePoint _placementPoint;
 
+    public LayerMask layerMask;
+    
     private void LoadResources()
     {
+        //TODO: Replace this with Addressables system
         polePrefab = Resources.Load<GameObject>("Prefabs/ZiplinePoints/ZiplinePole");
         wallPrefab = Resources.Load<GameObject>("Prefabs/ZiplinePoints/ZiplineWall");
         ceilingPrefab = Resources.Load<GameObject>("Prefabs/ZiplinePoints/ZiplineCeiling");
@@ -72,8 +74,9 @@ public class ZiplineTool : MonoBehaviour
     
     private RaycastHit? GetLookAtHit()
     {
+        
         Ray ray = new Ray(playerCamera.position, playerCamera.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100)) return hit;
+        if (Physics.Raycast(ray, out RaycastHit hit, 100, layerMask)) return hit;
         else return null;
     }
 
@@ -171,8 +174,10 @@ public class ZiplineTool : MonoBehaviour
 
     private bool ValidatePlacement()
     {
+        //TODO: Make zipline placement be invalid if they are colliding with an existing one
         //check if the zipline intersects any building anywhere
         //maybe check if there's "enough" room for the player on the zipline to not hit objects beneath it
+        //display the error as a message on some ui element to allow the player to correct it without having to redo everything
         return true;
     }
 
@@ -316,8 +321,8 @@ public class ZiplineTool : MonoBehaviour
         {
             aZipline.DeleteZipline();
         }
-        ziplines.Clear();
         
+        ziplines.Clear();
         currentZiplines = 0;
     }
 }

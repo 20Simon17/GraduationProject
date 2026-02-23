@@ -85,7 +85,6 @@ public class PlayerActionStack : ActionStack
         Debug.DrawRay(rRay.origin, rRay.direction * dataRecord.dataStruct.wallRunCheckDistance, Color.darkRed);
         Debug.DrawRay(lRay.origin, lRay.direction * dataRecord.dataStruct.wallRunCheckDistance, Color.darkRed);*/
         
-        // TODO: How can I make this less expensive?
         if (currentAction != CurrentAction as PlayerAction)
         {
             currentAction = (PlayerAction) CurrentAction;

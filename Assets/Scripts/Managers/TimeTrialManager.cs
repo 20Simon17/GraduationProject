@@ -1,8 +1,12 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class TimeTrialManager : Singleton<TimeTrialManager>
 {
     private readonly List<TimeTrial> timeTrials = new List<TimeTrial>();
+    
+    [SerializeField] private TimeTrialDisplay timeTrialDisplay;
+    private TimeTrial currentDisplayHolder;
 
     public void AddTimeTrial(TimeTrial timeTrial)
     {
@@ -33,5 +37,22 @@ public class TimeTrialManager : Singleton<TimeTrialManager>
     public string TimeToString(float time)
     {
         return System.TimeSpan.FromSeconds(time).ToString("mm':'ss'.'fff");
+    }
+
+    public GameObject RequestTimeTrialDisplay(TimeTrial timeTrial)
+    {
+        if (currentDisplayHolder && currentDisplayHolder != timeTrial)
+        {
+            currentDisplayHolder.ToggleLookAt(gameObject, false);
+        }
+        
+        timeTrialDisplay.LoadData(timeTrial.timeTrialData);
+        currentDisplayHolder = timeTrial;
+        return timeTrialDisplay.gameObject;
+    }
+
+    public void DisableTimeTrialDisplay()
+    {
+        timeTrialDisplay.gameObject.SetActive(false);
     }
 }

@@ -13,7 +13,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
     private void CheckJumps()
     {
         // TODO: if (forceJump) perform jump regardless of other conditions. (from zipline)
-        // TODO: Do I want a way to combine slam and slide jump? slam -> land, slide + jump = forward + up boost
+        // Do I want a way to combine slam and slide jump? slam -> land, slide + jump = forward + up boost
         if (CanDoubleJump())
         {
             PerformDoubleJump();

@@ -5,9 +5,8 @@ using UnityEngine.UI;
 
 public class GrappleGun : MonoBehaviour
 {
-    /*
-    private CharacterMovement characterMovement;
-    private PlayerCamera playerCamera;
+    private PlayerActionStack player;
+    private CameraActionStack playerCamera;
     private Camera playerCameraComponent;
     private bool disableIcon = false;
 
@@ -44,10 +43,22 @@ public class GrappleGun : MonoBehaviour
 
     private void Awake()
     {
-        characterMovement = FindFirstObjectByType<CharacterMovement>();
-        playerCamera = FindFirstObjectByType<PlayerCamera>();
+        player = FindFirstObjectByType<PlayerActionStack>();
+        playerCamera = FindFirstObjectByType<CameraActionStack>();
         grappleLineRenderer = GetComponent<LineRenderer>();
         playerCameraComponent = playerCamera.GetComponent<Camera>();
+    }
+
+    private void Start()
+    {
+        InputManager.Instance.OnPrimaryActionEvent += OnPrimaryAction;
+        InputManager.Instance.OnSecondaryActionEvent += OnSecondaryAction;
+    }
+
+    private void OnDisable()
+    {
+        InputManager.Instance.OnPrimaryActionEvent -= OnPrimaryAction;
+        InputManager.Instance.OnSecondaryActionEvent -= OnSecondaryAction;
     }
 
     private void PrimaryAction(bool startAction)
@@ -139,7 +150,7 @@ public class GrappleGun : MonoBehaviour
         }
         else
         {
-            if (playerCamera.IsObjectVisible(predictionPoint))
+            if (IsObjectVisible(predictionPoint))
             {
                 if (!grapplePointIcon.enabled)
                 {
@@ -204,11 +215,11 @@ public class GrappleGun : MonoBehaviour
         if (predictionHit.point == Vector3.zero) return;
         
         swingPoint = predictionHit.point;
-        joint = characterMovement.gameObject.AddComponent<SpringJoint>();
+        joint = player.gameObject.AddComponent<SpringJoint>();
         joint.autoConfigureConnectedAnchor = false;
         joint.connectedAnchor = swingPoint;
             
-        float distanceFromPoint = Vector3.Distance(characterMovement.transform.position, swingPoint);
+        float distanceFromPoint = Vector3.Distance(player.transform.position, swingPoint);
         joint.maxDistance = distanceFromPoint * springJointMaxDistance;
         joint.minDistance = distanceFromPoint * springJointMinDistance;
             
@@ -232,13 +243,27 @@ public class GrappleGun : MonoBehaviour
         if (Physics.Raycast(cameraRay, out RaycastHit hitInfo, grappleRange))
         {
             Vector3 grapplePoint = hitInfo.point;
-            Vector3 directionToGrapplePoint = (grapplePoint - characterMovement.transform.position).normalized;
-            float distanceToGrapplePoint = Vector3.Distance(characterMovement.transform.position, grapplePoint);
+            Vector3 directionToGrapplePoint = (grapplePoint - player.transform.position).normalized;
+            float distanceToGrapplePoint = Vector3.Distance(player.transform.position, grapplePoint);
             
             // Apply a force towards the grapple point
             Vector3 pullForce = directionToGrapplePoint * pullStrength * 100;
-            characterMovement.GetComponent<Rigidbody>().AddForce(pullForce, ForceMode.Force);
+            player.GetComponent<Rigidbody>().AddForce(pullForce, ForceMode.Force);
         }
     }
-    */
+    
+    private bool IsObjectVisible(Transform targetObject)
+    {
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(playerCameraComponent);
+
+        foreach (var plane in planes)
+        {
+            if (plane.GetDistanceToPoint(targetObject.position) < 0f)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

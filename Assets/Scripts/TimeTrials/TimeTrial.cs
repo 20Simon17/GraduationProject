@@ -31,6 +31,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     [SerializeField] private TMP_Text timeTrialTimerText;
 
     [SerializeField] private GameObject endObjectPrefab;
+    [SerializeField] private TimeTrialDisplay timeTrialDisplay;
     
     [Space(10)]
     public TimeTrialData timeTrialData;
@@ -47,14 +48,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
     public void ToggleLookAt(GameObject interactor, bool newToggle)
     {
-        if (newToggle)
-        {
-            EnableDisplay();
-        }
-        else
-        {
-            DisableDisplay();
-        }
+        
     }
 
     public void StartHoldInteract(GameObject interactor)
@@ -70,6 +64,8 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     {
         meshRenderer = GetComponent<MeshRenderer>();
         selfCollider = GetComponent<Collider>();
+        
+        timeTrialDisplay.LoadData(timeTrialData);
         
         TimeTrialManager.Instance.AddTimeTrial(this);
     }
@@ -95,6 +91,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
                 ToggleTimeTrialUI(true);
                 
                 FindAnyObjectByType<PlayerActionStack>().CompleteCurrentAction();
+                timeTrialData.numberOfAttempts++;
             }
         }
 
@@ -131,7 +128,6 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
         spawnedEndObject.GetComponent<TimeTrialEnding>().owner = this;
         
         DoTimeTrialCountdown();
-        DisableDisplay();
     }
 
     private void DoTimeTrialCountdown()
@@ -157,10 +153,18 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
         playerData.dataRecord.isInTimeTrial = false;
         // Do I have to clear my reference to the player data here? If you enter multiple time trials, would it cause more memory usage?
         
-        if (completed && (timeTrialData.playerPersonalBest == 0 || timeElapsed < timeTrialData.playerPersonalBest))
+        if (completed)
         {
-            //Debug.Log("New best time!");
-            HandleNewBest(timeElapsed);
+            timeTrialData.hasBeenCompleted = true;
+            timeTrialData.numberOfCompletions++;
+            
+            if (timeTrialData.playerPersonalBest == 0 || timeElapsed < timeTrialData.playerPersonalBest)
+            {
+                //Debug.Log("New best time!");
+                HandleNewBest(timeElapsed);
+            }
+            
+            timeTrialDisplay.LoadData(timeTrialData);
         }
         
         timeElapsed = 0;
@@ -187,35 +191,5 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     {
         meshRenderer.enabled = true;
         selfCollider.enabled = true;
-    }
-
-    private void EnableDisplay()
-    {
-        displayEnabled = true;
-        GameObject displayObject = TimeTrialManager.Instance.RequestTimeTrialDisplay(this);
-        displayObject.transform.position = transform.position + Vector3.up * 3;
-        displayObject.SetActive(true);
-    }
-
-    private void DisableDisplay()
-    {
-        displayEnabled = false;
-        TimeTrialManager.Instance.DisableTimeTrialDisplay();
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player") && !displayEnabled)
-        {
-            EnableDisplay();
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player") && displayEnabled)
-        {
-            DisableDisplay();
-        }
     }
 }

@@ -22,7 +22,7 @@ public class TimeTrialDisplay : MonoBehaviour
             completionStatusText.text = "Completed";
             completionStatusText.color = Color.green;
 
-            personalBestText.text = "Personal Best:\n" + timeTrialData.playerPersonalBest;
+            personalBestText.text = "Personal Best:\n" + TimeTrialManager.Instance.TimeToString(timeTrialData.playerPersonalBest);
         }
         else
         {

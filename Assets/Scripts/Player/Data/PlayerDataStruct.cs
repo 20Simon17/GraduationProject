@@ -15,6 +15,8 @@ public struct PlayerDataStruct
     [Header("Ground")]
     public float counterForceSpeedThreshold;
     public float defaultFriction;
+    public float counterFriction;
+    public float noInputFriction;
 
     [Header("Jump")]
     public float coyoteTimeDuration;

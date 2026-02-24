@@ -25,13 +25,16 @@ MonoBehaviour:
     isSlamming: 0
     currentWallRuns: 0
     canWallRunJump: 0
+    isInTimeTrial: 0
     dataStruct:
       currentSpeed: 0
       velocityHardCap: 150
       defaultPlayerScaleY: 1
       jumpForceScaling: 32
       counterForceSpeedThreshold: 3
-      defaultFriction: 0.6
+      defaultFriction: 0.3
+      counterFriction: 1
+      noInputFriction: 1
       coyoteTimeDuration: 0.25
       jumpForce: 7.5
       slamJumpTimeFrame: 0.5

@@ -134,9 +134,12 @@ public class Zipline : ProceduralMesh, IInteractable
 
         if (!meshCollider)
         {
-            meshCollider = gameObject.AddComponent<MeshCollider>();
-            meshCollider.convex = true;
-            meshCollider.isTrigger = true;
+            if (!TryGetComponent(out meshCollider))
+            {
+                meshCollider = gameObject.AddComponent<MeshCollider>();
+                meshCollider.convex = true;
+                meshCollider.isTrigger = true;
+            }
         }
         
         meshCollider.sharedMesh = mesh;

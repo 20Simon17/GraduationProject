@@ -23,19 +23,37 @@ public class CameraActionStack : ActionStack
     private Transform playerTransform;
     private Transform cameraTransform;
     
+    private bool gameIsQuitting;
     
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         
-        InputManager.Instance.OnFreeCamEvent += FreeCamToggle;
-        InputManager.Instance.OnLookEvent += Look;
-
         cameraTransform = transform;
         playerTransform = FindFirstObjectByType<PlayerActionStack>().transform;
         
         PushAction(new DefaultCameraAction(playerTransform, cameraTransform));
+        
+        BindEvents();
     }
+
+    private void BindEvents()
+    {
+        Application.quitting += QuitGame;
+        InputManager.Instance.OnFreeCamEvent += FreeCamToggle;
+        InputManager.Instance.OnLookEvent += Look;
+    }
+    
+    private void OnDisable()
+    {
+        Application.quitting -= QuitGame;
+        if (gameIsQuitting) return;
+        
+        InputManager.Instance.OnFreeCamEvent -= FreeCamToggle;
+        InputManager.Instance.OnLookEvent -= Look;
+    }
+    
+    private void QuitGame() => gameIsQuitting = true;
 
     public override void PushAction(IAction action)
     {
@@ -51,12 +69,6 @@ public class CameraActionStack : ActionStack
         {
             currentAction = (CameraAction) CurrentAction;
         }
-    }
-
-    private void OnDisable()
-    {
-        InputManager.Instance.OnFreeCamEvent -= FreeCamToggle;
-        InputManager.Instance.OnLookEvent -= Look;
     }
 
     private void FreeCamToggle(InputValue value)

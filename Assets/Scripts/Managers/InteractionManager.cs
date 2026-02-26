@@ -23,18 +23,26 @@ public class InteractionManager : MonoBehaviour
 
     private float pauseTime;
     
+    private bool gameIsQuitting;
+    
     void Start()
     {
         cameraTransform = FindAnyObjectByType<CameraActionStack>().transform;
         playerData = GetComponent<PlayerData>().dataRecord;
         
+        Application.quitting += QuitGame;
         InputManager.Instance.OnInteractEvent += Interact;
     }
 
     private void OnDisable()
     {
+        Application.quitting -= QuitGame;
+        if (gameIsQuitting) return;
+        
         InputManager.Instance.OnInteractEvent -= Interact;
     }
+    
+    private void QuitGame() => gameIsQuitting = true;
 
     private void FixedUpdate()
     {

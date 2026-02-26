@@ -35,6 +35,8 @@ public class PlayerActionStack : ActionStack
 
     private Vector3 velocityOnPause;
     private Vector3 gravityOnPause;
+
+    private bool gameIsQuitting;
     
     private void Start()
     {
@@ -43,6 +45,8 @@ public class PlayerActionStack : ActionStack
         playerDataComponent = GetComponent<PlayerData>();
         dataRecord = playerDataComponent.dataRecord;
         
+        GetComponent<CapsuleCollider>().material = dataRecord.dataStruct.physicsMaterial;
+        
         PushAction(new DefaultMovementAction(rb, transform, dataRecord));
         
         BindEvents();
@@ -50,6 +54,7 @@ public class PlayerActionStack : ActionStack
 
     private void BindEvents()
     {
+        Application.quitting += QuitGame;
         InputManager.Instance.OnJumpEvent += CheckJumpActions;
         InputManager.Instance.OnCrouchEvent += AddSlideAction;
         InputManager.Instance.OnSlamEvent += AddSlamAction;
@@ -57,10 +62,15 @@ public class PlayerActionStack : ActionStack
 
     private void OnDisable()
     {
+        Application.quitting -= QuitGame;
+        if (gameIsQuitting) return;
+        
         InputManager.Instance.OnJumpEvent -= CheckJumpActions;
         InputManager.Instance.OnCrouchEvent -= AddSlideAction;
         InputManager.Instance.OnSlamEvent -= AddSlamAction;
     }
+
+    private void QuitGame() => gameIsQuitting = true;
 
     public void UpdateActionStack()
     {
@@ -99,6 +109,17 @@ public class PlayerActionStack : ActionStack
         if (hit.collider && hit.transform.CompareTag("Ground") && currentAction is not ZiplineAction)
         {
             dataRecord.isGrounded = true;
+
+            if (hit.normal != Vector3.up && !dataRecord.isOnSlope)
+            {
+                dataRecord.isOnSlope = true;
+                dataRecord.slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+            }
+            else
+            {
+                dataRecord.isOnSlope = false;
+                dataRecord.slopeAngle = 0;
+            }
             
             if (dataRecord.hasJumped && dataRecord.timeAtLastJump != 0 && Time.time - dataRecord.timeAtLastJump > 0.1f)
             {
@@ -163,6 +184,7 @@ public class PlayerActionStack : ActionStack
 
     private bool CanWallRun()
     {
+        return false;
         Ray rRay = new Ray(transform.position, transform.right);
         Ray lRay = new Ray(transform.position, -transform.right);
             

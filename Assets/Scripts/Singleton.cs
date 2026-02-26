@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         get
         {
-            if (_instance == null && Application.isPlaying)
+            if (_instance == null && Application.isPlaying && _instance.gameObject.scene.isLoaded)
             {
                 GameObject go = new GameObject("Singleton_" + typeof(T).Name);
                 DontDestroyOnLoad(go);

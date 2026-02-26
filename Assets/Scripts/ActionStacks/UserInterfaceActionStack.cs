@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class UserInterfaceActionStack : ActionStack
 {
@@ -24,6 +25,8 @@ public class UserInterfaceActionStack : ActionStack
 
     private UserInterfaceAction currentAction;
 
+    private bool gameIsQuitting;
+
     private void Start()
     {
         PushAction(new DefaultUserInterfaceAction());
@@ -37,16 +40,22 @@ public class UserInterfaceActionStack : ActionStack
 
     private void BindEvents()
     {
+        Application.quitting += QuitGame;
         InputManager.Instance.OnPauseEvent += AddPauseMenuAction;
         InputManager.Instance.OnCancelEvent += CancelAction;
     }
 
     private void OnDisable()
     {
+        Application.quitting -= QuitGame;
+        if (gameIsQuitting) return;
+        
         InputManager.Instance.OnPauseEvent -= AddPauseMenuAction;
         InputManager.Instance.OnCancelEvent -= CancelAction;
     }
 
+    private void QuitGame() => gameIsQuitting = true;
+    
     public void UpdateActionStack()
     {
         base.UpdateStack();
@@ -88,6 +97,8 @@ public class UserInterfaceActionStack : ActionStack
         {
             currentAction?.CompleteAction();
         }*/
-        PushAction(new MainMenuAction());
+        //PushAction(new MainMenuAction());
+
+        SceneManager.LoadScene(0);
     }
 }

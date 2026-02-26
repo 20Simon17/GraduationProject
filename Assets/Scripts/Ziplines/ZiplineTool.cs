@@ -28,6 +28,8 @@ public class ZiplineTool : MonoBehaviour
 
     public LayerMask layerMask;
     
+    private bool gameIsQuitting;
+    
     private void LoadResources()
     {
         //TODO: Replace this with Addressables system
@@ -42,6 +44,7 @@ public class ZiplineTool : MonoBehaviour
         playerCamera = FindFirstObjectByType<CameraActionStack>().transform;
         player = FindFirstObjectByType<PlayerActionStack>();
         
+        Application.quitting += QuitGame;
         InputManager.Instance.OnPrimaryActionEvent += PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent += SecondaryAction;
         
@@ -50,12 +53,17 @@ public class ZiplineTool : MonoBehaviour
 
     private void OnDisable()
     {
+        CancelPlacement();
+        
+        Application.quitting -= QuitGame;
+        if (gameIsQuitting) return;
+        
         InputManager.Instance.OnPrimaryActionEvent -= PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent -= SecondaryAction;
-        
-        CancelPlacement();
     }
-
+    
+    private void QuitGame() => gameIsQuitting = true;
+    
     private void FixedUpdate()
     {
         RaycastHit? rayHit = GetLookAtHit();
@@ -125,6 +133,8 @@ public class ZiplineTool : MonoBehaviour
     {
         if (!value.isPressed) return;
 
+        ClearAllZiplines();
+        return;
         RaycastHit? rayHit = GetLookAtHit();
 
         if (rayHit is null) return;

@@ -20,6 +20,8 @@ MonoBehaviour:
     coyoteTime: 0
     isGrounded: 0
     isTouchingGround: 0
+    isOnSlope: 0
+    slopeAngle: 0
     hasJumped: 0
     isSliding: 0
     isSlamming: 0
@@ -45,7 +47,7 @@ MonoBehaviour:
       slideJumpSpeedMultiplier: 1.15
       slideFriction: 0.05
       slidePlayerScaleY: 0.5
-      timeUntilMaxFriction: 5
+      timeUntilMaxFriction: 3
       slideCooldown: 0.2
       slideSpeedRequirement: 7
       groundSlamForce: 10

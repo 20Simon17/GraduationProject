@@ -172,15 +172,13 @@ public class GrappleGun : MonoBehaviour
     private void CheckForSwingPoints()
     {
         if (joint) return;
-
-        RaycastHit sphereCastHit;
+        
         Physics.SphereCast(playerCamera.transform.position, predictionSphereCastRadius,
-                            playerCamera.transform.forward, out sphereCastHit, grappleRange);
-
-        RaycastHit raycastHit;
+                            playerCamera.transform.forward, out RaycastHit sphereCastHit, grappleRange);
+        
         Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, 
-                            out raycastHit, grappleRange);
-
+                            out RaycastHit raycastHit, grappleRange);
+        
         Vector3 realHitPoint;
         
         // Direct hit
@@ -217,15 +215,15 @@ public class GrappleGun : MonoBehaviour
         joint = player.gameObject.AddComponent<SpringJoint>();
         joint.autoConfigureConnectedAnchor = false;
         joint.connectedAnchor = swingPoint;
-            
+        
         float distanceFromPoint = Vector3.Distance(player.transform.position, swingPoint);
         joint.maxDistance = distanceFromPoint * springJointMaxDistance;
         joint.minDistance = distanceFromPoint * springJointMinDistance;
-            
+        
         joint.spring = springJointSpring;
         joint.damper = springJointDamper;
         joint.massScale = springJointMassScale;
-            
+        
         grappleLineRenderer.positionCount = 2; // Set line renderer to have 2 points
         currentGrapplePosition = gunTip.position; // Initialize current grapple position
     }
@@ -242,11 +240,11 @@ public class GrappleGun : MonoBehaviour
         if (Physics.Raycast(cameraRay, out RaycastHit hitInfo, grappleRange))
         {
             Vector3 grapplePoint = hitInfo.point;
-            Vector3 directionToGrapplePoint = (grapplePoint - player.transform.position).normalized;
+            Vector3 directionToGrapplePoint = grapplePoint - player.transform.position;
             float distanceToGrapplePoint = Vector3.Distance(player.transform.position, grapplePoint);
             
             // Apply a force towards the grapple point
-            Vector3 pullForce = directionToGrapplePoint * pullStrength * 100;
+            Vector3 pullForce = directionToGrapplePoint /** (distanceToGrapplePoint / 2)*/ * pullStrength;
             player.GetComponent<Rigidbody>().AddForce(pullForce, ForceMode.Force);
         }
     }

@@ -13,10 +13,12 @@ public class SlideAction : PlayerActionStack.PlayerAction
     {
         if (!dataRecord.isGrounded && !dataRecord.isCoyoteTimeActive)
         {
+            Debug.Log("Weren't grounded");
             return true;
         }
         if (rb.linearVelocity.magnitude <= 0)
         {
+            Debug.Log("Too slow");
             return true;
         }
         return ActionCompleted;
@@ -41,7 +43,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
         
         //TODO: Only collider gets scaled down, model / capsule gets rotated to be flat instead
         transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
-        rb.AddForce(-transform.up * 100, ForceMode.Impulse); //Send the player downwards to stick to the ground
+        //rb.AddForce(-transform.up * 25, ForceMode.Impulse); //Send the player downwards to stick to the ground
         
         dataRecord.timeAtLastSlide = Time.time;
 
@@ -72,6 +74,23 @@ public class SlideAction : PlayerActionStack.PlayerAction
         slideTime += deltaTime;
         
         float progress = Mathf.Min(slideTime / data.timeUntilMaxFriction, 1);
-        data.physicsMaterial.dynamicFriction = (float)(1 - Math.Sqrt(1 - Math.Pow(progress, 2))); // ease in circ
+        float lerpProgress = (float)(1 - Math.Sqrt(1 - Math.Pow(progress, 2))); // ease in circ
+        data.physicsMaterial.dynamicFriction = Mathf.Lerp(data.slideFriction, data.defaultFriction, lerpProgress);
+        
+        /*if (dataRecord.isOnSlope)
+        {
+            slideTime = 0;
+            data.physicsMaterial.dynamicFriction = data.slideFriction;
+            
+            // this should only happen if it's a downhill, otherwise maybe add the slope angle to the dynamic friction?
+        }
+        else
+        {
+            slideTime += deltaTime;
+        
+            float progress = Mathf.Min(slideTime / data.timeUntilMaxFriction, 1);
+            float lerpProgress = (float)(1 - Math.Sqrt(1 - Math.Pow(progress, 2))); // ease in circ
+            data.physicsMaterial.dynamicFriction = Mathf.Lerp(data.slideFriction, data.defaultFriction, lerpProgress);
+        }*/
     }
 }

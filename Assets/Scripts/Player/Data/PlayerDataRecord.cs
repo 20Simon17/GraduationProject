@@ -17,6 +17,9 @@ public record PlayerDataRecord
     public bool isGrounded;
     public bool isTouchingGround;
     
+    public bool isOnSlope;
+    public float slopeAngle;
+    
     [Space(5)]
     public bool hasJumped;
     private bool canJump;

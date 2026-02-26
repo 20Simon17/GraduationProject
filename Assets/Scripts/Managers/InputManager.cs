@@ -52,6 +52,7 @@ public class InputManager : Singleton<InputManager>
     {
         playerInput = GetComponent<PlayerInput>();
         playerInput.defaultActionMap = "Player";
+        SwitchActionMap(playerInput.defaultActionMap);
         
         inputActionHandle = Addressables.LoadAssetAsync<InputActionAsset>("Assets/Inputs/PlayerInputMapping.inputactions");
         inputActionHandle.Completed += InputActionsLoaded;

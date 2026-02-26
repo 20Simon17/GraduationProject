@@ -20,6 +20,7 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
     
     public override bool IsDone()
     {
+        if (!attachedZipline) return true;
         if (ziplineDirection == Vector3.zero && rb.linearVelocity.magnitude <= 0)
         {
             return true;

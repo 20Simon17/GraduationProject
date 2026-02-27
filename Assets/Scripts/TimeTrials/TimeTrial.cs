@@ -38,6 +38,8 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
     private GameObject spawnedEndObject;
 
+    private bool gameIsQuitting;
+
     #region Interactions
     public void Interact(GameObject interactor)
     {
@@ -67,13 +69,19 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
         
         timeTrialDisplay.LoadData(timeTrialData);
         
+        Application.quitting += QuitGame;
         TimeTrialManager.Instance.AddTimeTrial(this);
     }
 
     private void OnDisable()
     {
+        Application.quitting -= QuitGame;
+        if (gameIsQuitting) return;
+        
         TimeTrialManager.Instance.RemoveTimeTrial(this);
     }
+    
+    private void QuitGame() => gameIsQuitting = true;
 
     private void FixedUpdate()
     {

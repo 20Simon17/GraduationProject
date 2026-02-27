@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// 100% of all credit for this class goes to Carl Granberg, as I copied his implementation he showed us
+// LinkedIn: https://www.linkedin.com/in/carl-granberg-90287048/
+
 public class ActionStack : MonoBehaviour
 {
     #region Definitions

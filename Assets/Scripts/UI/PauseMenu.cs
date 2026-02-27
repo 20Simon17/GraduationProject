@@ -91,6 +91,7 @@ public class PauseMenu : MonoBehaviour
             float newScaleY = Mathf.Lerp(0.01f, 1, progress);
             imagesHolder.transform.localScale = new Vector3(1, newScaleY, 1);
 
+            //toggle the buttons in order based on the scale of the menu
             if (newScaleY >= buttonOneActivation)
             {
                 buttonsHolder.transform.GetChild(0).gameObject.SetActive(true);
@@ -133,6 +134,7 @@ public class PauseMenu : MonoBehaviour
             float newScaleY = Mathf.Lerp(1, 0.01f, progress);
             imagesHolder.transform.localScale = new Vector3(1, newScaleY, 1);
             
+            //toggle the buttons in order based on the scale of the menu
             if (newScaleY <= buttonFourActivation)
             {
                 buttonsHolder.transform.GetChild(3).gameObject.SetActive(false);

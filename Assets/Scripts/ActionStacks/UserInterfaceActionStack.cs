@@ -29,11 +29,12 @@ public class UserInterfaceActionStack : ActionStack
 
     private void Start()
     {
-        PushAction(new DefaultUserInterfaceAction());
-
+        // Get references
         pauseMenu = FindAnyObjectByType<PauseMenu>();
         optionsMenu = FindAnyObjectByType<OptionsMenu>();
         controlsMenu = FindAnyObjectByType<ControlsMenu>();
+        
+        PushAction(new DefaultUserInterfaceAction());
         
         BindEvents();
     }
@@ -48,7 +49,7 @@ public class UserInterfaceActionStack : ActionStack
     private void OnDisable()
     {
         Application.quitting -= QuitGame;
-        if (gameIsQuitting) return;
+        if (gameIsQuitting) return; //TODO: Add a "returning to main menu" exit condition too, add the bool in the game manager
         
         InputManager.Instance.OnPauseEvent -= AddPauseMenuAction;
         InputManager.Instance.OnCancelEvent -= CancelAction;
@@ -99,6 +100,7 @@ public class UserInterfaceActionStack : ActionStack
         }*/
         //PushAction(new MainMenuAction());
 
+        GameManager.Instance.Resume();
         SceneManager.LoadScene(0);
     }
 }

@@ -54,6 +54,9 @@ public class Zipline : ProceduralMesh, IInteractable
 
     protected override Mesh CreateMesh()
     {
+        Debug.LogError("Entered Creating Mesh");
+        if (startPoint == null) Debug.LogError("Start point is null");
+        if (endPoint == null) Debug.LogError("End point is null");
         if (startPoint is null || endPoint is null) return null;
         
         Mesh mesh = new Mesh();
@@ -72,11 +75,12 @@ public class Zipline : ProceduralMesh, IInteractable
         Vector3 rightVector = -Vector3.Cross(direction, Vector3.up);
         Vector3 upVector = Vector3.Cross(direction, rightVector);
 
-        float meshSize = ziplineSize;
-        float colSize = colliderSize;
+        float meshSize = 0.05f;
+        float colSize = 0.75f;
         
         vertices.AddRange(new Vector3[]
         {
+            // wire mesh
             sP - rightVector * meshSize - upVector * meshSize,  //0
             sP - rightVector * meshSize + upVector * meshSize,  //1
             sP + rightVector * meshSize + upVector * meshSize,  //2
@@ -87,6 +91,7 @@ public class Zipline : ProceduralMesh, IInteractable
             eP + rightVector * meshSize + upVector * meshSize,  //6
             eP + rightVector * meshSize - upVector * meshSize,  //7
             
+            // collision mesh
             sP - rightVector * colSize - upVector * colSize,    //8
             sP - rightVector * colSize + upVector * colSize,    //9
             sP + rightVector * colSize + upVector * colSize,    //10
@@ -138,11 +143,17 @@ public class Zipline : ProceduralMesh, IInteractable
         {
             if (!TryGetComponent(out meshCollider))
             {
+                Debug.LogError("Could not get component out, creating mesh collider");
                 meshCollider = gameObject.AddComponent<MeshCollider>();
                 meshCollider.convex = true;
                 meshCollider.isTrigger = true;
             }
         }
+        
+        Debug.LogError(sP + " Start point");
+        Debug.LogError(eP + " End point");
+        Debug.LogError(meshSize + " Mesh size");
+        Debug.LogError(colSize + " Collider size");
         
         meshCollider.sharedMesh = mesh;
         
@@ -176,6 +187,7 @@ public class Zipline : ProceduralMesh, IInteractable
 
     public Vector3 GetClosestPointOnZipline(Vector3 position)
     {
+        // found online, closest point on line segment
         Vector3 directionToPosition = position - startPoint.AttachLocation;
         Vector3 ziplineDirection = endPoint.AttachLocation - startPoint.AttachLocation;
         
@@ -215,6 +227,7 @@ public class Zipline : ProceduralMesh, IInteractable
 
     public bool IsPointOnZipline(Vector3 point)
     {
+        // found this calculation online, and it worked but I don't really understand how it works to be honest...
         Vector3 ziplineDirection = endPoint.AttachLocation - startPoint.AttachLocation;
         Vector3 pointDirection = point - startPoint.AttachLocation;
 

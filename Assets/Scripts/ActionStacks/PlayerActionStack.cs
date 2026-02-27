@@ -26,6 +26,7 @@ public class PlayerActionStack : ActionStack
         protected readonly Transform transform;
     }
     
+    // The data for the player
     private PlayerData playerDataComponent;
     private PlayerDataRecord dataRecord;
     
@@ -205,7 +206,6 @@ public class PlayerActionStack : ActionStack
 
         if (currentAction is ZiplineAction)
         {
-            Debug.Log("Completed zipline action");
             currentAction.CompleteAction();
         }
         

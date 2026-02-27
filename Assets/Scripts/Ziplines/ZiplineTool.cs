@@ -123,6 +123,8 @@ public class ZiplineTool : MonoBehaviour
         {
             ziplineObject = new GameObject { name = "Zipline" };
             zipline = ziplineObject.AddComponent<Zipline>();
+            zipline.startPoint = null;
+            zipline.endPoint = null;
         }
         
         CreateZiplinePoint(hit.point, hit.normal, zipline);
@@ -231,12 +233,19 @@ public class ZiplineTool : MonoBehaviour
         ZiplinePoint zipPoint = zipPointObject.GetComponent<ZiplinePoint>();
         zipPoint.pointType = pointType;
         zipPoint.enabled = false;
-
-        if (ownerZipline.startPoint is null) ownerZipline.startPoint = zipPoint;
-        else if (ownerZipline.endPoint is null) ownerZipline.endPoint = zipPoint;
         
         zipPointObject.transform.position = inPosition; // TODO: Might need to add an offset function to the zipline points so they can handle being put in the correct spot by themselves
         zipPointObject.transform.forward = GetSuitableRotation(player.transform.forward);
+
+        if (ownerZipline.startPoint is null) ownerZipline.startPoint = zipPoint;
+        else if (ownerZipline.endPoint is null)
+        {
+            ownerZipline.endPoint = zipPoint;
+            
+            Debug.LogError("Trying to update zipline mesh");
+            ownerZipline.UpdateMesh();
+        }
+        
         zipPoint.ToggleGhostRendering(false);
     }
 

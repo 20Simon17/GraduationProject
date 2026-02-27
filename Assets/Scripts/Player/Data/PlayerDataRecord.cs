@@ -10,7 +10,7 @@ public record PlayerDataRecord
     public float timeAtLastJump;
     
     [Header("Active values")]
-    public bool isCoyoteTimeActive; // get => coyoteTime != 0 && coyoteTime <= coyoteTimeDuration
+    public bool isCoyoteTimeActive;
     public float coyoteTime;
     
     [Space(5)]

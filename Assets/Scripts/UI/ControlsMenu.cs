@@ -43,12 +43,16 @@ public class ControlsMenu : MonoBehaviour
     
     public void OpenMenu()
     {
-        
+        imagesHolder.SetActive(true);
+        textHolder.SetActive(true);
+        buttonsHolder.SetActive(true);
     }
     
     public void CloseMenu()
     {
-        
+        imagesHolder.SetActive(false);
+        textHolder.SetActive(false);
+        buttonsHolder.SetActive(false);
     }
     
     public void AnimateButtonsAppearing()

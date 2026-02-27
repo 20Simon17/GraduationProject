@@ -15,6 +15,7 @@ public class FreeMoveCameraAction : CameraActionStack.CameraAction
 
     public override void OnBegin(bool bFirstTime)
     {
+        // Keep the vertical rotation for smooth transition
         VerticalRotation = CameraTransform.rotation.x;
     }
     
@@ -25,6 +26,7 @@ public class FreeMoveCameraAction : CameraActionStack.CameraAction
         VerticalRotation += -input.y * mouseSensitivity;
         VerticalRotation = Mathf.Clamp(VerticalRotation, clampAngleMin, clampAngleMax);
         
+        //Apply all rotation to the camera, leave the player unaffected
         CameraTransform.Rotate(Vector3.up, input.x * mouseSensitivity);
         CameraTransform.localEulerAngles = new Vector3(VerticalRotation, CameraTransform.localEulerAngles.y, 0);
     }

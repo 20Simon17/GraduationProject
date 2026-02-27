@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OptionsMenuAction : UserInterfaceActionStack.UserInterfaceAction
 {
@@ -8,6 +9,8 @@ public class OptionsMenuAction : UserInterfaceActionStack.UserInterfaceAction
     }
 
     private readonly OptionsMenu optionsMenu;
+    
+    private Button closeButton;
 
     public override bool IsDone()
     {
@@ -18,6 +21,9 @@ public class OptionsMenuAction : UserInterfaceActionStack.UserInterfaceAction
     {
         if (bFirstTime)
         {
+            Transform buttonsMenu = optionsMenu.transform.GetChild(2);
+            closeButton = buttonsMenu.GetChild(3).GetComponent<Button>();
+            
             BindEvents();
             
             optionsMenu.OpenMenu();
@@ -35,11 +41,11 @@ public class OptionsMenuAction : UserInterfaceActionStack.UserInterfaceAction
     
     private void BindEvents()
     {
-        
+        closeButton.onClick.AddListener(Cancel);
     }
 
     private void UnbindEvents()
     {
-        
+        closeButton.onClick.RemoveAllListeners();
     }
 }

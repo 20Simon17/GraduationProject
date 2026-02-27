@@ -11,16 +11,16 @@ public class ControlsMenuAction : UserInterfaceActionStack.UserInterfaceAction
     
     public override bool IsDone()
     {
-        return true;
+        return base.IsDone();
     }
 
     public override void OnBegin(bool bFirstTime)
     {
-        
+        controlsMenu.OpenMenu();
     }
 
     public override void OnEnd()
     {
-        
+        controlsMenu.CloseMenu();
     }
 }

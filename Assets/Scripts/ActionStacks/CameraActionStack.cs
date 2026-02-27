@@ -27,8 +27,10 @@ public class CameraActionStack : ActionStack
     
     private void Start()
     {
+        // Lock the cursor
         Cursor.lockState = CursorLockMode.Locked;
         
+        // Get references
         cameraTransform = transform;
         playerTransform = FindFirstObjectByType<PlayerActionStack>().transform;
         
@@ -73,6 +75,7 @@ public class CameraActionStack : ActionStack
 
     private void FreeCamToggle(InputValue value)
     {
+        // On press, add the free cam action. On release, complete the action
         if (value.isPressed && CurrentAction.ToString() != "FreeMoveCameraAction")
         {
             PushAction(new FreeMoveCameraAction(playerTransform, cameraTransform));

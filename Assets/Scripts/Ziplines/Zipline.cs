@@ -16,9 +16,16 @@ public class Zipline : ProceduralMesh, IInteractable
     [SerializeField] private float ziplineSize = 0.05f;
     [SerializeField] private float colliderSize = 0.75f;
 
+    public bool isInUse;
+    public bool isUserMade;
+
     public void Interact(GameObject interactor)
     {
-        interactor.GetComponent<PlayerActionStack>()?.AddZiplineAction(this);
+        PlayerActionStack player = interactor.GetComponent<PlayerActionStack>();
+        if (!player || (player && player.dataRecord.isOnZipline)) return;
+        
+        player.AddZiplineAction(this);
+        isInUse = true;
     }
 
     public void ToggleLookAt(GameObject interactor, bool newToggle)
@@ -54,9 +61,6 @@ public class Zipline : ProceduralMesh, IInteractable
 
     protected override Mesh CreateMesh()
     {
-        Debug.LogError("Entered Creating Mesh");
-        if (startPoint == null) Debug.LogError("Start point is null");
-        if (endPoint == null) Debug.LogError("End point is null");
         if (startPoint is null || endPoint is null) return null;
         
         Mesh mesh = new Mesh();
@@ -143,20 +147,13 @@ public class Zipline : ProceduralMesh, IInteractable
         {
             if (!TryGetComponent(out meshCollider))
             {
-                Debug.LogError("Could not get component out, creating mesh collider");
                 meshCollider = gameObject.AddComponent<MeshCollider>();
                 meshCollider.convex = true;
                 meshCollider.isTrigger = true;
             }
         }
         
-        Debug.LogError(sP + " Start point");
-        Debug.LogError(eP + " End point");
-        Debug.LogError(meshSize + " Mesh size");
-        Debug.LogError(colSize + " Collider size");
-        
         meshCollider.sharedMesh = mesh;
-        
         return mesh;
     }
 

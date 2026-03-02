@@ -28,7 +28,7 @@ public class PlayerActionStack : ActionStack
     
     // The data for the player
     private PlayerData playerDataComponent;
-    private PlayerDataRecord dataRecord;
+    public PlayerDataRecord dataRecord;
     
     private Rigidbody rb;
     

@@ -36,6 +36,7 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
 
     public override void OnBegin(bool bFirstTime)
     {
+        dataRecord.isOnZipline = true;
         if (!bFirstTime) return;
         
         //TODO: Fix zipline bug where if you enter at the very edge it gets cancelled because the player is "not on the zipline" anymore
@@ -83,6 +84,9 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
         
         dataRecord.CanJump = false;
         Physics.gravity = gravityUponEntering;
+
+        attachedZipline.isInUse = false;
+        dataRecord.isOnZipline = false;
     }
 
     public override void OnUpdate(float deltaTime)

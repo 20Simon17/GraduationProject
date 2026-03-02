@@ -1,6 +1,7 @@
 using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class TimeTrial : MonoBehaviour, IHoldInteractable
 {
@@ -92,14 +93,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
             if (countDownTime <= 0.1)
             {
-                countDownActive = false;
-                countDownText.gameObject.SetActive(false);
-
-                timeTrialActive = true;
-                ToggleTimeTrialUI(true);
-                
-                FindAnyObjectByType<PlayerActionStack>().CompleteCurrentAction();
-                timeTrialData.numberOfAttempts++;
+                CompleteCountDown();
             }
         }
 
@@ -116,8 +110,33 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
         }
     }
 
-    public void StartTimeTrial()
+    private void CompleteCountDown()
     {
+        countDownActive = false;
+        countDownText.gameObject.SetActive(false);
+
+        timeTrialActive = true;
+        ToggleTimeTrialUI(true);
+                
+        FindAnyObjectByType<PlayerActionStack>().CompleteCurrentAction();
+        timeTrialData.numberOfAttempts++;
+    }
+
+    private void ResetValues()
+    {
+        countDownActive = false;
+        timeTrialActive = false;
+        timeElapsed = 0;
+    }
+    
+    public void StartTimeTrial(bool bindEvents = true)
+    {
+        if (bindEvents)
+        {
+            InputManager.Instance.OnRestartEvent += Restart;
+            InputManager.Instance.OnExitEvent += Exit;
+        }
+        
         TimeTrialManager.Instance.HideAllTimeTrials();
 
         Vector3 timeTrialDirection = endLocation - transform.position;
@@ -150,8 +169,14 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
         player.AddWaitingAction();
     }
 
-    public void EndTimeTrial(bool completed)
+    public void EndTimeTrial(bool completed, bool unbindEvents = true)
     {
+        if (unbindEvents)
+        {
+            InputManager.Instance.OnRestartEvent -= Restart;
+            InputManager.Instance.OnExitEvent -= Exit;
+        }
+        
         TimeTrialManager.Instance.ShowAllTimeTrials();
         
         ToggleTimeTrialUI(false);
@@ -175,7 +200,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
             timeTrialDisplay.LoadData(timeTrialData);
         }
         
-        timeElapsed = 0;
+        ResetValues();
     }
 
     private void ToggleTimeTrialUI(bool newActiveState)
@@ -200,4 +225,19 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
         meshRenderer.enabled = true;
         selfCollider.enabled = true;
     }
+
+    public void RestartTimeTrial()
+    {
+        EndTimeTrial(false, false);
+        StartTimeTrial(false);
+    }
+
+    public void ExitTimeTrial()
+    {
+        if (countDownActive) CompleteCountDown();
+        EndTimeTrial(false);
+    }
+    
+    private void Restart(InputValue value) => RestartTimeTrial();
+    private void Exit(InputValue value) => ExitTimeTrial();
 }

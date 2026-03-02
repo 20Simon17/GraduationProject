@@ -19,6 +19,7 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
 
     private bool closingMenu;
     private bool addButtonsOnBegin;
+    private bool isInOtherMenu;
 
     public override bool IsDone()
     {
@@ -27,6 +28,8 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
 
     public override void OnBegin(bool bFirstTime)
     {
+        isInOtherMenu = false;
+        
         if (bFirstTime)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -90,13 +93,23 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
 
     private void AddOptionsMenu()
     {
+        if (isInOtherMenu) return;
+        
         addButtonsOnBegin = true;
+        isInOtherMenu = true;
+        
         pauseMenu.HideButtons();
         stack.AddOptionsMenuAction();
     }
 
     private void AddControlsMenu()
     {
+        if (isInOtherMenu) return;
+        
+        addButtonsOnBegin = true;
+        isInOtherMenu = true;
+        
+        pauseMenu.HideButtons();
         stack.AddControlsMenuAction();
     }
 

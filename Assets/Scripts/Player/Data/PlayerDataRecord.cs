@@ -19,6 +19,8 @@ public record PlayerDataRecord
     
     public bool isOnSlope;
     public float slopeAngle;
+
+    public bool isOnZipline;
     
     [Space(5)]
     public bool hasJumped;

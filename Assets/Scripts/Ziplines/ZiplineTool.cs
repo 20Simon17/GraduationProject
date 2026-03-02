@@ -13,6 +13,8 @@ public class ZiplineTool : MonoBehaviour
     private Transform playerCamera;
     private PlayerActionStack player;
 
+    private GameObject userZiplinesObject;
+
     public int maxZiplines = 3;
     public int currentZiplines = 0;
     public List<Zipline> ziplines;
@@ -27,6 +29,8 @@ public class ZiplineTool : MonoBehaviour
     //private ZiplinePoint _placementPoint;
 
     public LayerMask layerMask;
+
+    public float minZiplineDistance = 2f;
     
     private bool gameIsQuitting;
     
@@ -43,6 +47,7 @@ public class ZiplineTool : MonoBehaviour
         LoadResources();
         playerCamera = FindFirstObjectByType<CameraActionStack>().transform;
         player = FindFirstObjectByType<PlayerActionStack>();
+        userZiplinesObject = GameObject.Find("UserZiplines");
         
         Application.quitting += QuitGame;
         InputManager.Instance.OnPrimaryActionEvent += PrimaryAction;
@@ -110,7 +115,7 @@ public class ZiplineTool : MonoBehaviour
         }
         
         // Select the point you're looking at to be moved
-        if (zipPoint is not null && !bIsPlacing) 
+        if (zipPoint is not null && !bIsPlacing && !zipPoint.Owner.isInUse) 
         { 
             bIsMoving = true;
             selectedPoint = zipPoint;
@@ -123,8 +128,10 @@ public class ZiplineTool : MonoBehaviour
         {
             ziplineObject = new GameObject { name = "Zipline" };
             zipline = ziplineObject.AddComponent<Zipline>();
+            ziplineObject.transform.parent = userZiplinesObject.transform;
             zipline.startPoint = null;
             zipline.endPoint = null;
+            zipline.isUserMade = true;
         }
         
         CreateZiplinePoint(hit.point, hit.normal, zipline);
@@ -134,9 +141,7 @@ public class ZiplineTool : MonoBehaviour
     private void SecondaryAction(InputValue value)
     {
         if (!value.isPressed) return;
-
-        ClearAllZiplines();
-        return;
+        
         RaycastHit? rayHit = GetLookAtHit();
 
         if (rayHit is null) return;
@@ -157,7 +162,11 @@ public class ZiplineTool : MonoBehaviour
 
     private void CancelPlacement()
     {
-        if (selectedPoint is null) return;
+        if (selectedPoint is null)
+        {
+            Debug.Log("No selected point found");
+            return;
+        }
         
         selectedPoint.ToggleGhostRendering(false);
         selectedPoint = null;
@@ -171,6 +180,11 @@ public class ZiplineTool : MonoBehaviour
     private void CheckPlacement()
     {
         if (zipline.endPoint is null || !ValidatePlacement()) return;
+        if (!ValidatePlacement())
+        {
+            CancelPlacement();
+            return;
+        }
         
         if (ziplines.Count == maxZiplines)
         {
@@ -190,6 +204,16 @@ public class ZiplineTool : MonoBehaviour
         //check if the zipline intersects any building anywhere
         //maybe check if there's "enough" room for the player on the zipline to not hit objects beneath it
         //display the error as a message on some ui element to allow the player to correct it without having to redo everything
+        
+        Vector3 pointA = zipline.startPoint.AttachLocation;
+        Vector3 pointB = zipline.endPoint.AttachLocation;
+        float ziplineLength = Vector3.Distance(pointA, pointB);
+
+        if (ziplineLength < minZiplineDistance)
+        {
+            Debug.Log("Zipline was too short");
+            //return false;
+        }
         return true;
     }
 

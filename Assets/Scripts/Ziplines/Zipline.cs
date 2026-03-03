@@ -22,7 +22,10 @@ public class Zipline : ProceduralMesh, IInteractable
     public void Interact(GameObject interactor)
     {
         PlayerActionStack player = interactor.GetComponent<PlayerActionStack>();
-        if (!player || (player && player.dataRecord.isOnZipline)) return;
+        
+        if (!player) return;
+        if (player.dataRecord.isOnZipline) return;
+        if (player.dataRecord.isInTimeTrial && isUserMade) return;
         
         player.AddZiplineAction(this);
         isInUse = true;
@@ -79,8 +82,8 @@ public class Zipline : ProceduralMesh, IInteractable
         Vector3 rightVector = -Vector3.Cross(direction, Vector3.up);
         Vector3 upVector = Vector3.Cross(direction, rightVector);
 
-        float meshSize = 0.05f;
-        float colSize = 0.75f;
+        float meshSize = ziplineSize;
+        float colSize = colliderSize;
         
         vertices.AddRange(new Vector3[]
         {

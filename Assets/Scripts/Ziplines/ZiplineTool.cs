@@ -265,8 +265,6 @@ public class ZiplineTool : MonoBehaviour
         else if (ownerZipline.endPoint is null)
         {
             ownerZipline.endPoint = zipPoint;
-            
-            Debug.LogError("Trying to update zipline mesh");
             ownerZipline.UpdateMesh();
         }
         

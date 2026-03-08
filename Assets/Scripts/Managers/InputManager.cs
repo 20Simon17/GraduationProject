@@ -52,6 +52,9 @@ public class InputManager : Singleton<InputManager>
     
     public delegate void OnExitDelegate(InputValue value);
     public OnExitDelegate OnExitEvent;
+    
+    public delegate void OnScrollDelegate(InputValue value);
+    public OnScrollDelegate OnScrollEvent;
     #endregion
     
     private void Start()
@@ -96,6 +99,7 @@ public class InputManager : Singleton<InputManager>
     private void OnCancel(InputValue value) => OnCancelEvent?.Invoke(value);
     private void OnRestart(InputValue value) => OnRestartEvent?.Invoke(value);
     private void OnExit(InputValue value) => OnExitEvent?.Invoke(value);
+    private void OnScroll(InputValue value) => OnScrollEvent?.Invoke(value);
 
     public void Pause()
     {

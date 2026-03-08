@@ -33,7 +33,7 @@ public class ZiplinePoint : MonoBehaviour
     
     public void ToggleGhostRendering(bool newGhost)
     {
-        Owner.ToggleGhostRendering(newGhost);
+        //Owner.ToggleGhostRendering(newGhost);
         
         foreach (var aMeshRenderer in meshRenderers)
         {

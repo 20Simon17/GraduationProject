@@ -51,8 +51,6 @@ public class Zipline : ProceduralMesh, IInteractable
     
     private new void Start()
     {
-        base.Start();
-        
         gameObject.layer = LayerMask.NameToLayer("Zipline");
         
         // Set default material
@@ -173,6 +171,15 @@ public class Zipline : ProceduralMesh, IInteractable
     }
 
     public void ToggleGhostRendering(bool newGhost)
+    {
+        if (meshCollider) meshCollider.enabled = !newGhost;
+        meshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;
+        
+        startPoint?.ToggleGhostRendering(newGhost);
+        endPoint?.ToggleGhostRendering(newGhost);
+    }
+
+    public void ToggleGhostRenderingExclusive(bool newGhost)
     {
         if (meshCollider) meshCollider.enabled = !newGhost;
         meshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;

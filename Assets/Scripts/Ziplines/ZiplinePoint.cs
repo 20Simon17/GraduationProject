@@ -6,6 +6,9 @@ public class ZiplinePoint : MonoBehaviour
 
     private MeshRenderer[] meshRenderers;
     private Collider[] colliders;
+    [SerializeField] private GameObject[] attachmentPoints;
+
+    public Vector3 attachDirection;
     
     public EPointTypes pointType;
     
@@ -33,8 +36,6 @@ public class ZiplinePoint : MonoBehaviour
     
     public void ToggleGhostRendering(bool newGhost)
     {
-        //Owner.ToggleGhostRendering(newGhost);
-        
         foreach (var aMeshRenderer in meshRenderers)
         {
             aMeshRenderer.material = newGhost ? ghostMaterial : defaultMaterial;
@@ -44,5 +45,18 @@ public class ZiplinePoint : MonoBehaviour
         {
             aCollider.enabled = !newGhost;
         }
+    }
+
+    public bool ValidateAttachment()
+    {
+        foreach (GameObject attachmentPoint in attachmentPoints)
+        {
+            Ray ray = new Ray(attachmentPoint.transform.position, attachmentPoint.transform.forward);
+            if (!Physics.Raycast(ray, 1f))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

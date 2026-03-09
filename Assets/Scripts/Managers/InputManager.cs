@@ -55,6 +55,12 @@ public class InputManager : Singleton<InputManager>
     
     public delegate void OnScrollDelegate(InputValue value);
     public OnScrollDelegate OnScrollEvent;
+
+    public delegate void OnLockDelegate(InputValue value);
+    public OnLockDelegate OnLockEvent;
+    
+    public delegate void OnAltMoveDelegate(InputValue value);
+    public OnAltMoveDelegate OnAltMoveEvent;
     #endregion
     
     private void Start()
@@ -100,6 +106,8 @@ public class InputManager : Singleton<InputManager>
     private void OnRestart(InputValue value) => OnRestartEvent?.Invoke(value);
     private void OnExit(InputValue value) => OnExitEvent?.Invoke(value);
     private void OnScroll(InputValue value) => OnScrollEvent?.Invoke(value);
+    private void OnLock(InputValue value) => OnLockEvent?.Invoke(value);
+    private void OnAltMove(InputValue value) => OnAltMoveEvent?.Invoke(value);
 
     public void Pause()
     {

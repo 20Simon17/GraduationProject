@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering.VirtualTexturing;
 
 public class ZiplineToolRefactor : MonoBehaviour
 {
@@ -22,8 +22,8 @@ public class ZiplineToolRefactor : MonoBehaviour
     public List<Zipline> ziplines;
     
     public bool bShowGhost = true;
-    private bool bIsPlacing;
-    private bool bIsMoving;
+    [SerializeField] private bool bIsPlacing;
+    [SerializeField] private bool bIsMoving;
     
     private ZiplinePoint selectedPoint;
     private Zipline zipline;
@@ -41,6 +41,9 @@ public class ZiplineToolRefactor : MonoBehaviour
     private bool gameIsQuitting;
 
     private bool placingFirstPoint;
+
+    private bool lockedSelection;
+    public float nudgeDistance = 0.25f;
     
     private void LoadResources()
     {
@@ -61,6 +64,8 @@ public class ZiplineToolRefactor : MonoBehaviour
         InputManager.Instance.OnPrimaryActionEvent += PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent += SecondaryAction;
         InputManager.Instance.OnScrollEvent += HandleRotation;
+        InputManager.Instance.OnLockEvent += LockPlacement;
+        InputManager.Instance.OnAltMoveEvent += MovePlacement;
     }
 
     private void OnDisable()
@@ -71,12 +76,15 @@ public class ZiplineToolRefactor : MonoBehaviour
         InputManager.Instance.OnPrimaryActionEvent -= PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent -= SecondaryAction;
         InputManager.Instance.OnScrollEvent -= HandleRotation;
+        InputManager.Instance.OnLockEvent -= LockPlacement;
+        InputManager.Instance.OnAltMoveEvent -= MovePlacement;
     }
     
     private void QuitGame() => gameIsQuitting = true;
     
     private void FixedUpdate()
     {
+        if (lockedSelection) return;
         RaycastHit? rayHit = GetLookAtHit(false);
 
         if (rayHit is null) return;
@@ -101,6 +109,12 @@ public class ZiplineToolRefactor : MonoBehaviour
 
     private void HandlePrimaryAction()
     {
+        if (lockedSelection)
+        {
+            HandlePlacement(selectedPoint.AttachLocation, Vector3.zero, zipline);
+            return;
+        }
+        
         RaycastHit? checkHit = GetLookAtHit(!bIsMoving || bIsPlacing);
         if (!checkHit.HasValue) return;
             
@@ -117,6 +131,7 @@ public class ZiplineToolRefactor : MonoBehaviour
         {
             if (ziplinePoint.Owner.isUserMade && !ziplinePoint.Owner.isInUse)
             {
+                zipline = ziplinePoint.Owner;
                 HandleMovement(false, ziplinePoint);
             }
             return;
@@ -176,6 +191,8 @@ public class ZiplineToolRefactor : MonoBehaviour
                 
             selectedPoint = null;
             bIsPlacing = false;
+            lockedSelection = false;
+            zipline = null;
         }
     }
 
@@ -188,10 +205,13 @@ public class ZiplineToolRefactor : MonoBehaviour
             selectedPoint = movedPoint;
         }
 
-        selectedPoint.ToggleGhostRendering(!finishedMovement);
+        zipline.ToggleGhostRendering(!finishedMovement);
+        
         if (finishedMovement)
         {
             selectedPoint = null;
+            lockedSelection = false;
+            zipline = null;
         }
         else
         {
@@ -204,10 +224,16 @@ public class ZiplineToolRefactor : MonoBehaviour
     {
         if (!selectedPoint || selectedPoint.pointType == ZiplinePoint.EPointTypes.Wall) return;
 
-
-        //int inputFactor = value.Get<float>() > 0 ? 1 : -1;
-        int inputFactor = (int) value.Get<float>();
+        int inputFactor = (int)value.Get<float>();
+        if (inputFactor == 0) return;
+        
+        Vector3 savedRotation = selectedPoint.transform.eulerAngles;
         selectedPoint.transform.eulerAngles += new Vector3(0, rotationStepDegrees * inputFactor, 0);
+        
+        if (!selectedPoint.ValidateAttachment())
+        {
+            selectedPoint.transform.eulerAngles = savedRotation;
+        }
     }
 
     private Zipline CreateZipline()
@@ -221,7 +247,6 @@ public class ZiplineToolRefactor : MonoBehaviour
         ziplineComponent.isUserMade = true;
         
         ziplineComponent.ToggleGhostRendering(true);
-        
         return ziplineComponent;
     }
 
@@ -256,6 +281,7 @@ public class ZiplineToolRefactor : MonoBehaviour
         }
         
         selectedPoint = null;
+        lockedSelection = false;
     }
 
     private ZiplinePoint CreateZiplinePoint(Vector3 inPosition, Vector3 inNormal, Zipline owner)
@@ -341,6 +367,66 @@ public class ZiplineToolRefactor : MonoBehaviour
         Destroy(inZiplinePoint);
         
         return newZiplinePoint;
+    }
+
+    private void LockPlacement(InputValue value)
+    {
+        if (!bIsPlacing && !bIsMoving) return;
+        lockedSelection = !lockedSelection;
+    }
+
+    private void MovePlacement(InputValue value)
+    {
+        if ((!bIsPlacing && !bIsMoving) || !lockedSelection || !selectedPoint) return;
+        
+        Vector2 inputVector = value.Get<Vector2>();
+        if (inputVector == Vector2.zero) return;
+        
+        Vector3 savedPosition = selectedPoint.transform.position;
+        
+        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right, Vector3.up, Vector3.down };
+        
+        float bestForwardDot = 0f;
+        float bestRightDot = 0f;
+        Vector3 closestForward = Vector3.zero;
+        Vector3 closestRight = Vector3.zero;
+
+        // this might be expensive?
+        foreach (Vector3 direction in directions)
+        {
+            float forwardDot = Vector3.Dot(player.transform.forward, direction);
+            if (forwardDot > bestForwardDot)
+            {
+                bestForwardDot = forwardDot;
+                closestForward = direction;
+            }
+            
+            float rightDot = Vector3.Dot(player.transform.right, direction);
+            if (rightDot > bestRightDot)
+            {
+                bestRightDot = rightDot;
+                closestRight = direction;
+            }
+        }
+        
+        if (inputVector.x != 0)
+        {
+            // denormalize the input value to keep the point aligned no matter how you move it
+            // otherwise moving on 2 axis at once would not lead to the same position as both axis separately
+            int inputModifier = inputVector.x > 0 ? 1 : -1;
+            selectedPoint.transform.position += closestRight * inputModifier * nudgeDistance;
+        }
+        if (inputVector.y != 0)
+        {
+            // - || -
+            int inputModifier = inputVector.y > 0 ? 1 : -1;
+            selectedPoint.transform.position += closestForward * inputModifier * nudgeDistance;
+        }
+
+        if (!selectedPoint.ValidateAttachment())
+        {
+            selectedPoint.transform.position = savedPosition;
+        }
     }
 
     private void PrimaryAction(InputValue value)

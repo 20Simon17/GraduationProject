@@ -1354,6 +1354,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 591712092}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 0
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -2565,6 +2567,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 670537827}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 0
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -4161,6 +4165,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 1588815320}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 0
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -6025,6 +6031,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 100484021}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 1
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -9947,6 +9955,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 587197324}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 0
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -11011,6 +11021,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 1995072254}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 0
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -11086,6 +11098,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 530735348}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 1
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -15350,7 +15364,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1381479459
 Transform:
   m_ObjectHideFlags: 0
@@ -15383,6 +15397,8 @@ MonoBehaviour:
   currentZiplines: 0
   ziplines: []
   bShowGhost: 1
+  bIsPlacing: 0
+  bIsMoving: 0
   layerMaskIncludeZiplines:
     serializedVersion: 2
     m_Bits: 65
@@ -15391,6 +15407,7 @@ MonoBehaviour:
     m_Bits: 1
   rotationStepDegrees: 10
   minZiplineDistance: 2
+  nudgeDistance: 0.25
 --- !u!1 &1393784969
 GameObject:
   m_ObjectHideFlags: 0
@@ -16241,6 +16258,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 1601434262}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 0
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -18010,6 +18029,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601983674}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1606751703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1606751704}
+  - component: {fileID: 1606751705}
+  m_Layer: 7
+  m_Name: Grappler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1606751704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606751703}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3709995593333351700}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1606751705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606751703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2305d723d41d7ec43b114d53a858b58b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GrappleGunRefactor
+  isSwinging: 0
+  isPulling: 0
+  grappleLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  pullForce: 20
+  pullDetachDistance: 2
+  attachPoint: {x: 0, y: 0, z: 0}
+  grappleRange: 75
+  grappleCooldown: 0.5
+  maxSwingGrapples: 3
+  maxPullGrapples: 1
+  minSwingVelocity: 1
+  maxSwingVelocity: 1000
+  swingForceDivision: 2
+  forwardVelocityAddition: 5
 --- !u!1 &1615475171
 GameObject:
   m_ObjectHideFlags: 0
@@ -21936,6 +22015,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 115268037}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 0
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -23407,6 +23488,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZiplinePolePoint
   attachObject: {fileID: 365056003}
+  attachmentPoints: []
+  attachDirection: {x: 0, y: 0, z: 0}
   pointType: 0
   ghostMaterial: {fileID: 2100000, guid: 2f322a6cd0a296640937aaa580cff33b, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 72cd188593cd7f048bece9fc357aed9b, type: 2}
@@ -26697,6 +26780,7 @@ Transform:
   - {fileID: 6996305959513681431}
   - {fileID: 7687850339803141709}
   - {fileID: 1381479459}
+  - {fileID: 1606751704}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3842532007331278964

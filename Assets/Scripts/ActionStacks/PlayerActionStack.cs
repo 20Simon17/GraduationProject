@@ -25,6 +25,9 @@ public class PlayerActionStack : ActionStack
         protected PlayerDataStruct data;
         protected readonly Transform transform;
     }
+
+    public delegate void OnGroundedDelegate();
+    public OnGroundedDelegate OnGroundedEvent;
     
     // The data for the player
     private PlayerData playerDataComponent;
@@ -109,8 +112,12 @@ public class PlayerActionStack : ActionStack
 
         if (hit.collider && hit.transform.CompareTag("Ground") && currentAction is not ZiplineAction)
         {
-            dataRecord.isGrounded = true;
-
+            if (!dataRecord.isGrounded)
+            {
+                OnGroundedEvent?.Invoke();
+                dataRecord.isGrounded = true;
+            }
+            
             if (hit.normal != Vector3.up && !dataRecord.isOnSlope)
             {
                 dataRecord.isOnSlope = true;
@@ -186,11 +193,11 @@ public class PlayerActionStack : ActionStack
     private bool CanWallRun()
     {
         return false;
-        Ray rRay = new Ray(transform.position, transform.right);
+        /*Ray rRay = new Ray(transform.position, transform.right);
         Ray lRay = new Ray(transform.position, -transform.right);
             
         return Physics.Raycast(rRay, out RaycastHit rHit, dataRecord.dataStruct.wallRunCheckDistance) && rHit.transform.CompareTag("Ground") ||
-               Physics.Raycast(lRay, out RaycastHit lHit, dataRecord.dataStruct.wallRunCheckDistance) && lHit.transform.CompareTag("Ground");
+               Physics.Raycast(lRay, out RaycastHit lHit, dataRecord.dataStruct.wallRunCheckDistance) && lHit.transform.CompareTag("Ground");*/
     }
 
     private void AddJumpAction(InputValue value)

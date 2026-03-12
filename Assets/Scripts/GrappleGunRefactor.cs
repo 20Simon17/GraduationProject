@@ -14,6 +14,7 @@ public class GrappleGunRefactor : MonoBehaviour
     private Transform predictionPoint;
     
     private bool gameIsQuitting;
+    private bool gameIsPaused;
 
     private bool IsActive => isSwinging || isPulling;
     [SerializeField] private bool isSwinging;
@@ -56,6 +57,9 @@ public class GrappleGunRefactor : MonoBehaviour
         player.OnGroundedEvent += RefreshGrapples;
         InputManager.Instance.OnPrimaryActionEvent += PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent += SecondaryAction;
+
+        GameManager.Instance.OnGamePausedEvent += Pause;
+        GameManager.Instance.OnGameResumedEvent += Resume;
     }
 
     private void OnDisable()
@@ -66,9 +70,14 @@ public class GrappleGunRefactor : MonoBehaviour
         player.OnGroundedEvent -= RefreshGrapples;
         InputManager.Instance.OnPrimaryActionEvent -= PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent -= SecondaryAction;
+        
+        GameManager.Instance.OnGamePausedEvent -= Pause;
+        GameManager.Instance.OnGameResumedEvent -= Resume;
     }
     
     private void QuitGame() => gameIsQuitting = true;
+    private void Pause() => gameIsPaused = true;
+    private void Resume() => gameIsPaused = false;
 
     private void RefreshGrapples()
     {
@@ -85,6 +94,8 @@ public class GrappleGunRefactor : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (gameIsPaused) return;
+        
         if (isPulling)
         {
             Vector3 direction = (attachPoint - player.transform.position).normalized;
@@ -163,9 +174,6 @@ public class GrappleGunRefactor : MonoBehaviour
     {
         if (isStart && !IsActive && pullGrapples < maxPullGrapples)
         {
-            isPulling = true;
-            pullGrapples++;
-            
             RaycastHit? checkHit = GetLookAtHit();
             if (!checkHit.HasValue) return;
             

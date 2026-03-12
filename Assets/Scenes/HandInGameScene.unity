@@ -18085,8 +18085,8 @@ MonoBehaviour:
   grappleCooldown: 0.5
   maxSwingGrapples: 3
   maxPullGrapples: 1
-  minSwingVelocity: 1
-  maxSwingVelocity: 1000
+  minSwingVelocity: 20
+  maxSwingVelocity: 100
   swingForceDivision: 2
   forwardVelocityAddition: 5
 --- !u!1 &1615475171

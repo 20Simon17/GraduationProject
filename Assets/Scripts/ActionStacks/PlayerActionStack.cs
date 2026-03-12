@@ -41,6 +41,8 @@ public class PlayerActionStack : ActionStack
     private Vector3 gravityOnPause;
 
     private bool gameIsQuitting;
+
+    private bool slideBufferActive;
     
     private void Start()
     {
@@ -116,6 +118,12 @@ public class PlayerActionStack : ActionStack
             {
                 OnGroundedEvent?.Invoke();
                 dataRecord.isGrounded = true;
+
+                if (slideBufferActive)
+                {
+                    slideBufferActive = false;
+                    AddSlideAction();
+                }
             }
             
             if (hit.normal != Vector3.up && !dataRecord.isOnSlope)
@@ -237,14 +245,28 @@ public class PlayerActionStack : ActionStack
     private void AddSlideAction(InputValue value)
     {
         if (currentAction is WaitAction) return;
-        if (value.isPressed && currentAction is not SlideAction)
+
+        if (!dataRecord.isGrounded)
         {
-            PushAction(new SlideAction(rb, transform, dataRecord));
+            slideBufferActive = value.isPressed;
+            return;
         }
-        else if (!value.isPressed && currentAction is SlideAction)
+        else
         {
-            currentAction.CompleteAction();
+            if (value.isPressed && currentAction is not SlideAction)
+            {
+                AddSlideAction();
+            }
+            else if (!value.isPressed && currentAction is SlideAction)
+            {
+                currentAction.CompleteAction();
+            }
         }
+    }
+
+    private void AddSlideAction()
+    {
+        PushAction(new SlideAction(rb, transform, dataRecord));
     }
     
     private void AddSlamAction(InputValue value)

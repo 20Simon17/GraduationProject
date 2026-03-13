@@ -43,6 +43,7 @@ public class PlayerActionStack : ActionStack
     private bool gameIsQuitting;
 
     private bool slideBufferActive;
+    private bool jumpBufferActive;
     
     private void Start()
     {
@@ -124,6 +125,11 @@ public class PlayerActionStack : ActionStack
                     slideBufferActive = false;
                     AddSlideAction();
                 }
+                else if (jumpBufferActive)
+                {
+                    jumpBufferActive = false;
+                    ForceAddJumpAction();
+                }
             }
             
             if (hit.normal != Vector3.up && !dataRecord.isOnSlope)
@@ -183,19 +189,24 @@ public class PlayerActionStack : ActionStack
             return;
         }
         
+        if (!dataRecord.isGrounded && value.isPressed)
+        {
+            jumpBufferActive = true;
+            
+            if (slideBufferActive) slideBufferActive = false;
+        }
+        else if (jumpBufferActive && !value.isPressed)
+        {
+            jumpBufferActive = false;
+            return;
+        }
+        
         // Touching ground is true when touching walls as well
         if (dataRecord.CanJump)
         {
             AddJumpAction(value);
         }
-        else
-        {
-            if (CanWallRun()) AddWallRunAction(value);
-            else
-            {
-                // buffer jump input? if isPressed is true
-            }
-        }
+        else if (CanWallRun()) AddWallRunAction(value);
     }
 
     private bool CanWallRun()
@@ -246,10 +257,15 @@ public class PlayerActionStack : ActionStack
     {
         if (currentAction is WaitAction) return;
 
-        if (!dataRecord.isGrounded)
+        if (!dataRecord.isGrounded && value.isPressed)
         {
-            slideBufferActive = value.isPressed;
-            return;
+            slideBufferActive = true;
+            
+            if (jumpBufferActive) jumpBufferActive = false;
+        }
+        else if (slideBufferActive && !value.isPressed)
+        {
+            slideBufferActive = false;
         }
         else
         {

@@ -123,5 +123,8 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
         return resultingVelocity;
     }
 
-    private void DropFromZipline(InputValue value) => CompleteAction();
+    private void DropFromZipline(InputValue value)
+    {
+        if (value.isPressed) CompleteAction();
+    }
 }

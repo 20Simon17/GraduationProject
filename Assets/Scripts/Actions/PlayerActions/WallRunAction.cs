@@ -8,6 +8,14 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     private Vector3 moveDirection;
     private Vector3 directionToWall;
     
+    //TODO: If the player is wallrunning and reaches a corner, then check if the player is looking
+    // towards the wall's normal (roughly opposite of the normal), then continue the wallrunning on the other side of the wall
+    
+    //TODO: Limit the wallrun to a certain speed, if the player is above that speed and tries to wallrun
+    // just do a walljump instead (slight momentum boost?)
+    
+    //TODO: Use boxcast instead of raycast to check for wallrunning possibilities, should be much more accurate
+    
     public override bool IsDone()
     {
         Ray wallRay = new Ray(transform.position, directionToWall);

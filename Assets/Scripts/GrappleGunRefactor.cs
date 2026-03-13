@@ -145,7 +145,7 @@ public class GrappleGunRefactor : MonoBehaviour
     private void HandleSwingGrapple(bool isStart)
     {
         if (isStart && !IsActive && swingGrapples < maxSwingGrapples &&
-            playerRb.linearVelocity.y < 0 && !player.dataRecord.isGrounded)
+            playerRb.linearVelocity.y < 0 && !player.dataRecord.isGrounded && !player.dataRecord.isInTimeTrial)
         {
             RaycastHit? checkHit = GetLookAtHit();
             if (!checkHit.HasValue) return;
@@ -160,19 +160,17 @@ public class GrappleGunRefactor : MonoBehaviour
                 
                 player.AddWaitingAction();
             }
-            return;
         }
-        else
+        else if (isSwinging)
         {
             isSwinging = false;
             player.CompleteCurrentAction();
         }
-        // continuously add force towards the point in some way to make it feel like a swing?
     }
 
     private void HandlePullGrapple(bool isStart)
     {
-        if (isStart && !IsActive && pullGrapples < maxPullGrapples)
+        if (isStart && !IsActive && pullGrapples < maxPullGrapples  && !player.dataRecord.isInTimeTrial)
         {
             RaycastHit? checkHit = GetLookAtHit();
             if (!checkHit.HasValue) return;
@@ -187,9 +185,8 @@ public class GrappleGunRefactor : MonoBehaviour
                 
                 player.AddWaitingAction();
             }
-            return;
         }
-        else
+        else if (isPulling)
         {
             isPulling = false;
             player.CompleteCurrentAction();

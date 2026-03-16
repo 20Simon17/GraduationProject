@@ -1,6 +1,8 @@
 using System.Linq;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent(typeof(PlayerData))]
 public class PlayerActionStack : ActionStack
@@ -136,11 +138,13 @@ public class PlayerActionStack : ActionStack
             {
                 dataRecord.isOnSlope = true;
                 dataRecord.slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+                dataRecord.slopeNormal = hit.normal;
             }
             else
             {
                 dataRecord.isOnSlope = false;
                 dataRecord.slopeAngle = 0;
+                dataRecord.slopeNormal = Vector3.zero;
             }
             
             if (dataRecord.hasJumped && dataRecord.timeAtLastJump != 0 && Time.time - dataRecord.timeAtLastJump > 0.1f)
@@ -160,22 +164,6 @@ public class PlayerActionStack : ActionStack
             dataRecord.isGrounded = false;
             dataRecord.coyoteTime = 0;
             dataRecord.isCoyoteTimeActive = true;
-        }
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Ground"))
-        {
-            dataRecord.isTouchingGround = true;
-        }
-    }
-
-    private void OnCollisionExit(Collision other)
-    {
-        if (other.gameObject.CompareTag("Ground"))
-        {
-            dataRecord.isTouchingGround = false;
         }
     }
 

@@ -15,10 +15,12 @@ public record PlayerDataRecord
     
     [Space(5)]
     public bool isGrounded;
-    public bool isTouchingGround;
     
     public bool isOnSlope;
     public float slopeAngle;
+    public Vector3 slopeNormal;
+    
+    public Vector3 GetSlopeMoveDirection(Vector3 inMoveDirection) => Vector3.ProjectOnPlane(inMoveDirection, slopeNormal).normalized;
 
     public bool isOnZipline;
     

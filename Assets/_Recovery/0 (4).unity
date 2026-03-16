@@ -15364,7 +15364,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1381479459
 Transform:
   m_ObjectHideFlags: 0
@@ -26690,9 +26690,9 @@ MonoBehaviour:
     isCoyoteTimeActive: 0
     coyoteTime: 0
     isGrounded: 0
+    isTouchingGround: 0
     isOnSlope: 0
     slopeAngle: 0
-    slopeNormal: {x: 0, y: 0, z: 0}
     isOnZipline: 0
     hasJumped: 0
     isSliding: 0
@@ -27230,9 +27230,9 @@ MonoBehaviour:
     isCoyoteTimeActive: 0
     coyoteTime: 0
     isGrounded: 0
+    isTouchingGround: 0
     isOnSlope: 0
     slopeAngle: 0
-    slopeNormal: {x: 0, y: 0, z: 0}
     isOnZipline: 0
     hasJumped: 0
     isSliding: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -25,8 +26,8 @@ public class ZiplineToolRefactor : MonoBehaviour
     [SerializeField] private bool bIsPlacing;
     [SerializeField] private bool bIsMoving;
     
-    private ZiplinePoint selectedPoint;
-    private Zipline zipline;
+    [SerializeField] private ZiplinePoint selectedPoint;
+    [SerializeField] private Zipline zipline;
     
     private Vector3 savedSelectedPosition;
     private Quaternion savedSelectedRotation;
@@ -93,9 +94,13 @@ public class ZiplineToolRefactor : MonoBehaviour
         if (bShowGhost && selectedPoint)
         {
             selectedPoint = ReplaceZiplinePoint(selectedPoint, hit.normal);
+            selectedPoint.transform.position = GetClosestGridPoint(hit.point);
             
-            selectedPoint.transform.position = hit.point;
-            //selectedPoint.transform.forward = GetSuitableRotation(player.transform.forward);
+            if (selectedPoint.ValidateAttachment())
+            {
+                savedSelectedPosition = selectedPoint.transform.position;
+            }
+            else selectedPoint.transform.position = savedSelectedPosition;
         }
     }
     
@@ -129,7 +134,8 @@ public class ZiplineToolRefactor : MonoBehaviour
         //otherwise, if we looked at a zipline point, select it and move it
         if (!bIsPlacing && hit.transform.parent.TryGetComponent(out ZiplinePoint ziplinePoint))
         {
-            if (ziplinePoint.Owner.isUserMade && !ziplinePoint.Owner.isInUse)
+            if (ziplinePoint.Owner && ziplinePoint.Owner.isUserMade && 
+                !ziplinePoint.Owner.isInUse)
             {
                 zipline = ziplinePoint.Owner;
                 HandleMovement(false, ziplinePoint);
@@ -175,11 +181,11 @@ public class ZiplineToolRefactor : MonoBehaviour
 
         if (owner.startPoint is null)
         {
-            owner.startPoint = ziplinePoint;
-                
             selectedPoint = CreateZiplinePoint(position, normal, owner);
+            
+            owner.startPoint = ziplinePoint;
             owner.endPoint = selectedPoint;
-                
+            
             owner.ToggleGhostRendering(true);
         }
         else
@@ -193,6 +199,7 @@ public class ZiplineToolRefactor : MonoBehaviour
             bIsPlacing = false;
             lockedSelection = false;
             zipline = null;
+            savedSelectedPosition = Vector3.zero;
         }
     }
 
@@ -212,6 +219,7 @@ public class ZiplineToolRefactor : MonoBehaviour
             selectedPoint = null;
             lockedSelection = false;
             zipline = null;
+            savedSelectedPosition = Vector3.zero;
         }
         else
         {
@@ -295,18 +303,31 @@ public class ZiplineToolRefactor : MonoBehaviour
             go = Instantiate(ceilingPrefab, owner.transform);
             go.transform.up = -inNormal;
             pointType = ZiplinePoint.EPointTypes.Ceiling;
+
+            go.transform.forward = player.transform.forward;
+            go.transform.eulerAngles = new Vector3(
+                go.transform.eulerAngles.x,
+                GetClosestSnapRotation(go.transform.eulerAngles.y),
+                go.transform.eulerAngles.z);
         }
         else if (inNormal == Vector3.forward || inNormal == Vector3.back ||
                  inNormal == Vector3.right   || inNormal == Vector3.left)
         {
             go = Instantiate(wallPrefab, owner.transform);
             pointType = ZiplinePoint.EPointTypes.Wall;
+            go.transform.forward = -inNormal;
         }
         else
         {
             go = Instantiate(polePrefab, owner.transform);
             go.transform.up = inNormal;
             pointType = ZiplinePoint.EPointTypes.Pole;
+
+            go.transform.forward = player.transform.forward;
+            go.transform.eulerAngles = new Vector3(
+                go.transform.eulerAngles.x,
+                GetClosestSnapRotation(go.transform.eulerAngles.y),
+                go.transform.eulerAngles.z);
         }
         
         go.transform.position = inPosition;
@@ -345,6 +366,7 @@ public class ZiplineToolRefactor : MonoBehaviour
         {
             newZiplinePoint = Instantiate(wallPrefab).GetComponent<ZiplinePoint>();
             newZiplinePoint.pointType = ZiplinePoint.EPointTypes.Wall;
+            newZiplinePoint.transform.forward = -inNormal;
         }
         else if (inNormal == Vector3.down)
         {
@@ -422,11 +444,39 @@ public class ZiplineToolRefactor : MonoBehaviour
             int inputModifier = inputVector.y > 0 ? 1 : -1;
             selectedPoint.transform.position += closestForward * inputModifier * nudgeDistance;
         }
+        
+        selectedPoint.transform.position = GetClosestGridPoint(selectedPoint.transform.position);
 
         if (!selectedPoint.ValidateAttachment())
         {
             selectedPoint.transform.position = savedPosition;
         }
+    }
+
+    private Vector3 GetClosestGridPoint(Vector3 inPosition)
+    {
+        SnapPositionToGrid(ref inPosition.x, inPosition.x % nudgeDistance);
+        SnapPositionToGrid(ref inPosition.y, inPosition.y % nudgeDistance);
+        SnapPositionToGrid(ref inPosition.z, inPosition.z % nudgeDistance);
+        return inPosition;
+        
+        void SnapPositionToGrid(ref float inPos, float inRest)
+        {
+            int polarity = inPos > 0 ? 1 : -1;
+            switch (inRest)
+            {
+                case 0: break;
+                case > 0: inPos -= inRest * polarity; break;
+                default: inPos += inRest * polarity; break;
+            }
+        }
+    }
+
+    private float GetClosestSnapRotation(float inAngle)
+    {
+        float rest = inAngle % rotationStepDegrees;
+        inAngle += rest > 0 ? -rest : rest;
+        return inAngle;
     }
 
     private void PrimaryAction(InputValue value)

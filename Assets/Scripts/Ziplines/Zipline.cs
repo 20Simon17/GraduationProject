@@ -158,7 +158,7 @@ public class Zipline : ProceduralMesh, IInteractable
         return mesh;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         #if UNITY_EDITOR
         if (endPoint is null || startPoint is null) return;

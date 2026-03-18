@@ -19,9 +19,19 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
     public override void OnUpdate(float deltaTime)
     {
         UpdateMovement(deltaTime);
+        
+        //TODO: if current speed is X more than "max speed", slowly remove speed back to the default
+    }
+
+    private void UpdateMovement(float fixedDeltaTime)
+    {
+        moveDirection = InputManager.Instance.moveDirection.normalized * data.maxRunVelocity;
+        Vector3 newVelocity = new Vector3(moveDirection.x, rb.linearVelocity.y, moveDirection.y);
+
+        rb.linearVelocity = transform.rotation * newVelocity;
     }
     
-    private void UpdateMovement(float fixedDeltaTime)
+    /*private void UpdateMovement(float fixedDeltaTime)
     {
         horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
         moveDirection = InputManager.Instance.moveDirection;
@@ -111,7 +121,12 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
         Vector3 vForwardVelocity = forwardVelocity * transform.forward;
         Vector3 vStrafeVelocity = strafeVelocity * transform.right;
         Vector3 vNewHorizontalVelocity = vForwardVelocity + vStrafeVelocity;
-
+        
+        if (dataRecord.isOnSlope)
+        {
+            vNewHorizontalVelocity = Vector3.ProjectOnPlane(vNewHorizontalVelocity, dataRecord.slopeNormal);
+        }
+        
         if (moveDirection != Vector2.zero)
         {
             // Set the velocity towards our characters forward
@@ -123,8 +138,8 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
             Vector3 newVelocity = rb.linearVelocity.normalized * vNewHorizontalVelocity.magnitude;
             rb.linearVelocity = new Vector3(newVelocity.x, rb.linearVelocity.y, newVelocity.z);
         }
-
+        
         dataRecord.dataStruct.forwardVelocity = forwardVelocity;
         dataRecord.dataStruct.strafeVelocity = strafeVelocity;
-    }
+    }*/
 }

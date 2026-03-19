@@ -9,8 +9,6 @@ public class SlideAction : PlayerActionStack.PlayerAction
     private float slideTime;
     private bool exitedEarly;
     private bool isAboveSlope;
-    private Vector3 defaultGravity = Physics.gravity;
-    private float slopeGravityMultiplier = 2;
     private bool wasOnSlope = false;
     
     public override bool IsDone()
@@ -20,7 +18,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
             Debug.Log("Weren't grounded");
             return true;
         }
-        if (rb.linearVelocity.magnitude <= 0)
+        if (rb.linearVelocity.magnitude <= 2)
         {
             Debug.Log("Too slow");
             return true;
@@ -52,15 +50,25 @@ public class SlideAction : PlayerActionStack.PlayerAction
         dataRecord.timeAtLastSlide = Time.time;
 
         Vector2 moveInput = InputManager.Instance.moveDirection;
-        Vector3 slideDirection = transform.rotation * new Vector3(moveInput.x, 0, moveInput.y); //replaced transform.forward with this for directional slide
+        Vector3 slideDirection = transform.rotation * new Vector3(moveInput.x, 0, moveInput.y);
         
-        if (rb.linearVelocity.magnitude < data.maxRunVelocity)
+        if (rb.linearVelocity.magnitude <= data.maxRunVelocity)
         {
-            rb.linearVelocity =  slideDirection * data.slideSpeed;
+            rb.linearVelocity = slideDirection * data.slideSpeed;
+            
+            if (dataRecord.isOnSlope)
+            {
+                rb.linearVelocity = dataRecord.GetSlopeMoveDirection(rb.linearVelocity) * rb.linearVelocity.magnitude;
+            }
         }
         else
         {
             rb.linearVelocity = slideDirection * (rb.linearVelocity.magnitude * data.slideSpeedBoost);
+            
+            if (dataRecord.isOnSlope)
+            {
+                rb.linearVelocity = dataRecord.GetSlopeMoveDirection(rb.linearVelocity) * rb.linearVelocity.magnitude;
+            }
         }
     }
 
@@ -83,7 +91,10 @@ public class SlideAction : PlayerActionStack.PlayerAction
         
         if (dataRecord.isOnSlope)
         {
-            if (!wasOnSlope) wasOnSlope = true;
+            if (!wasOnSlope)
+            {
+                wasOnSlope = true;
+            }
             
             slideTime = 0;
             data.physicsMaterial.dynamicFriction = data.slideFriction;
@@ -93,18 +104,19 @@ public class SlideAction : PlayerActionStack.PlayerAction
         }
         else
         {
-            if (wasOnSlope)
+            if (wasOnSlope && !dataRecord.isCoyoteTimeActive)
             {
-                /*wasOnSlope = false;
-                rb.linearVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, Vector3.up).normalized * rb.linearVelocity.magnitude;*/
+                wasOnSlope = false;
+                Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).normalized * rb.linearVelocity.magnitude;
+                rb.linearVelocity = flatVelocity;
                 // TODO: fix the line above this, this happens because the ground check doesn't detect the slope anymore and it bugs out
             }
             
             slideTime += deltaTime;
-        
-            float progress = Mathf.Min(slideTime / data.timeUntilMaxFriction, 1);
-            float lerpProgress = (float)(1 - Math.Sqrt(1 - Math.Pow(progress, 2))); // ease in circ
-            data.physicsMaterial.dynamicFriction = Mathf.Lerp(data.slideFriction, data.defaultFriction, lerpProgress);
         }
+        
+        float progress = Mathf.Min(slideTime / data.timeUntilMaxFriction, 1);
+        float lerpProgress = (float)(1 - Math.Sqrt(1 - Math.Pow(progress, 2))); // ease in circ
+        data.physicsMaterial.dynamicFriction = Mathf.Lerp(data.slideFriction, data.defaultFriction, lerpProgress);
     }
 }

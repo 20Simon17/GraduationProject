@@ -25,10 +25,62 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
 
     private void UpdateMovement(float fixedDeltaTime)
     {
-        moveDirection = InputManager.Instance.moveDirection.normalized * data.maxRunVelocity;
-        Vector3 newVelocity = new Vector3(moveDirection.x, rb.linearVelocity.y, moveDirection.y);
+        moveDirection = InputManager.Instance.moveDirection.normalized;
 
-        rb.linearVelocity = transform.rotation * newVelocity;
+        if (moveDirection != Vector2.zero)
+        {
+            // TODO: if the player is grounded, use this movement below
+            // else use acceleration instead of instant speed
+            if (dataRecord.isGrounded)
+            {
+                if (rb.linearVelocity.magnitude > data.maxRunVelocity)
+                {
+                    Vector2 hVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
+                    Vector2 scaledInput = moveDirection * hVelocity.magnitude;
+            
+                    Vector3 newVelocity = new Vector3(scaledInput.x, rb.linearVelocity.y, scaledInput.y);
+                    rb.linearVelocity = transform.rotation * newVelocity;
+                }
+                else
+                {
+                    Vector3 newVelocity = new Vector3(moveDirection.x * data.maxRunVelocity, rb.linearVelocity.y, moveDirection.y * data.maxRunVelocity);
+                    rb.linearVelocity = transform.rotation * newVelocity;
+                }
+            }
+            else
+            {
+                
+            }
+        }
+        else if (rb.linearVelocity.x != 0 && rb.linearVelocity.z != 0)
+        {
+            if (dataRecord.isGrounded)
+            {
+                rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            }
+            else
+            {
+                Vector2 hVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
+                Vector2 hVelocityNormalized = hVelocity.normalized;
+            
+                int xScaleFactor = hVelocityNormalized.x > 0 ? 1 : -1;
+                int yScaleFactor = hVelocityNormalized.y > 0 ? 1 : -1;
+            
+                hVelocity.x -= xScaleFactor * data.decelerationForce * Time.deltaTime;
+                hVelocity.y -= yScaleFactor * data.decelerationForce * Time.deltaTime;
+            
+                if (Mathf.Abs(hVelocity.x) < 2) hVelocity.x = 0;
+                if (Mathf.Abs(hVelocity.y) < 2) hVelocity.y = 0;
+            
+                rb.linearVelocity = new Vector3(hVelocity.x, rb.linearVelocity.y, hVelocity.y);
+            }
+        }
+        
+        
+        if (dataRecord.isOnSlope && dataRecord.isGrounded)
+        {
+            rb.linearVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, dataRecord.slopeNormal).normalized * rb.linearVelocity.magnitude;
+        }
     }
     
     /*private void UpdateMovement(float fixedDeltaTime)

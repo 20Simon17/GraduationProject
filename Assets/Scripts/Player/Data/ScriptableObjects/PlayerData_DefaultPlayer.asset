@@ -13,19 +13,32 @@ MonoBehaviour:
   m_Name: PlayerData_DefaultPlayer
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataSO
   dataRecord:
+    timeAtLastSlide: 0
+    timeAtLastSlam: 0
+    timeAtLastJump: 0
+    isCoyoteTimeActive: 0
+    coyoteTime: 0
+    isGrounded: 0
+    isOnSlope: 0
+    slopeAngle: 0
+    slopeNormal: {x: 0, y: 0, z: 0}
+    isOnZipline: 0
+    hasJumped: 0
+    isSliding: 0
+    isSlamming: 0
+    currentWallRuns: 0
+    canWallRunJump: 0
+    isInTimeTrial: 0
     dataStruct:
-      timeAtLastSlide: 0
-      timeAtLastSlam: 0
       currentSpeed: 0
-      isGrounded: 0
-      isTouchingGround: 0
-      isSliding: 0
-      isSlamming: 0
       velocityHardCap: 150
       defaultPlayerScaleY: 1
       jumpForceScaling: 100
       counterForceSpeedThreshold: 3
       defaultFriction: 0.6
+      counterFriction: 0
+      noInputFriction: 0
+      coyoteTimeDuration: 0
       jumpForce: 7.5
       slamJumpTimeFrame: 0.2
       slideJumpTimeFrame: 0.2
@@ -35,17 +48,27 @@ MonoBehaviour:
       slideJumpSpeedMultiplier: 1.15
       slideFriction: 0.05
       slidePlayerScaleY: 0.5
-      slideFallOfThreshold: 8
-      slideFallOfForce: 5
+      timeUntilMaxFriction: 0
+      slideCooldown: 0
+      slideSpeedRequirement: 0
       groundSlamForce: 10
       slamJumpForceMultiplier: 1.3
       groundSlamGravityMultiplier: 3
+      slamCooldown: 0
+      defaultGravity: {x: 0, y: 0, z: 0}
       physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
       maxRunVelocity: 10
-      accelerationForce: 50
-      decelerationForce: 50
+      accelerationForce: 2
+      decelerationForce: 2
       forwardVelocity: 0
       strafeVelocity: 0
       maxStrafeVelocity: 3
       initialVelocity: 4
       trueVelocity: 0
+      wallRunCheckDistance: 0
+      wallRunJumpSpeedBoost: 0
+      wallRunGravityMultiplier: 0
+      wallRunCancelVerticalVelocity: 0
+      maxWallRuns: 0
+      maxInteractionDistance: 0
+      ziplineAutoDropVelocity: 0

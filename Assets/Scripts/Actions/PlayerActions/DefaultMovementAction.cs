@@ -49,7 +49,25 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
             }
             else
             {
+                Vector3 accelerationAmount = transform.right * (moveDirection.x * data.accelerationForce * fixedDeltaTime) + 
+                                             transform.forward * (moveDirection.y * data.accelerationForce * fixedDeltaTime);
                 
+                Vector3 newVelocity = rb.linearVelocity + accelerationAmount;
+
+                Vector2 hVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
+                Vector2 hNewVelocity = new Vector2(newVelocity.x, newVelocity.z);
+                
+                if (hNewVelocity.magnitude > hVelocity.magnitude)
+                {
+                    Vector2 scaledNewVelocity = hNewVelocity.normalized * hVelocity.magnitude;
+                    rb.linearVelocity = new Vector3(scaledNewVelocity.x, rb.linearVelocity.y, scaledNewVelocity.y);
+                }
+                else
+                {
+                    rb.linearVelocity = newVelocity;
+                }
+                
+                //rb.linearVelocity += accelerationAmount;
             }
         }
         else if (rb.linearVelocity.x != 0 && rb.linearVelocity.z != 0)
@@ -76,11 +94,14 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
             }
         }
         
-        
         if (dataRecord.isOnSlope && dataRecord.isGrounded)
         {
             rb.linearVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, dataRecord.slopeNormal).normalized * rb.linearVelocity.magnitude;
         }
+        
+        // TODO: If the player runs from flat ground onto a slope, make the movement follow the slope direction immediately
+        // UNLESS the players velocity is greater than a certain threshold. Then it wouldn't make sense to have such a sharp
+        // direction change. In that case, just make the player keep the velocity direction (would result in being airborne)
     }
     
     /*private void UpdateMovement(float fixedDeltaTime)

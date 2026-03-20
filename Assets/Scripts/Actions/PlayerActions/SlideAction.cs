@@ -8,12 +8,13 @@ public class SlideAction : PlayerActionStack.PlayerAction
     
     private float slideTime;
     private bool exitedEarly;
-    private bool isAboveSlope;
-    private bool wasOnSlope = false;
+    
+    private bool wasOnSlope;
+    private Vector3 slopeVelocity;
     
     public override bool IsDone()
     {
-        if (!dataRecord.isGrounded && !dataRecord.isCoyoteTimeActive && !isAboveSlope)
+        if (!dataRecord.isGrounded && !dataRecord.isCoyoteTimeActive)
         {
             Debug.Log("Weren't grounded");
             return true;
@@ -30,46 +31,32 @@ public class SlideAction : PlayerActionStack.PlayerAction
     {
         if (!dataRecord.isGrounded) return;
         
-        if (Time.time - dataRecord.timeAtLastSlide < data.slideCooldown ||
+        if (Time.time - dataRecord.timeAtLastSlide < data.slideCooldown || 
             rb.linearVelocity.magnitude < data.slideSpeedRequirement)
         {
-            CompleteAction();
             exitedEarly = true;
+            CompleteAction();
             return;
         }
+        
+        slideTime = 0;
+        dataRecord.timeAtLastSlide = Time.time;
         
         dataRecord.isSliding = true;
         data.physicsMaterial.dynamicFriction = data.slideFriction;
         
-        slideTime = 0;
-        
         //TODO: Only collider gets scaled down, model / capsule gets rotated to be flat instead
         transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
-        rb.AddForce(-transform.up * 5, ForceMode.Impulse); //Send the player downwards to stick to the ground
+        rb.AddForce(-transform.up * 10, ForceMode.Impulse); //Send the player downwards to stick to the ground
         
-        dataRecord.timeAtLastSlide = Time.time;
-
         Vector2 moveInput = InputManager.Instance.moveDirection;
         Vector3 slideDirection = transform.rotation * new Vector3(moveInput.x, 0, moveInput.y);
         
         if (rb.linearVelocity.magnitude <= data.maxRunVelocity)
         {
             rb.linearVelocity = slideDirection * data.slideSpeed;
-            
-            if (dataRecord.isOnSlope)
-            {
-                rb.linearVelocity = dataRecord.GetSlopeMoveDirection(rb.linearVelocity) * rb.linearVelocity.magnitude;
-            }
         }
-        else
-        {
-            rb.linearVelocity = slideDirection * (rb.linearVelocity.magnitude * data.slideSpeedBoost);
-            
-            if (dataRecord.isOnSlope)
-            {
-                rb.linearVelocity = dataRecord.GetSlopeMoveDirection(rb.linearVelocity) * rb.linearVelocity.magnitude;
-            }
-        }
+        else rb.linearVelocity = slideDirection * (rb.linearVelocity.magnitude * data.slideSpeedBoost);
     }
 
     public override void OnEnd()
@@ -89,27 +76,24 @@ public class SlideAction : PlayerActionStack.PlayerAction
         float lerpProgress = (float)(1 - Math.Sqrt(1 - Math.Pow(progress, 2))); // ease in circ
         data.physicsMaterial.dynamicFriction = Mathf.Lerp(data.slideFriction, data.defaultFriction, lerpProgress);*/
         
+        // this should only happen if it's a downhill, otherwise maybe add the slope angle to the dynamic friction?
         if (dataRecord.isOnSlope)
         {
-            if (!wasOnSlope)
-            {
-                wasOnSlope = true;
-            }
+            if (!wasOnSlope) wasOnSlope = true;
             
             slideTime = 0;
-            data.physicsMaterial.dynamicFriction = data.slideFriction;
             rb.linearVelocity = dataRecord.GetSlopeMoveDirection(rb.linearVelocity) * rb.linearVelocity.magnitude;
-            
-            // this should only happen if it's a downhill, otherwise maybe add the slope angle to the dynamic friction?
+            slopeVelocity = rb.linearVelocity;
         }
         else
         {
-            if (wasOnSlope && !dataRecord.isCoyoteTimeActive)
+            if (wasOnSlope /*&& !dataRecord.isCoyoteTimeActive*/)
             {
                 wasOnSlope = false;
-                Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).normalized * rb.linearVelocity.magnitude;
+                Vector3 flatVelocity = new Vector3(slopeVelocity.x, 0, slopeVelocity.z).normalized * slopeVelocity.magnitude;
                 rb.linearVelocity = flatVelocity;
-                // TODO: fix the line above this, this happens because the ground check doesn't detect the slope anymore and it bugs out
+                
+                //TODO: Fix the transition between slope and ground. Only works sometimes, don't really understand it currently
             }
             
             slideTime += deltaTime;

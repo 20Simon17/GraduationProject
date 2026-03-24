@@ -1391,7 +1391,7 @@ GameObject:
   - component: {fileID: 129707626}
   - component: {fileID: 129707625}
   - component: {fileID: 129707624}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (2)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1640,7 +1640,7 @@ GameObject:
   - component: {fileID: 142954185}
   - component: {fileID: 142954184}
   - component: {fileID: 142954186}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -3550,7 +3550,7 @@ GameObject:
   - component: {fileID: 300931172}
   - component: {fileID: 300931171}
   - component: {fileID: 300931173}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -6546,7 +6546,7 @@ GameObject:
   - component: {fileID: 595071036}
   - component: {fileID: 595071035}
   - component: {fileID: 595071037}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -6771,7 +6771,7 @@ GameObject:
   - component: {fileID: 626082575}
   - component: {fileID: 626082574}
   - component: {fileID: 626082576}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -9077,7 +9077,7 @@ GameObject:
   - component: {fileID: 801959978}
   - component: {fileID: 801959980}
   - component: {fileID: 801959979}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9507,9 +9507,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2686774482046258875, guid: 422aa7d801951924ab6ca56597f894f7, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 8925122956919151928, guid: 422aa7d801951924ab6ca56597f894f7, type: 3}
       propertyPath: m_Name
       value: Slope (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8925122956919151928, guid: 422aa7d801951924ab6ca56597f894f7, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9711,7 +9719,7 @@ GameObject:
   - component: {fileID: 917562040}
   - component: {fileID: 917562039}
   - component: {fileID: 917562038}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Slope (3)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -10165,7 +10173,7 @@ GameObject:
   - component: {fileID: 956090408}
   - component: {fileID: 956090407}
   - component: {fileID: 956090406}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (11)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -10390,7 +10398,7 @@ GameObject:
   - component: {fileID: 963042896}
   - component: {fileID: 963042895}
   - component: {fileID: 963042894}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Platform
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -10778,7 +10786,7 @@ GameObject:
   - component: {fileID: 968722977}
   - component: {fileID: 968722976}
   - component: {fileID: 968722975}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (8)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -12221,7 +12229,7 @@ GameObject:
   - component: {fileID: 1056472027}
   - component: {fileID: 1056472026}
   - component: {fileID: 1056472025}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (1)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -14363,9 +14371,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2686774482046258875, guid: 422aa7d801951924ab6ca56597f894f7, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 8925122956919151928, guid: 422aa7d801951924ab6ca56597f894f7, type: 3}
       propertyPath: m_Name
       value: Slope (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8925122956919151928, guid: 422aa7d801951924ab6ca56597f894f7, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14533,7 +14549,7 @@ GameObject:
   - component: {fileID: 1267611343}
   - component: {fileID: 1267611342}
   - component: {fileID: 1267611341}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (5)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -14680,7 +14696,7 @@ GameObject:
   - component: {fileID: 1295758801}
   - component: {fileID: 1295758800}
   - component: {fileID: 1295758799}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (4)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -15022,7 +15038,7 @@ GameObject:
   - component: {fileID: 1321277915}
   - component: {fileID: 1321277914}
   - component: {fileID: 1321277913}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (12)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -15135,7 +15151,7 @@ GameObject:
   - component: {fileID: 1329704989}
   - component: {fileID: 1329704988}
   - component: {fileID: 1329704990}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -15364,7 +15380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1381479459
 Transform:
   m_ObjectHideFlags: 0
@@ -15403,12 +15419,13 @@ MonoBehaviour:
   zipline: {fileID: 0}
   layerMaskIncludeZiplines:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 576
   layerMaskExcludeZiplines:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 512
   rotationStepDegrees: 10
   minZiplineDistance: 2
+  lockedSelection: 0
   nudgeDistance: 0.1
 --- !u!1 &1393784969
 GameObject:
@@ -15574,7 +15591,7 @@ GameObject:
   - component: {fileID: 1419910240}
   - component: {fileID: 1419910239}
   - component: {fileID: 1419910238}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -16008,7 +16025,7 @@ GameObject:
   - component: {fileID: 1465062987}
   - component: {fileID: 1465062986}
   - component: {fileID: 1465062988}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -16597,7 +16614,7 @@ GameObject:
   - component: {fileID: 1515046909}
   - component: {fileID: 1515046908}
   - component: {fileID: 1515046907}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Platform
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -16709,7 +16726,7 @@ GameObject:
   - component: {fileID: 1516856308}
   - component: {fileID: 1516856307}
   - component: {fileID: 1516856306}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (10)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -16821,7 +16838,7 @@ GameObject:
   - component: {fileID: 1528231060}
   - component: {fileID: 1528231059}
   - component: {fileID: 1528231058}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Slope (4)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -16935,7 +16952,7 @@ GameObject:
   - component: {fileID: 1533424491}
   - component: {fileID: 1533424490}
   - component: {fileID: 1533424492}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -16952,7 +16969,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.5001, z: 1.12}
-  m_LocalScale: {x: 0.1, y: 1, z: 0.1}
+  m_LocalScale: {x: 0.1, y: 0.00001, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 968722974}
@@ -17033,7 +17050,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1560640824
@@ -17160,7 +17177,7 @@ GameObject:
   - component: {fileID: 1571470455}
   - component: {fileID: 1571470454}
   - component: {fileID: 1571470453}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (6)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -18047,7 +18064,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1606751704
 Transform:
   m_ObjectHideFlags: 0
@@ -19574,7 +19591,7 @@ GameObject:
   - component: {fileID: 1684559256}
   - component: {fileID: 1684559255}
   - component: {fileID: 1684559257}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -20753,7 +20770,7 @@ GameObject:
   - component: {fileID: 1770528343}
   - component: {fileID: 1770528342}
   - component: {fileID: 1770528341}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (7)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -22054,7 +22071,7 @@ GameObject:
   - component: {fileID: 1895381679}
   - component: {fileID: 1895381678}
   - component: {fileID: 1895381677}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TopMaterial
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -22166,7 +22183,7 @@ GameObject:
   - component: {fileID: 1916033220}
   - component: {fileID: 1916033222}
   - component: {fileID: 1916033221}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23971,7 +23988,7 @@ GameObject:
   - component: {fileID: 2028172984}
   - component: {fileID: 2028172983}
   - component: {fileID: 2028172982}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (3)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -26017,7 +26034,7 @@ GameObject:
   - component: {fileID: 2128055791}
   - component: {fileID: 2128055790}
   - component: {fileID: 2128055789}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building (9)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -26317,7 +26334,7 @@ GameObject:
   - component: {fileID: 2143432720}
   - component: {fileID: 2143432719}
   - component: {fileID: 2143432718}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -26663,7 +26680,7 @@ GameObject:
   - component: {fileID: 8384038074105970203}
   - component: {fileID: 8520821025931239705}
   - component: {fileID: 5431344352602344050}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Slope
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -26702,13 +26719,9 @@ MonoBehaviour:
     isInTimeTrial: 0
     dataStruct:
       currentSpeed: 0
-      velocityHardCap: 0
       defaultPlayerScaleY: 0
       jumpForceScaling: 0
-      counterForceSpeedThreshold: 0
       defaultFriction: 0
-      counterFriction: 0
-      noInputFriction: 0
       coyoteTimeDuration: 0
       jumpForce: 0
       slamJumpTimeFrame: 0
@@ -26719,9 +26732,10 @@ MonoBehaviour:
       slideJumpSpeedMultiplier: 0
       slideFriction: 0
       slidePlayerScaleY: 0
-      timeUntilMaxFriction: 0
       slideCooldown: 0
       slideSpeedRequirement: 0
+      slideSpeedLoss: 0
+      maxSlideSpeed: 0
       groundSlamForce: 0
       slamJumpForceMultiplier: 0
       groundSlamGravityMultiplier: 0
@@ -26731,11 +26745,6 @@ MonoBehaviour:
       maxRunVelocity: 0
       accelerationForce: 0
       decelerationForce: 0
-      forwardVelocity: 0
-      strafeVelocity: 0
-      maxStrafeVelocity: 0
-      initialVelocity: 0
-      trueVelocity: 0
       wallRunCheckDistance: 0
       wallRunJumpSpeedBoost: 0
       wallRunGravityMultiplier: 0
@@ -27124,7 +27133,7 @@ GameObject:
   - component: {fileID: 3253127414581683491}
   - component: {fileID: 995530354141814530}
   - component: {fileID: 2670391055393284977}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27195,7 +27204,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3570534741668560890}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -27242,13 +27251,9 @@ MonoBehaviour:
     isInTimeTrial: 0
     dataStruct:
       currentSpeed: 0
-      velocityHardCap: 0
       defaultPlayerScaleY: 0
       jumpForceScaling: 0
-      counterForceSpeedThreshold: 0
       defaultFriction: 0
-      counterFriction: 0
-      noInputFriction: 0
       coyoteTimeDuration: 0
       jumpForce: 0
       slamJumpTimeFrame: 0
@@ -27259,9 +27264,10 @@ MonoBehaviour:
       slideJumpSpeedMultiplier: 0
       slideFriction: 0
       slidePlayerScaleY: 0
-      timeUntilMaxFriction: 0
       slideCooldown: 0
       slideSpeedRequirement: 0
+      slideSpeedLoss: 0
+      maxSlideSpeed: 0
       groundSlamForce: 0
       slamJumpForceMultiplier: 0
       groundSlamGravityMultiplier: 0
@@ -27271,11 +27277,6 @@ MonoBehaviour:
       maxRunVelocity: 0
       accelerationForce: 0
       decelerationForce: 0
-      forwardVelocity: 0
-      strafeVelocity: 0
-      maxStrafeVelocity: 0
-      initialVelocity: 0
-      trueVelocity: 0
       wallRunCheckDistance: 0
       wallRunJumpSpeedBoost: 0
       wallRunGravityMultiplier: 0
@@ -27283,6 +27284,9 @@ MonoBehaviour:
       maxWallRuns: 0
       maxInteractionDistance: 0
       ziplineAutoDropVelocity: 0
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

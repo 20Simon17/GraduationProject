@@ -19,9 +19,10 @@ MonoBehaviour:
     isCoyoteTimeActive: 0
     coyoteTime: 0
     isGrounded: 0
-    isTouchingGround: 0
     isOnSlope: 0
     slopeAngle: 0
+    slopeNormal: {x: 0, y: 0, z: 0}
+    isOnZipline: 0
     hasJumped: 0
     isSliding: 0
     isSlamming: 0
@@ -30,13 +31,9 @@ MonoBehaviour:
     isInTimeTrial: 0
     dataStruct:
       currentSpeed: 0
-      velocityHardCap: 150
       defaultPlayerScaleY: 1
       jumpForceScaling: 32
-      counterForceSpeedThreshold: 3
       defaultFriction: 0.3
-      counterFriction: 1
-      noInputFriction: 1
       coyoteTimeDuration: 0.25
       jumpForce: 7.5
       slamJumpTimeFrame: 0.5
@@ -45,11 +42,12 @@ MonoBehaviour:
       slideSpeed: 12
       slideJumpForceMultiplier: 0.85
       slideJumpSpeedMultiplier: 1.15
-      slideFriction: 0.05
+      slideFriction: 0.15
       slidePlayerScaleY: 0.5
-      timeUntilMaxFriction: 3
-      slideCooldown: 0.2
+      slideCooldown: 0.5
       slideSpeedRequirement: 7
+      slideSpeedLoss: 1
+      maxSlideSpeed: 30
       groundSlamForce: 10
       slamJumpForceMultiplier: 1.3
       groundSlamGravityMultiplier: 3
@@ -59,11 +57,6 @@ MonoBehaviour:
       maxRunVelocity: 10
       accelerationForce: 50
       decelerationForce: 50
-      forwardVelocity: 0
-      strafeVelocity: 0
-      maxStrafeVelocity: 3
-      initialVelocity: 4
-      trueVelocity: 0
       wallRunCheckDistance: 1.5
       wallRunJumpSpeedBoost: 1.3
       wallRunGravityMultiplier: 0.75

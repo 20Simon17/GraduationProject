@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Numerics;
 using UnityEngine;
@@ -46,6 +47,8 @@ public class PlayerActionStack : ActionStack
     
     private bool slideBufferActive;
     private bool jumpBufferActive;
+
+    [SerializeField] private LayerMask groundLayerMask;
     
     //TODO: For vaulting (if I decide to add it) I could boxcast in front of the player around mid height to see if an edge is there
     
@@ -104,14 +107,14 @@ public class PlayerActionStack : ActionStack
             currentAction = (PlayerAction) CurrentAction;
         }
     }
-    
+
     private void GroundCheck()
     {
-        Ray ray = new Ray(transform.position, -transform.up);
-        Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.1f);
-
-        if (hit.collider && hit.transform.CompareTag("Ground") && currentAction is not ZiplineAction)
+        Ray ray = new Ray(transform.position + transform.up * 0.01f, -transform.up);
+        if (Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.1f, groundLayerMask))
         {
+            if (currentAction is ZiplineAction) return;
+            
             if (!dataRecord.isGrounded)
             {
                 OnGroundedEvent?.Invoke();
@@ -151,31 +154,20 @@ public class PlayerActionStack : ActionStack
     
     private void SlopeCheck()
     {
-        Ray ray = new Ray(transform.position, -transform.up);
-        Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.2f);
-        
-        if (hit.collider && hit.normal != Vector3.up && hit.transform.CompareTag("Ground") && dataRecord.isGrounded)
+        Ray ray = new Ray(transform.position + transform.up * 0.01f, -transform.up);
+        if (Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.2f, groundLayerMask))
         {
-            if (dataRecord.isOnSlope) return;
-            if (Mathf.Approximately(hit.normal.x, 0) ||
-                Mathf.Approximately(hit.normal.y, 1) ||
-                Mathf.Approximately(hit.normal.z, 0))
+            if (hit.normal != Vector3.up && dataRecord.isGrounded)
             {
-                Debug.Log("Fixed your problem");
-                Debug.Log(hit.collider.transform.rotation);
-                Debug.Log(hit.collider.transform.name);
-                return;
+                if (dataRecord.isOnSlope) return;
+                
+                dataRecord.isOnSlope = true;
+                dataRecord.slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
+                dataRecord.slopeNormal = hit.normal;
             }
-            
-            
-            Debug.Log($"Hit normal is {hit.normal} and it is {hit.normal != Vector3.up} that it doesn't equal Vector3.up");
-            
-            
-            dataRecord.isOnSlope = true;
-            dataRecord.slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-            dataRecord.slopeNormal = hit.normal;
+            else ResetValues();
         }
-        else ResetValues();
+        else if (dataRecord.isOnSlope) ResetValues();
         return;
         
         void ResetValues()
@@ -287,7 +279,7 @@ public class PlayerActionStack : ActionStack
     
     private void AddSlideAction()
     {
-        PushAction(new SlideAction(rb, transform, dataRecord));
+        PushAction(new SlideAction(rb, transform, dataRecord, this));
     }
     
     private void AddSlamAction(InputValue value)

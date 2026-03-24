@@ -29,8 +29,6 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
 
         if (moveDirection != Vector2.zero)
         {
-            // TODO: if the player is grounded, use this movement below
-            // else use acceleration instead of instant speed
             if (dataRecord.isGrounded)
             {
                 if (rb.linearVelocity.magnitude > data.maxRunVelocity)
@@ -66,8 +64,6 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
                 {
                     rb.linearVelocity = newVelocity;
                 }
-                
-                //rb.linearVelocity += accelerationAmount;
             }
         }
         else if (rb.linearVelocity.x != 0 && rb.linearVelocity.z != 0)

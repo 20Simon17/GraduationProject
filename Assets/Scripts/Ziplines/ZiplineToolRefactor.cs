@@ -43,7 +43,7 @@ public class ZiplineToolRefactor : MonoBehaviour
 
     private bool placingFirstPoint;
 
-    private bool lockedSelection;
+    [SerializeField] private bool lockedSelection;
     public float nudgeDistance = 0.25f;
     
     private void LoadResources()
@@ -482,6 +482,7 @@ public class ZiplineToolRefactor : MonoBehaviour
     private void PrimaryAction(InputValue value)
     {
         if (!value.isPressed) return;
+        Debug.Log("Primary action");
         HandlePrimaryAction();
     }
 

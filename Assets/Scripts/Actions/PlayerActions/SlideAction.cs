@@ -42,7 +42,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
         
         //TODO: Only collider gets scaled down, model / capsule gets rotated to be flat instead
         transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
-        rb.AddForce(-transform.up * 10, ForceMode.Impulse); //Send the player downwards to stick to the ground
+        rb.AddForce(-transform.up * 5, ForceMode.Impulse); //Send the player downwards to stick to the ground
     }
 
     public override void OnEnd()
@@ -107,7 +107,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
         {
             rb.linearVelocity = slideDirection * (rb.linearVelocity.magnitude * data.slideSpeedBoost);
         }
-
+        
         if (dataRecord.isOnSlope)
         {
             rb.linearVelocity = dataRecord.GetSlopeMoveDirection(rb.linearVelocity) * rb.linearVelocity.magnitude;

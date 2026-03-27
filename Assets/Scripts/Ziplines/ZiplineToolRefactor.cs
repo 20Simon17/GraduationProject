@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ZiplineToolRefactor : MonoBehaviour
+public class ZiplineToolRefactor : ItemBase
 {
     #region Prefabs
     private GameObject polePrefab;
@@ -61,6 +58,13 @@ public class ZiplineToolRefactor : MonoBehaviour
         player = FindFirstObjectByType<PlayerActionStack>();
         userZiplinesObject = GameObject.Find("UserZiplines");
         
+        BindEvents();
+    }
+
+    private void OnDisable() => UnbindEvents();
+
+    private void BindEvents()
+    {
         Application.quitting += QuitGame;
         InputManager.Instance.OnPrimaryActionEvent += PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent += SecondaryAction;
@@ -69,7 +73,7 @@ public class ZiplineToolRefactor : MonoBehaviour
         InputManager.Instance.OnAltMoveEvent += MovePlacement;
     }
 
-    private void OnDisable()
+    private void UnbindEvents()
     {
         Application.quitting -= QuitGame;
         if (gameIsQuitting) return;
@@ -82,6 +86,20 @@ public class ZiplineToolRefactor : MonoBehaviour
     }
     
     private void QuitGame() => gameIsQuitting = true;
+    
+    public override void EquipItem()
+    {
+        base.EquipItem();
+        BindEvents();
+        gameObject.SetActive(true);
+    }
+
+    public override void UnequipItem()
+    {
+        base.UnequipItem();
+        UnbindEvents();
+        gameObject.SetActive(false);
+    }
     
     private void FixedUpdate()
     {

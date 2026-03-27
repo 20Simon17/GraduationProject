@@ -22,6 +22,7 @@ public class UserInterfaceActionStack : ActionStack
     private PauseMenu pauseMenu;
     private OptionsMenu optionsMenu;
     private ControlsMenu controlsMenu;
+    private InventoryMenu inventoryMenu;
 
     private UserInterfaceAction currentAction;
 
@@ -33,6 +34,7 @@ public class UserInterfaceActionStack : ActionStack
         pauseMenu = FindAnyObjectByType<PauseMenu>();
         optionsMenu = FindAnyObjectByType<OptionsMenu>();
         controlsMenu = FindAnyObjectByType<ControlsMenu>();
+        inventoryMenu = FindAnyObjectByType<InventoryMenu>();
         
         PushAction(new DefaultUserInterfaceAction());
         
@@ -83,6 +85,12 @@ public class UserInterfaceActionStack : ActionStack
     public void AddControlsMenuAction()
     {
         PushAction(new ControlsMenuAction(controlsMenu));
+    }
+
+    public void AddInventoryMenuAction()
+    {
+        if (currentAction is InventoryMenuAction) currentAction.CompleteAction();
+        else PushAction(new InventoryMenuAction(inventoryMenu));
     }
 
     private void CancelAction(InputValue value)

@@ -1,12 +1,13 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Massive credit to "Lewis Fiford" on youtube, he went through how to recreate the spiderman swing
 // Video link: https://youtu.be/R52qmIler-E
 
-public class GrappleGunRefactor : MonoBehaviour
+public class GrappleGunRefactor : ItemBase
 {
+    //TODO: Pass through all FindObjectsByType variables into these scripts, avoid them as much as possible
+    
     private PlayerActionStack player;
     private Rigidbody playerRb;
     private CameraActionStack playerCamera;
@@ -15,28 +16,29 @@ public class GrappleGunRefactor : MonoBehaviour
     
     private bool gameIsQuitting;
     private bool gameIsPaused;
+    private bool eventsAreBound;
+    private bool referencesAreSet;
 
     private bool IsActive => isSwinging || isPulling;
     [SerializeField] private bool isSwinging;
     [SerializeField] private bool isPulling;
-
+    
     [SerializeField] private LayerMask grappleLayerMask;
-
+    
     [SerializeField] private float pullForce = 20;
     [SerializeField] private float pullDetachDistance = 2;
-
+    
     [SerializeField] private Vector3 attachPoint;
-
+    
     [SerializeField] private float grappleRange;
-
+    
     [SerializeField] private float grappleCooldown = 0.5f;
-
+    
     [SerializeField] private int maxSwingGrapples = 1;
-    [SerializeField] private int maxPullGrapples = 1;
-
     private int swingGrapples = 0;
+    [SerializeField] private int maxPullGrapples = 1;
     private int pullGrapples = 0;
-
+    
     [SerializeField] private float minSwingVelocity = 0;
     [SerializeField] private float maxSwingVelocity = 100;
     [SerializeField] private float swingForceDivision = 1;
@@ -44,15 +46,37 @@ public class GrappleGunRefactor : MonoBehaviour
 
     private void Start()
     {
+        BindEvents();
+    }
+
+    private void GetReferences()
+    {
         player = FindFirstObjectByType<PlayerActionStack>();
         playerRb = player.GetComponent<Rigidbody>();
         playerCamera = FindFirstObjectByType<CameraActionStack>();
-        
+        referencesAreSet = true;
+    }
+
+    public override void EquipItem()
+    {
+        base.EquipItem();
+        if (!referencesAreSet) GetReferences();
         BindEvents();
+        gameObject.SetActive(true);
+    }
+
+    public override void UnequipItem()
+    {
+        base.UnequipItem();
+        UnbindEvents();
+        gameObject.SetActive(false);
     }
 
     private void BindEvents()
     {
+        if (eventsAreBound) return;
+        eventsAreBound = true;
+        
         Application.quitting += QuitGame;
         player.OnGroundedEvent += RefreshGrapples;
         InputManager.Instance.OnPrimaryActionEvent += PrimaryAction;
@@ -62,11 +86,12 @@ public class GrappleGunRefactor : MonoBehaviour
         GameManager.Instance.OnGameResumedEvent += Resume;
     }
 
-    private void OnDisable()
+    private void UnbindEvents()
     {
         Application.quitting -= QuitGame;
         if (gameIsQuitting) return;
         
+        eventsAreBound = false;
         player.OnGroundedEvent -= RefreshGrapples;
         InputManager.Instance.OnPrimaryActionEvent -= PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent -= SecondaryAction;
@@ -74,7 +99,8 @@ public class GrappleGunRefactor : MonoBehaviour
         GameManager.Instance.OnGamePausedEvent -= Pause;
         GameManager.Instance.OnGameResumedEvent -= Resume;
     }
-    
+
+    private void OnDisable() => UnbindEvents();
     private void QuitGame() => gameIsQuitting = true;
     private void Pause() => gameIsPaused = true;
     private void Resume() => gameIsPaused = false;

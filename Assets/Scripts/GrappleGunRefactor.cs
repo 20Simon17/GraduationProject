@@ -170,6 +170,10 @@ public class GrappleGunRefactor : ItemBase
     
     private void HandleSwingGrapple(bool isStart)
     {
+        //TODO: if the player aims "roughly" horizontally in front of itself and the dot between the players velocity and the hit.point
+        // is roughly equal to 0, then assume the player wants to grapple around a corner instead of swing.
+        // to be clear, if the aim location is in the players velocity's path, then perform a swing.
+        
         if (isStart && !IsActive && swingGrapples < maxSwingGrapples &&
             playerRb.linearVelocity.y < 0 && !player.dataRecord.isGrounded && !player.dataRecord.isInTimeTrial)
         {

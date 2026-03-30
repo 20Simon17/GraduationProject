@@ -90,6 +90,11 @@ public class PlayerActionStack : ActionStack
         
         GroundCheck();
         SlopeCheck();
+
+        if (rb.linearVelocity.magnitude > dataRecord.dataStruct.velocityHardCap)
+        {
+            rb.linearVelocity = rb.linearVelocity.normalized * dataRecord.dataStruct.velocityHardCap;
+        }
         
         if (dataRecord.isCoyoteTimeActive)
         {

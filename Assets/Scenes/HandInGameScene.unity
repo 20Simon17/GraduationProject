@@ -7240,6 +7240,7 @@ GameObject:
   - component: {fileID: 565694353}
   - component: {fileID: 565694352}
   - component: {fileID: 565694355}
+  - component: {fileID: 565694356}
   m_Layer: 5
   m_Name: ZiplineCreatorButton
   m_TagString: Untagged
@@ -7378,6 +7379,20 @@ MonoBehaviour:
   itemName: 
   itemDescription: 
   itemImage: {fileID: 0}
+--- !u!114 &565694356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565694350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 1
+  m_AspectRatio: 6.6666665
 --- !u!1 &587197324
 GameObject:
   m_ObjectHideFlags: 0
@@ -28307,6 +28322,7 @@ MonoBehaviour:
       maxWallRuns: 0
       maxInteractionDistance: 50
       ziplineAutoDropVelocity: 0
+      ziplineAccelerationReduction: 0
 --- !u!1 &3570534741668560890
 GameObject:
   m_ObjectHideFlags: 0
@@ -28840,6 +28856,7 @@ MonoBehaviour:
       maxWallRuns: 0
       maxInteractionDistance: 0
       ziplineAutoDropVelocity: 0
+      ziplineAccelerationReduction: 0
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 512

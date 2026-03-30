@@ -208,16 +208,22 @@ public class Zipline : ProceduralMesh, IInteractable
         return closestPoint;
     }
 
+    public Vector3 GetZiplineUpDirection()
+    {
+        Vector3 ziplineDirection = GetZiplineDirection();
+        Vector3 ziplineRightAngle = Vector3.Cross(ziplineDirection, Vector3.up);
+        return -Vector3.Cross(ziplineDirection, ziplineRightAngle);
+    }
+
     public Vector3 GetZiplineDirection()
     {
-        if (Mathf.Approximately(startPoint.AttachLocation.y, endPoint.AttachLocation.y)) return Vector3.zero;
-        return GetZiplineDirectionNonZero();
+        return Mathf.Approximately(startPoint.AttachLocation.y, endPoint.AttachLocation.y) ? Vector3.zero : GetZiplineDirectionNonZero();
     }
 
     public Vector3 GetZiplineDirectionNonZero()
     {
         Vector3 highestPoint, lowestPoint;
-
+        
         if (startPoint.AttachLocation.y > endPoint.AttachLocation.y)
         {
             highestPoint = startPoint.AttachLocation;
@@ -229,7 +235,7 @@ public class Zipline : ProceduralMesh, IInteractable
             lowestPoint = startPoint.AttachLocation;
         }
         
-        return (highestPoint - lowestPoint).normalized;
+        return (lowestPoint - highestPoint).normalized;
     }
 
     public bool IsPointOnZipline(Vector3 point)

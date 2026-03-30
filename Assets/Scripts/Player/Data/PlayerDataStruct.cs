@@ -4,11 +4,8 @@ using UnityEngine;
 [Serializable]
 public struct PlayerDataStruct
 {
-    [Header("Debugging - Values")] 
-    public float currentSpeed; //unused currently
-    
     [Header("General Settings")]
-    //public float velocityHardCap;
+    public float velocityHardCap;
     public float defaultPlayerScaleY;
     public float jumpForceScaling;
     
@@ -50,12 +47,6 @@ public struct PlayerDataStruct
     public float accelerationForce;
     public float decelerationForce;
 
-    //public float forwardVelocity;
-    //public float strafeVelocity;
-    //public float maxStrafeVelocity;
-    //public float initialVelocity;
-    //public float trueVelocity;
-
     [Header("Wall Run")]
     public float wallRunCheckDistance;
     public float wallRunJumpSpeedBoost;
@@ -66,4 +57,5 @@ public struct PlayerDataStruct
     public float maxInteractionDistance;
 
     public float ziplineAutoDropVelocity;
+    public float ziplineAccelerationReduction;
 }

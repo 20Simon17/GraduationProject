@@ -15,6 +15,7 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
     private Vector3 gravityUponEntering;
 
     private Vector3 velocityDirection;
+    private Vector3 previousVelocityDirection;
 
     private readonly float flatZiplineDeacceleration = -2;
     
@@ -64,13 +65,13 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
         }
         else
         {
-            //TODO: Fix sloped acceleration calculation, currently does not work as intended
             Vector3 flatZiplineDirection = new Vector3(ziplineDirection.x, 0, ziplineDirection.z);
-            float angleDifference = 1 - Vector3.Dot(ziplineDirection, flatZiplineDirection);
+            float angleDifference = Vector3.Dot(ziplineDirection, flatZiplineDirection);
             
             float velocityDirectionDot = Vector3.Dot(velocityDirection, ziplineDirection);
             ziplineAngleAcceleration = velocityDirectionDot < 0 ? angleDifference : -angleDifference;
             ziplineAngleAcceleration *= data.defaultGravity.magnitude;
+            ziplineAngleAcceleration /= velocityDirection.y > 0 ? data.ziplineAccelerationReduction : 1;
         }
         
         // set the gravity
@@ -91,8 +92,7 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
 
     public override void OnUpdate(float deltaTime)
     {
-        //Debug.Log($"Players velocity: {rb.linearVelocity.magnitude}");
-        //Debug.Log($"Player acceleration: {ziplineAngleAcceleration}");
+        Debug.Log($"Player acceleration: {ziplineAngleAcceleration}");
         rb.linearVelocity += velocityDirection * (ziplineAngleAcceleration * deltaTime);
         
         if (ziplineDirection == Vector3.zero && rb.linearVelocity.magnitude <= data.ziplineAutoDropVelocity)

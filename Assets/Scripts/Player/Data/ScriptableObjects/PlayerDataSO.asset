@@ -30,7 +30,7 @@ MonoBehaviour:
     canWallRunJump: 0
     isInTimeTrial: 0
     dataStruct:
-      currentSpeed: 0
+      velocityHardCap: 250
       defaultPlayerScaleY: 1
       jumpForceScaling: 32
       defaultFriction: 0.3
@@ -64,3 +64,4 @@ MonoBehaviour:
       maxWallRuns: 2
       maxInteractionDistance: 2
       ziplineAutoDropVelocity: 1
+      ziplineAccelerationReduction: 1.5

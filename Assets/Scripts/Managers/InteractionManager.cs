@@ -13,15 +13,12 @@ public class InteractionManager : MonoBehaviour
     private GameObject interactionObject;
     private float timeOfInteraction;
     private bool isInteracting;
-    private float timeOfPause;
     private bool isPaused;
     private IHoldInteractable interactionHoldInterface;
 
     public LayerMask interactionLayerMask;
 
     private GameObject previousLookingAt;
-
-    private float pauseTime;
     
     private bool gameIsQuitting;
     
@@ -139,29 +136,21 @@ public class InteractionManager : MonoBehaviour
         timeOfInteraction = 0;
         interactionHoldInterface?.StopHoldInteract();
         interactionHoldInterface = null;
-        pauseTime = 0;
     }
 
     private float GetInteractionDuration()
     {
-        return Time.time - (timeOfInteraction + pauseTime);
+        return Time.time - timeOfInteraction;
     }
 
     public void Pause()
     {
         StopHoldInteraction();
-        
-        if (!isInteracting) return;
-
         isPaused = true;
-        timeOfPause = Time.time;
     }
 
     public void Resume()
     {
-        if (!isPaused) return;
-        
         isPaused = false;
-        pauseTime += Time.time - timeOfPause;
     }
 }

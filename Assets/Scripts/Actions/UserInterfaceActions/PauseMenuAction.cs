@@ -34,11 +34,11 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
         {
             Cursor.lockState = CursorLockMode.None;
             
-            Transform buttonsMenu = pauseMenu.transform.GetChild(2);
+            Transform buttonsMenu = pauseMenu.transform.GetChild(0).GetChild(0).GetChild(1);
             resumeButton = buttonsMenu.GetChild(0).GetComponent<Button>();
             optionsButton = buttonsMenu.GetChild(1).GetComponent<Button>();
             controlsButton = buttonsMenu.GetChild(2).GetComponent<Button>();
-            mainMenuButton = buttonsMenu.GetChild(3).GetComponent<Button>();
+            mainMenuButton = buttonsMenu.GetChild(4).GetComponent<Button>();
 
             BindEvents();
             
@@ -62,10 +62,6 @@ public class PauseMenuAction : UserInterfaceActionStack.UserInterfaceAction
             
             pauseMenu.CloseMenu();
             GameManager.Instance.Resume();
-        }
-        else
-        {
-            // animate buttons disappearing here
         }
     }
 

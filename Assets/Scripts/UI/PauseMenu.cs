@@ -5,7 +5,6 @@ public class PauseMenu : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject imagesHolder;
-    [SerializeField] private GameObject textHolder;
     [SerializeField] private GameObject buttonsHolder;
     
     [Header("Durations")]
@@ -13,13 +12,6 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private float smallImagesFillTime;
     [SerializeField] private float bigImageFillTime;
     [SerializeField] private float buttonTogglingRate;
-    
-    [Header("Activation Points")]
-    [SerializeField] private float buttonOneActivation;
-    [SerializeField] private float buttonTwoActivation;
-    [SerializeField] private float buttonThreeActivation;
-    [SerializeField] private float buttonFourActivation;
-    [SerializeField] private float titleActivation;
     
     private bool animateMenuOpening;
     private bool animateMenuClosing;
@@ -90,36 +82,9 @@ public class PauseMenu : MonoBehaviour
             float progress = GetScaleProgress(animationTime);
             float newScaleY = Mathf.Lerp(0.01f, 1, progress);
             imagesHolder.transform.localScale = new Vector3(1, newScaleY, 1);
-
-            //toggle the buttons in order based on the scale of the menu
-            if (newScaleY >= buttonOneActivation)
-            {
-                buttonsHolder.transform.GetChild(0).gameObject.SetActive(true);
-            }
-                
-            if (newScaleY >= buttonTwoActivation)
-            {
-                buttonsHolder.transform.GetChild(1).gameObject.SetActive(true);
-            }
-                
-            if (newScaleY >= buttonThreeActivation)
-            {
-                buttonsHolder.transform.GetChild(2).gameObject.SetActive(true);
-            }
-                
-            if (newScaleY >= buttonFourActivation)
-            {
-                buttonsHolder.transform.GetChild(3).gameObject.SetActive(true);
-            }
-                
-            if (newScaleY >= titleActivation)
-            {
-                textHolder.SetActive(true);
-            }
         }
         else
         {
-            textHolder.SetActive(true);
             animateMenuOpening = false;
             animationTime = 0;
         }
@@ -133,32 +98,6 @@ public class PauseMenu : MonoBehaviour
             float progress = GetScaleProgress(animationTime);
             float newScaleY = Mathf.Lerp(1, 0.01f, progress);
             imagesHolder.transform.localScale = new Vector3(1, newScaleY, 1);
-            
-            //toggle the buttons in order based on the scale of the menu
-            if (newScaleY <= buttonFourActivation)
-            {
-                buttonsHolder.transform.GetChild(3).gameObject.SetActive(false);
-            }
-            
-            if (newScaleY <= buttonThreeActivation)
-            {
-                buttonsHolder.transform.GetChild(2).gameObject.SetActive(false);
-            }
-            
-            if (newScaleY <= buttonTwoActivation)
-            {
-                buttonsHolder.transform.GetChild(1).gameObject.SetActive(false);
-            }
-            
-            if (newScaleY <= buttonOneActivation)
-            {
-                buttonsHolder.transform.GetChild(0).gameObject.SetActive(false);
-            }
-            
-            if (newScaleY <= titleActivation)
-            {
-                textHolder.SetActive(false);
-            }
         }
         else if (currentImage >= 0)
         {
@@ -184,9 +123,6 @@ public class PauseMenu : MonoBehaviour
             animateMenuClosing = false;
             animationTime = 0;
             doOnce = false;
-            
-            buttonsHolder.SetActive(false);
-            imagesHolder.SetActive(false);
         }
     }
     
@@ -241,25 +177,16 @@ public class PauseMenu : MonoBehaviour
 
     public void OpenMenu()
     {
-        imagesHolder.transform.localScale = new Vector3(1, 0.01f, 1);
-        
         animateMenuOpening = true;
-        
-        imagesHolder.SetActive(true);
-        buttonsHolder.SetActive(true);
-        
+        imagesHolder.transform.localScale = new Vector3(1, 0.01f, 1);
         currentImage = 0;
     }
     
     public void CloseMenu()
     {
-        animationTime = 0;
-            
         animateMenuOpening = false;
         animateMenuClosing = true;
-        
-        buttonsHolder.SetActive(true);
-        
+        animationTime = 0;
         currentImage = images.Length - 1;
     }
 

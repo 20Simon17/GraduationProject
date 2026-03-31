@@ -56,7 +56,7 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
         ziplineDirection = attachedZipline.GetZiplineDirection();
         
         // calculate player carryover speed from outside zipline onto the zipline
-        rb.linearVelocity = CalculateCarryOverVelocity();
+        rb.linearVelocity = CalculateEntryVelocity();
 
         // calculate acceleration on the zipline based on the vertical angle of it
         if (ziplineDirection == Vector3.zero)
@@ -65,13 +65,9 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
         }
         else
         {
-            Vector3 flatZiplineDirection = new Vector3(ziplineDirection.x, 0, ziplineDirection.z);
-            float angleDifference = Vector3.Dot(ziplineDirection, flatZiplineDirection);
-            
-            float velocityDirectionDot = Vector3.Dot(velocityDirection, ziplineDirection);
-            ziplineAngleAcceleration = velocityDirectionDot < 0 ? angleDifference : -angleDifference;
-            ziplineAngleAcceleration *= data.defaultGravity.magnitude;
-            ziplineAngleAcceleration /= velocityDirection.y > 0 ? data.ziplineAccelerationReduction : 1;
+            float vDot = Vector3.Dot(ziplineDirection, Vector3.down);
+            float hDot = Vector3.Dot(velocityDirection, ziplineDirection);
+            ziplineAngleAcceleration = data.defaultGravity.magnitude * vDot * (hDot > 0 ? 1 : -1);
         }
         
         // set the gravity
@@ -92,7 +88,6 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
 
     public override void OnUpdate(float deltaTime)
     {
-        Debug.Log($"Player acceleration: {ziplineAngleAcceleration}");
         rb.linearVelocity += velocityDirection * (ziplineAngleAcceleration * deltaTime);
         
         if (ziplineDirection == Vector3.zero && rb.linearVelocity.magnitude <= data.ziplineAutoDropVelocity)
@@ -101,26 +96,18 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
         }
     }
 
-    private Vector3 CalculateCarryOverVelocity()
+    private Vector3 CalculateEntryVelocity()
     {
-        Vector3 nonZeroZiplineDirection = attachedZipline.GetZiplineDirectionNonZero();
-            
-        float dot = Vector3.Dot(rb.linearVelocity.normalized,  nonZeroZiplineDirection);
-        float absoluteDot = Mathf.Abs(dot);
-
-        Vector3 flatPlayerVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-        velocityDirection = dot > 0 ? nonZeroZiplineDirection : -nonZeroZiplineDirection;
-        Vector3 resultingVelocity = velocityDirection * (flatPlayerVelocity.magnitude * absoluteDot);
+        Vector3 zipDir = attachedZipline.GetZiplineDirectionNonZero();
         
-        if (ziplineDirection != Vector3.zero)
-        {
-            Vector3 verticalZiplineDirection = new Vector3(0, nonZeroZiplineDirection.y, 0);
-            Vector3 verticalVelocity = new Vector3(0, rb.linearVelocity.y, 0);
-            float verticalSimilarity = Vector3.Dot(verticalZiplineDirection, verticalVelocity);
-            resultingVelocity += velocityDirection * (rb.linearVelocity.y * verticalSimilarity);
-        }
-
-        return resultingVelocity;
+        Vector3 flatZipDir = new Vector3(zipDir.x, 0, zipDir.z);
+        Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        int dir = Vector3.Dot(flatZipDir, flatVelocity) > 0 ? 1 : -1;
+        velocityDirection = dir > 0 ? zipDir : -zipDir;
+        
+        float keptVelocity = Vector3.Dot(zipDir, rb.linearVelocity.normalized);
+        if (dir == -1) return zipDir * (rb.linearVelocity.magnitude * keptVelocity);
+        else return zipDir * (rb.linearVelocity.magnitude * (0.5f + 0.5f * keptVelocity));
     }
 
     private void DropFromZipline(InputValue value)

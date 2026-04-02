@@ -13,6 +13,8 @@ public class SlideAction : PlayerActionStack.PlayerAction
     private bool wasOnSlope;
     private Vector3 slopeVelocity;
     private bool doSpeedLoss = true;
+
+    private Vector3 velocityOnEnter;
     
     public override bool IsDone()
     {
@@ -34,15 +36,15 @@ public class SlideAction : PlayerActionStack.PlayerAction
         }
         
         dataRecord.isSliding = true;
-        dataRecord.timeAtLastSlide = Time.time;
-        
         data.physicsMaterial.dynamicFriction = data.slideFriction;
 
         player.OnGroundedEvent += SetStartingVelocity;
+        velocityOnEnter = rb.linearVelocity;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         
         //TODO: Only collider gets scaled down, model / capsule gets rotated to be flat instead
         transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
-        rb.AddForce(-transform.up * 5, ForceMode.Impulse); //Send the player downwards to stick to the ground
+        if (rb.linearVelocity.y < 20) rb.AddForce(-transform.up * 5, ForceMode.Impulse); //Send the player downwards to stick to the ground
     }
 
     public override void OnEnd()
@@ -53,6 +55,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
         player.OnGroundedEvent -= SetStartingVelocity;
         
         dataRecord.isSliding = false;
+        dataRecord.timeAtLastSlide = Time.time;
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
         transform.localScale = new Vector3(transform.localScale.x, data.defaultPlayerScaleY, transform.localScale.z);
     }
@@ -99,13 +102,13 @@ public class SlideAction : PlayerActionStack.PlayerAction
         Vector2 moveInput = InputManager.Instance.moveDirection;
         Vector3 slideDirection = transform.rotation * new Vector3(moveInput.x, 0, moveInput.y);
         
-        if (rb.linearVelocity.magnitude <= data.maxRunVelocity + 2)
+        if (velocityOnEnter.magnitude <= data.maxRunVelocity + 2)
         {
             rb.linearVelocity = slideDirection * data.slideSpeed;
         }
-        else if (rb.linearVelocity.magnitude < data.maxSlideSpeed)
+        else if (velocityOnEnter.magnitude < data.maxSlideSpeed)
         {
-            rb.linearVelocity = slideDirection * (rb.linearVelocity.magnitude * data.slideSpeedBoost);
+            rb.linearVelocity = slideDirection * (velocityOnEnter.magnitude * data.slideSpeedBoost);
         }
         
         if (dataRecord.isOnSlope)

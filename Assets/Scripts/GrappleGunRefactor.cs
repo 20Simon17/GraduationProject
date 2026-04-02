@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -43,6 +44,8 @@ public class GrappleGunRefactor : ItemBase
     [SerializeField] private float maxSwingVelocity = 100;
     [SerializeField] private float swingForceDivision = 1;
     [SerializeField] private float forwardVelocityAddition = 20;
+
+    private Action onGrappleFinished;
 
     private void Start()
     {
@@ -202,13 +205,14 @@ public class GrappleGunRefactor : ItemBase
                     }
                 }*/
                 
-                player.AddWaitingAction();
+                player.AddWaitingAction(ref onGrappleFinished);
             }
         }
         else if (isSwinging)
         {
             isSwinging = false;
-            player.CompleteCurrentAction();
+            onGrappleFinished?.Invoke();
+            //player.CompleteCurrentAction();
         }
     }
 
@@ -227,13 +231,14 @@ public class GrappleGunRefactor : ItemBase
                 
                 attachPoint = hit.point;
                 
-                player.AddWaitingAction();
+                player.AddWaitingAction(ref onGrappleFinished);
             }
         }
         else if (isPulling)
         {
             isPulling = false;
-            player.CompleteCurrentAction();
+            onGrappleFinished?.Invoke();
+            //player.CompleteCurrentAction();
         }
     }
     

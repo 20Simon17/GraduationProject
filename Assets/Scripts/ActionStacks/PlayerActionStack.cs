@@ -318,9 +318,9 @@ public class PlayerActionStack : ActionStack
         }
     }
     
-    public void AddWaitingAction()
+    public void AddWaitingAction(ref System.Action inFinishCondition)
     {
-        PushAction(new WaitAction(rb, transform, dataRecord));
+        PushAction(new WaitAction(rb, transform, dataRecord, ref inFinishCondition));
     }
     
     public void AddZiplineAction(Zipline zipline)

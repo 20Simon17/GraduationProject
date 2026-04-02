@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
@@ -40,6 +41,8 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
     private GameObject spawnedEndObject;
 
     private bool gameIsQuitting;
+
+    private Action onCountdownFinished;
 
     #region Interactions
     public void Interact(GameObject interactor)
@@ -117,8 +120,8 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
         timeTrialActive = true;
         ToggleTimeTrialUI(true);
-                
-        FindAnyObjectByType<PlayerActionStack>().CompleteCurrentAction();
+        
+        onCountdownFinished?.Invoke();
         timeTrialData.numberOfAttempts++;
     }
 
@@ -138,8 +141,6 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
         }
         
         TimeTrialManager.Instance.HideAllTimeTrials();
-
-        Vector3 timeTrialDirection = endLocation - transform.position;
         
         playerObject.transform.position = transform.position;
         playerObject.transform.LookAt(endLocation);
@@ -166,7 +167,7 @@ public class TimeTrial : MonoBehaviour, IHoldInteractable
 
         PlayerActionStack player = FindAnyObjectByType<PlayerActionStack>();
         player.ClearAllActions();
-        player.AddWaitingAction();
+        player.AddWaitingAction(ref onCountdownFinished);
     }
 
     public void EndTimeTrial(bool completed, bool unbindEvents = true)

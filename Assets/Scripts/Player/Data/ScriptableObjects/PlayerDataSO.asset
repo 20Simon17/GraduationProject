@@ -57,9 +57,10 @@ MonoBehaviour:
       maxRunVelocity: 10
       accelerationForce: 50
       decelerationForce: 50
-      wallRunCheckDistance: 1.5
+      wallRunCheckDistance: 0.5
       wallRunJumpSpeedBoost: 1.3
       wallRunGravityMultiplier: 0.75
+      maxWallRunEntryVelocity: 0
       wallRunCancelVerticalVelocity: -8
       maxWallRuns: 2
       maxInteractionDistance: 2

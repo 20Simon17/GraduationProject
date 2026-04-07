@@ -14,11 +14,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
     {
         // TODO: if (forceJump) perform jump regardless of other conditions. (from zipline)
         // Do I want a way to combine slam and slide jump? slam -> land, slide + jump = forward + up boost
-        if (CanDoubleJump())
-        {
-            PerformDoubleJump();
-        }
-        else if (CanSlamJump())
+        if (CanSlamJump())
         {
             PerformSlamJump();
         }
@@ -46,11 +42,6 @@ public class JumpAction : PlayerActionStack.PlayerAction
         return dataRecord.timeAtLastSlam != 0 && Time.time - dataRecord.timeAtLastSlam <= data.slamJumpTimeFrame && CanJump();
     }
 
-    private bool CanDoubleJump()
-    {
-        return false;
-    }
-
     private bool CanJump()
     {
         return dataRecord.CanJump;
@@ -75,19 +66,16 @@ public class JumpAction : PlayerActionStack.PlayerAction
         dataRecord.CanJump = false;
     }
     
-    private void PerformDoubleJump()
-    {
-        Debug.Log("Performing double jump");
-        //Reset vertical velocity so we always get the same height from double jump
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); 
-        rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
-        dataRecord.CanJump = false;
-    }
-    
     private void PerformJump()
     {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
         dataRecord.CanJump = false;
+        
+        if (dataRecord.canWallRunJump)
+        {
+            Debug.Log("Wall run jump boost");
+            rb.AddForce(transform.forward * data.wallRunJumpSpeedBoost, ForceMode.Force);
+        }
     }
 }

@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Linq;
 using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Quaternion = UnityEngine.Quaternion;
 using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent(typeof(PlayerData))]
@@ -90,6 +92,7 @@ public class PlayerActionStack : ActionStack
         
         GroundCheck();
         SlopeCheck();
+        CanWallRun();
 
         if (rb.linearVelocity.magnitude > dataRecord.dataStruct.velocityHardCap)
         {
@@ -124,6 +127,9 @@ public class PlayerActionStack : ActionStack
             {
                 OnGroundedEvent?.Invoke();
                 dataRecord.isGrounded = true;
+                
+                dataRecord.canWallRunJump = false;
+                dataRecord.currentWallRuns = 0;
                 
                 if (slideBufferActive)
                 {
@@ -189,7 +195,7 @@ public class PlayerActionStack : ActionStack
         
         if (currentAction is WallRunAction)
         {
-            AddWallRunAction(value);
+            HandleWallRunAction(value);
             return;
         }
         
@@ -209,18 +215,38 @@ public class PlayerActionStack : ActionStack
         {
             AddJumpAction(value);
         }
-        else if (CanWallRun()) AddWallRunAction(value);
+        else if (CanWallRun()) HandleWallRunAction(value);
     }
     
     private bool CanWallRun()
     {
-        //TODO: Boxcast each side
-        return false;
-        /*Ray rRay = new Ray(transform.position, transform.right);
-        Ray lRay = new Ray(transform.position, -transform.right);
-            
-        return Physics.Raycast(rRay, out RaycastHit rHit, dataRecord.dataStruct.wallRunCheckDistance) && rHit.transform.CompareTag("Ground") ||
-               Physics.Raycast(lRay, out RaycastHit lHit, dataRecord.dataStruct.wallRunCheckDistance) && lHit.transform.CompareTag("Ground");*/
+        Vector3 rHalfExtents = transform.forward * 0.3f + transform.up * 0.5f + transform.right * 0.2f;
+        Vector3 lHalfExtents = transform.forward * 0.3f + transform.up * 0.5f - transform.right * 0.2f;
+        Vector3 rightCenter = transform.position + transform.right * 0.2f;
+        Vector3 leftCenter  = transform.position - transform.right * 0.2f;
+        
+        //TODO: when done debugging, compress this function.
+        
+        bool returnValue = false;
+        Color leftDebugColor = Color.darkRed;
+        Color rightDebugColor = Color.darkRed;
+
+        if (Physics.BoxCast(rightCenter, rHalfExtents, transform.right, Quaternion.identity, dataRecord.dataStruct.wallRunCheckDistance))
+        {
+            returnValue = true;
+            rightDebugColor = Color.green;
+        }
+        
+        if (Physics.BoxCast(leftCenter, lHalfExtents, -transform.right, Quaternion.identity, dataRecord.dataStruct.wallRunCheckDistance))
+        {
+            returnValue = true;
+            leftDebugColor = Color.green;
+        }
+        
+        ExtDebug.DrawBoxCastBox(rightCenter, rHalfExtents, Quaternion.identity, transform.right, dataRecord.dataStruct.wallRunCheckDistance, rightDebugColor);
+        ExtDebug.DrawBoxCastBox(leftCenter, lHalfExtents, Quaternion.identity, -transform.right, dataRecord.dataStruct.wallRunCheckDistance, leftDebugColor);
+
+        return returnValue;
     }
     
     private void AddJumpAction(InputValue value)
@@ -240,17 +266,21 @@ public class PlayerActionStack : ActionStack
         PushAction(new JumpAction(rb, transform, dataRecord));
     }
     
-    private void AddWallRunAction(InputValue value)
+    private void HandleWallRunAction(InputValue value)
     {
-        if (value.isPressed && currentAction is not WallRunAction && !dataRecord.isGrounded)
+        if (!value.isPressed) return;
+        
+        if (currentAction is not WallRunAction && !dataRecord.isGrounded)
         {
             PushAction(new WallRunAction(rb, transform, dataRecord));
         }
-        else if (!value.isPressed && currentAction is WallRunAction)
+        else if (currentAction is WallRunAction && dataRecord.currentWallRuns < dataRecord.dataStruct.maxWallRuns)
         {
             Debug.Log("Completing wall run and forcing a jump.");
-            dataRecord.canWallRunJump = true;
             currentAction.CompleteAction();
+            dataRecord.canWallRunJump = true;
+            dataRecord.CanJump = true;
+
             ForceAddJumpAction();
         }
     }

@@ -9,30 +9,15 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     private Vector3 directionToWall;
     
     //TODO: If the player is wallrunning and reaches a corner, then check if the player is looking
-    // towards the wall's normal (roughly opposite of the normal), then continue the wallrunning on the other side of the wall
-    
-    //TODO: Limit the wallrun to a certain speed, if the player is above that speed and tries to wallrun
-    // just do a walljump instead (slight momentum boost?)
-    
-    //TODO: Use boxcast instead of raycast to check for wallrunning possibilities, should be much more accurate
+    // towards the wall's normal (roughly opposite of the normal), then continue the wallrunning on the other side of the wall?  (probably waaaaaay over kill for now)
     
     public override bool IsDone()
     {
-        Ray wallRay = new Ray(transform.position, directionToWall);
-        if (!Physics.Raycast(wallRay, data.wallRunCheckDistance))
-        {
-            //return true;
-        }
-        
         Vector2 horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
-        if (horizontalVelocity.magnitude <= 0)
-        {
-            Debug.Log("No speed during wallrun, forcing jump");
-            // force jump here
-            return true;
-        }
+        if (horizontalVelocity.magnitude <= 0) return true;
         if (rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity || dataRecord.isGrounded)
         {
+            Debug.Log("Falling too fast or were grounded");
             return true;
         }
         return ActionCompleted;
@@ -42,13 +27,20 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     {
         if (dataRecord.currentWallRuns >= data.maxWallRuns)
         {
+            Debug.Log("Can't do more wallruns before landing");
             CompleteAction();
         }
-        
-        Ray rRay = new Ray(transform.position, transform.right);
-        Ray lRay = new Ray(transform.position, -transform.right);
 
-        if (Physics.Raycast(rRay, out RaycastHit rHit, transform.localScale.y / 2 + 0.1f) &&
+        if (rb.linearVelocity.magnitude > data.maxWallRunEntryVelocity)
+        {
+            // Perform wall jump
+        }
+        
+        // TODO: Store the left and right wall normal values in the data record, don't cast here. If no wall = Vector3.zero.
+        Ray rRay = new Ray(transform.position + transform.right * 0.2f, transform.right);
+        Ray lRay = new Ray(transform.position - transform.right * 0.2f, -transform.right);
+
+        if (Physics.Raycast(rRay, out RaycastHit rHit, data.wallRunCheckDistance) &&
             rHit.transform.CompareTag("Ground"))
         {
             directionToWall = -rHit.normal;
@@ -63,7 +55,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             else moveDirection = -wallDirection;
         }
 
-        else if (Physics.Raycast(lRay, out RaycastHit lHit, transform.localScale.y / 2 + 0.1f) &&
+        else if (Physics.Raycast(lRay, out RaycastHit lHit, data.wallRunCheckDistance) &&
             lHit.transform.CompareTag("Ground"))
         {
             directionToWall = -lHit.normal;
@@ -78,14 +70,18 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             else moveDirection = -wallDirection;
         }
 
-        Physics.gravity = data.defaultGravity * data.wallRunGravityMultiplier;
         Vector2 horizontalVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.z);
         Vector3 movementVelocity = moveDirection.normalized * horizontalVelocity.magnitude;
         rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y + 5, movementVelocity.z);
-        
+
+        Physics.gravity = Vector3.zero;
         data.physicsMaterial.dynamicFriction = 0;
-        
-        //if y velocity is less than a certain amount, leave unchanged, if it's within a range = set it to 0, if it's above the range, keep it
+    }
+
+    public override void OnUpdate(float deltaTime)
+    {
+        //TODO: Replace "1" with variable, giga testing to make it feel good (maybe just steal gravity = 9.81)
+        rb.AddForce(-transform.up * (1 * deltaTime), ForceMode.Force);
     }
 
     public override void OnEnd()

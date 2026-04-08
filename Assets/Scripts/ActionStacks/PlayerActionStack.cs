@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Linq;
-using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Quaternion = UnityEngine.Quaternion;
@@ -224,28 +221,32 @@ public class PlayerActionStack : ActionStack
         Vector3 lHalfExtents = transform.forward * 0.3f + transform.up * 0.5f - transform.right * 0.2f;
         Vector3 rightCenter = transform.position + transform.right * 0.2f;
         Vector3 leftCenter  = transform.position - transform.right * 0.2f;
+        bool returnValue = false;
         
         //TODO: when done debugging, compress this function.
         
-        bool returnValue = false;
         Color leftDebugColor = Color.darkRed;
         Color rightDebugColor = Color.darkRed;
 
-        if (Physics.BoxCast(rightCenter, rHalfExtents, transform.right, Quaternion.identity, dataRecord.dataStruct.wallRunCheckDistance))
+        if (Physics.BoxCast(rightCenter, rHalfExtents, transform.right, out RaycastHit rHit, Quaternion.identity, dataRecord.dataStruct.wallRunCheckDistance))
         {
             returnValue = true;
+            dataRecord.rightWallNormal = rHit.normal;
             rightDebugColor = Color.green;
         }
+        else dataRecord.rightWallNormal = Vector3.zero;
         
-        if (Physics.BoxCast(leftCenter, lHalfExtents, -transform.right, Quaternion.identity, dataRecord.dataStruct.wallRunCheckDistance))
+        if (Physics.BoxCast(leftCenter, lHalfExtents, -transform.right, out RaycastHit lHit, Quaternion.identity, dataRecord.dataStruct.wallRunCheckDistance))
         {
             returnValue = true;
+            dataRecord.leftWallNormal = lHit.normal;
             leftDebugColor = Color.green;
         }
+        else dataRecord.leftWallNormal = Vector3.zero;
         
         ExtDebug.DrawBoxCastBox(rightCenter, rHalfExtents, Quaternion.identity, transform.right, dataRecord.dataStruct.wallRunCheckDistance, rightDebugColor);
         ExtDebug.DrawBoxCastBox(leftCenter, lHalfExtents, Quaternion.identity, -transform.right, dataRecord.dataStruct.wallRunCheckDistance, leftDebugColor);
-
+        
         return returnValue;
     }
     

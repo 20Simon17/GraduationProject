@@ -40,6 +40,8 @@ public record PlayerDataRecord
     [Space(5)]
     public int currentWallRuns;
     public bool canWallRunJump;
+    public Vector3 leftWallNormal;
+    public Vector3 rightWallNormal;
 
     [Space(5)] 
     public bool isInTimeTrial;

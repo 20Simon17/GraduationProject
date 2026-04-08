@@ -81,7 +81,7 @@ public class GrappleGunRefactor : ItemBase
         eventsAreBound = true;
         
         Application.quitting += QuitGame;
-        player.OnGroundedEvent += RefreshGrapples;
+        player.OnGroundedEvent += OnGrounded;
         InputManager.Instance.OnPrimaryActionEvent += PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent += SecondaryAction;
 
@@ -95,7 +95,7 @@ public class GrappleGunRefactor : ItemBase
         if (gameIsQuitting) return;
         
         eventsAreBound = false;
-        player.OnGroundedEvent -= RefreshGrapples;
+        player.OnGroundedEvent -= OnGrounded;
         InputManager.Instance.OnPrimaryActionEvent -= PrimaryAction;
         InputManager.Instance.OnSecondaryActionEvent -= SecondaryAction;
         
@@ -108,10 +108,12 @@ public class GrappleGunRefactor : ItemBase
     private void Pause() => gameIsPaused = true;
     private void Resume() => gameIsPaused = false;
 
-    private void RefreshGrapples()
+    private void OnGrounded()
     {
         swingGrapples = 0;
         pullGrapples = 0;
+
+        if (isSwinging) HandleSwingGrapple(false);
     }
     
     private RaycastHit? GetLookAtHit()
@@ -212,7 +214,6 @@ public class GrappleGunRefactor : ItemBase
         {
             isSwinging = false;
             onGrappleFinished?.Invoke();
-            //player.CompleteCurrentAction();
         }
     }
 

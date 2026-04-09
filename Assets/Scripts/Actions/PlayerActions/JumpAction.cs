@@ -68,9 +68,12 @@ public class JumpAction : PlayerActionStack.PlayerAction
     
     private void PerformJump()
     {
+        Debug.Log("Jump");
+        
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
         dataRecord.CanJump = false;
+
         
         if (dataRecord.canWallRunJump)
         {

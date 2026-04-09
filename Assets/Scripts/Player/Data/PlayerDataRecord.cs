@@ -36,6 +36,7 @@ public record PlayerDataRecord
     [Space(5)]
     public bool isSliding;
     public bool isSlamming;
+    public bool isWallRunning;
     
     [Space(5)]
     public int currentWallRuns;

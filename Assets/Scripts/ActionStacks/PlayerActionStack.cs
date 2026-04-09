@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Xml;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Quaternion = UnityEngine.Quaternion;
@@ -127,6 +128,11 @@ public class PlayerActionStack : ActionStack
                 
                 dataRecord.canWallRunJump = false;
                 dataRecord.currentWallRuns = 0;
+                if (dataRecord.isWallRunning)
+                {
+                    slideBufferActive = false;
+                    jumpBufferActive = false;
+                }
                 
                 if (slideBufferActive)
                 {
@@ -135,6 +141,9 @@ public class PlayerActionStack : ActionStack
                 }
                 else if (jumpBufferActive)
                 {
+                    //TODO: Max buffer time (aka store the time of buffering and compare it here)
+                    Debug.Log("Jump buffered, adding jump action.");
+                    Debug.Log(dataRecord.isWallRunning);
                     jumpBufferActive = false;
                     ForceAddJumpAction();
                 }
@@ -271,9 +280,13 @@ public class PlayerActionStack : ActionStack
     {
         if (!value.isPressed) return;
         
+        Debug.Log("Handling Wallrun");
+
         if (currentAction is not WallRunAction && !dataRecord.isGrounded)
         {
             PushAction(new WallRunAction(rb, transform, dataRecord));
+            jumpBufferActive = false;
+            slideBufferActive = false;
         }
         else if (currentAction is WallRunAction && dataRecord.currentWallRuns < dataRecord.dataStruct.maxWallRuns)
         {

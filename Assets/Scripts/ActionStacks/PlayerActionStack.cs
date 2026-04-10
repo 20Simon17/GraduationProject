@@ -226,37 +226,49 @@ public class PlayerActionStack : ActionStack
     
     private bool CanWallRun()
     {
-        Vector3 rHalfExtents = transform.forward * 0.3f + transform.up * 0.5f + transform.right * 0.2f;
-        Vector3 lHalfExtents = transform.forward * 0.3f + transform.up * 0.5f - transform.right * 0.2f;
-        Vector3 rightCenter = transform.position + transform.right * 0.2f;
-        Vector3 leftCenter  = transform.position - transform.right * 0.2f;
-        bool returnValue = false;
-        
-        //TODO: when done debugging, compress this function.
-        
-        Color leftDebugColor = Color.darkRed;
-        Color rightDebugColor = Color.darkRed;
+        float rayOffset = 0.2f;
+        float raySidewaysOffset = 0.5f;
 
-        if (Physics.BoxCast(rightCenter, rHalfExtents, transform.right, out RaycastHit rHit, Quaternion.identity, dataRecord.dataStruct.wallRunCheckDistance))
+        Ray[] lRays = LocalCreateRays(-transform.right, transform.forward);
+        Ray[] rRays = LocalCreateRays(transform.right, transform.forward);
+        Ray[] fRays = LocalCreateRays(transform.forward, transform.right);
+
+        bool returnValue = false;
+        for (int i = 0; i < lRays.Length; i++)
         {
-            returnValue = true;
-            dataRecord.rightWallNormal = rHit.normal;
-            rightDebugColor = Color.green;
+            if (Physics.Raycast(fRays[i], out RaycastHit fHit, dataRecord.dataStruct.wallRunCheckDistance))
+            {
+                dataRecord.frontWallNormal = fHit.normal;
+                returnValue = true;
+            }
+            else dataRecord.frontWallNormal = Vector3.zero;
+
+            if (Physics.Raycast(lRays[i], out RaycastHit lHit, dataRecord.dataStruct.wallRunCheckDistance))
+            {
+                dataRecord.leftWallNormal = lHit.normal;
+                returnValue = true;
+            }
+            else dataRecord.leftWallNormal = Vector3.zero;
+
+            if (Physics.Raycast(rRays[i], out RaycastHit rHit, dataRecord.dataStruct.wallRunCheckDistance))
+            {
+                dataRecord.rightWallNormal = rHit.normal;
+                returnValue = true;
+            }
+            else dataRecord.rightWallNormal = Vector3.zero;
         }
-        else dataRecord.rightWallNormal = Vector3.zero;
-        
-        if (Physics.BoxCast(leftCenter, lHalfExtents, -transform.right, out RaycastHit lHit, Quaternion.identity, dataRecord.dataStruct.wallRunCheckDistance))
-        {
-            returnValue = true;
-            dataRecord.leftWallNormal = lHit.normal;
-            leftDebugColor = Color.green;
-        }
-        else dataRecord.leftWallNormal = Vector3.zero;
-        
-        ExtDebug.DrawBoxCastBox(rightCenter, rHalfExtents, Quaternion.identity, transform.right, dataRecord.dataStruct.wallRunCheckDistance, rightDebugColor);
-        ExtDebug.DrawBoxCastBox(leftCenter, lHalfExtents, Quaternion.identity, -transform.right, dataRecord.dataStruct.wallRunCheckDistance, leftDebugColor);
-        
         return returnValue;
+
+        Ray[] LocalCreateRays(Vector3 direction, Vector3 rayOffsetDirection)
+        {
+            return new Ray[4]
+            {
+                new(transform.position + rayOffsetDirection * rayOffset + transform.up * rayOffset + direction * raySidewaysOffset, direction),
+                new(transform.position + rayOffsetDirection * rayOffset - transform.up * rayOffset + direction * raySidewaysOffset, direction),
+                new(transform.position - rayOffsetDirection * rayOffset + transform.up * rayOffset + direction * raySidewaysOffset, direction),
+                new(transform.position - rayOffsetDirection * rayOffset - transform.up * rayOffset + direction * raySidewaysOffset, direction)
+            };
+        }
     }
     
     private void AddJumpAction(InputValue value)
@@ -279,8 +291,6 @@ public class PlayerActionStack : ActionStack
     private void HandleWallRunAction(InputValue value)
     {
         if (!value.isPressed) return;
-        
-        Debug.Log("Handling Wallrun");
 
         if (currentAction is not WallRunAction && !dataRecord.isGrounded)
         {
@@ -290,7 +300,6 @@ public class PlayerActionStack : ActionStack
         }
         else if (currentAction is WallRunAction && dataRecord.currentWallRuns < dataRecord.dataStruct.maxWallRuns)
         {
-            Debug.Log("Completing wall run and forcing a jump.");
             currentAction.CompleteAction();
             dataRecord.canWallRunJump = true;
             dataRecord.CanJump = true;

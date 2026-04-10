@@ -43,8 +43,9 @@ public record PlayerDataRecord
     public bool canWallRunJump;
     public Vector3 leftWallNormal;
     public Vector3 rightWallNormal;
+    public Vector3 frontWallNormal;
 
-    [Space(5)] 
+    [Space(5)]
     public bool isInTimeTrial;
     
     [Header("Static Data")]

@@ -68,17 +68,17 @@ public class JumpAction : PlayerActionStack.PlayerAction
     
     private void PerformJump()
     {
-        Debug.Log("Jump");
-        
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
-        dataRecord.CanJump = false;
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
-        
         if (dataRecord.canWallRunJump)
         {
-            Debug.Log("Wall run jump boost");
+            int direction = Vector3.Dot(horizontalVelocity, transform.forward) >= 0 ? 1 : -1;
+            rb.linearVelocity = transform.rotation * horizontalVelocity.normalized * rb.linearVelocity.magnitude * direction;
             rb.AddForce(transform.forward * data.wallRunJumpSpeedBoost, ForceMode.Force);
         }
+        else rb.linearVelocity = horizontalVelocity;
+
+        rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);
+        dataRecord.CanJump = false;
     }
 }

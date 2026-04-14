@@ -10,7 +10,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     public override bool IsDone()
     {
-        if (HorizontalVelocity.magnitude <= 0)
+        if (normalWallRun && HorizontalVelocity.magnitude <= 0)
         {
             Debug.Log("Wallrun ended due to low horizontal velocity");
             return true;
@@ -21,6 +21,11 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         }
         if (normalWallRun && dataRecord.rightWallNormal == Vector3.zero && dataRecord.leftWallNormal == Vector3.zero)
         {
+            return true;
+        }
+        if (!normalWallRun && dataRecord.frontWallNormal == Vector3.zero)
+        {
+            // Make player climb the edge in front of them in this case?
             return true;
         }
         return ActionCompleted;
@@ -39,34 +44,50 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             // Perform wall jump
         }
 
-        // TODO: if speed is towards the same wall the player is looking at, wallrun up and make jump go backwards (out from the wall) <-----------------------------------
-
         // TODO: max 1 wallrun per side, meaning if the player wallruns on a wall to the right, left is the only remaining option (turn around to stick to same wall)
+        // This doesn't make sense because what if there is a case where the player would wallrun on the inner side of an L shaped wall, then there would be 2 of the same direction
+        // wallrun. Instead I should limit it to 1 of the same directional wallrun per same wall. (can't do 2 right wallruns on 1 wall)
 
         // TODO: Wallrun upwards can only happen if velocity.y > 0 and X time has passed since the previous one (to prevent permanent wallclimbing on the same wall)
         // Extra prevention: Maximum of X jumps? that doesn't make sense though if the player still has the speed for it. Maybe just allow it? Unless there's buggy behaviour.
 
-        Vector3 moveDirection = Vector3.zero;
-        if (dataRecord.frontWallNormal != Vector3.zero)
+        dataRecord.previousWallRunWasVertical = false;
+
+        Vector3 moveDirection;
+        if (dataRecord.frontWallNormal != Vector3.zero && rb.linearVelocity.y > 0)
         {
+            dataRecord.previousWallRunWasVertical = true;
+            dataRecord.previousWallNormal = dataRecord.frontWallNormal;
+
             moveDirection = Vector3.Cross(dataRecord.frontWallNormal, -transform.right);
+            rb.linearVelocity = moveDirection * (rb.linearVelocity.magnitude * data.percentageConvertedVelocityOnVerticalWallRun);
         }
-        else if (dataRecord.rightWallNormal != Vector3.zero)
+        else
         {
-            normalWallRun = true;
-            moveDirection = GetWallMoveDirection(dataRecord.rightWallNormal);
+            if (dataRecord.rightWallNormal != Vector3.zero)
+            {
+                dataRecord.previousWallNormal = dataRecord.rightWallNormal;
+                normalWallRun = true;
+                moveDirection = GetWallMoveDirection(dataRecord.rightWallNormal);
+            }
+            else if (dataRecord.leftWallNormal != Vector3.zero)
+            {
+                dataRecord.previousWallNormal = dataRecord.leftWallNormal;
+                normalWallRun = true;
+                moveDirection = GetWallMoveDirection(dataRecord.leftWallNormal);
+            }
+            else
+            {
+                CompleteAction();
+                return;
+            }
+
+            Vector3 movementVelocity = moveDirection.normalized * HorizontalVelocity.magnitude;
+
+            float extraVerticalVelocity = rb.linearVelocity.y > 0 ? 3 : 0;
+            rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y + extraVerticalVelocity, movementVelocity.z);
         }
-        else if (dataRecord.leftWallNormal != Vector3.zero)
-        {
-            normalWallRun = true;
-            moveDirection = GetWallMoveDirection(dataRecord.leftWallNormal);
-        }
-
-        Vector3 movementVelocity = moveDirection.normalized * HorizontalVelocity.magnitude;
-
-        float extraVerticalVelocity = rb.linearVelocity.y > 0 ? 3 : 0;
-        rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y + extraVerticalVelocity, movementVelocity.z);
-
+        
         Physics.gravity = Vector3.zero;
         data.physicsMaterial.dynamicFriction = 0;
         dataRecord.isWallRunning = true;
@@ -83,15 +104,19 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     public override void OnUpdate(float deltaTime)
     {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y - (3 * deltaTime), rb.linearVelocity.z);
-        //TODO: Replace hardcoded value with variable, giga testing to make it feel good
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y - (data.wallRunVerticalVelocityLoss * deltaTime), rb.linearVelocity.z);
     }
 
     public override void OnEnd()
     {
-        if (dataRecord.currentWallRuns < data.maxWallRuns) dataRecord.currentWallRuns++;
+        if (dataRecord.currentWallRuns < data.maxWallRuns && dataRecord.frontWallNormal == Vector3.zero)
+        {
+            dataRecord.currentWallRuns++;
+        }
+
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
-        dataRecord.isWallRunning = false;
         Physics.gravity = data.defaultGravity;
+        dataRecord.isWallRunning = false;
+        normalWallRun = false;
     }
 }

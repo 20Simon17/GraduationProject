@@ -40,7 +40,7 @@ public struct PlayerDataStruct
     public float groundSlamGravityMultiplier;
     public float slamCooldown;
 
-    [Header("Movement")] 
+    [Header("Movement")]
     public Vector3 defaultGravity;
     public PhysicsMaterial physicsMaterial;
     public float maxRunVelocity;
@@ -53,10 +53,16 @@ public struct PlayerDataStruct
     public float wallRunGravityMultiplier;
     public float maxWallRunEntryVelocity;
     public float wallRunCancelVerticalVelocity;
+    public float wallRunVerticalVelocityLoss;
+    public float verticalWallJumpOutwardForce;
+    public float forwardWallRunCheckDistanceMultiplier;
+    public float percentageConvertedVelocityOnVerticalWallRun;
     public int maxWallRuns;
 
+    [Header("Interaction")]
     public float maxInteractionDistance;
 
+    [Header("Zipline")]
     public float ziplineAutoDropVelocity;
     public float ziplineAccelerationReduction;
 }

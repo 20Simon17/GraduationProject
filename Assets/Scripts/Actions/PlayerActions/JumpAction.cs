@@ -72,9 +72,20 @@ public class JumpAction : PlayerActionStack.PlayerAction
 
         if (dataRecord.canWallRunJump)
         {
-            int direction = Vector3.Dot(horizontalVelocity, transform.forward) >= 0 ? 1 : -1;
-            rb.linearVelocity = transform.rotation * horizontalVelocity.normalized * rb.linearVelocity.magnitude * direction;
-            rb.AddForce(transform.forward * data.wallRunJumpSpeedBoost, ForceMode.Force);
+            if (dataRecord.previousWallRunWasVertical)
+            {
+                if (Vector3.Dot(transform.forward, -dataRecord.previousWallNormal) < 0)
+                {
+                    rb.linearVelocity = horizontalVelocity;
+                    rb.AddForce(dataRecord.previousWallNormal * data.verticalWallJumpOutwardForce, ForceMode.Force);
+                }
+            }
+            else
+            {
+                int direction = Vector3.Dot(horizontalVelocity, transform.forward) >= 0 ? 1 : -1;
+                rb.linearVelocity = transform.rotation * horizontalVelocity.normalized * rb.linearVelocity.magnitude * direction;
+                rb.AddForce(transform.forward * data.wallRunJumpSpeedBoost, ForceMode.Force);
+            }
         }
         else rb.linearVelocity = horizontalVelocity;
 

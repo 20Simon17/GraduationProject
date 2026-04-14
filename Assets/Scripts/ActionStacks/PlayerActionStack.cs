@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Numerics;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -127,6 +128,8 @@ public class PlayerActionStack : ActionStack
                 dataRecord.isGrounded = true;
                 
                 dataRecord.canWallRunJump = false;
+                dataRecord.previousWallRunWasVertical = false;
+                dataRecord.previousWallNormal = Vector3.zero;
                 dataRecord.currentWallRuns = 0;
                 if (dataRecord.isWallRunning)
                 {
@@ -229,6 +232,22 @@ public class PlayerActionStack : ActionStack
         float rayOffset = 0.2f;
         float raySidewaysOffset = 0.5f;
 
+        // When wallrunning upwards, check that there is still a wall there (need to do this since the player can look around)
+        if (dataRecord.isWallRunning && dataRecord.previousWallRunWasVertical && dataRecord.frontWallNormal != Vector3.zero)
+        {
+            Vector3 offsetDirection = Vector3.Cross(-dataRecord.frontWallNormal, transform.up);
+            Vector3 rayDirection = -dataRecord.frontWallNormal;
+            Ray[] wallRays = LocalCreateRays(rayDirection, offsetDirection);
+
+            foreach (Ray ray in wallRays)
+            {
+                if (Physics.Raycast(ray, dataRecord.dataStruct.wallRunCheckDistance * dataRecord.dataStruct.forwardWallRunCheckDistanceMultiplier))
+                {
+                    return true;
+                }
+            }
+        }
+
         Ray[] lRays = LocalCreateRays(-transform.right, transform.forward);
         Ray[] rRays = LocalCreateRays(transform.right, transform.forward);
         Ray[] fRays = LocalCreateRays(transform.forward, transform.right);
@@ -236,7 +255,7 @@ public class PlayerActionStack : ActionStack
         bool returnValue = false;
         for (int i = 0; i < lRays.Length; i++)
         {
-            if (Physics.Raycast(fRays[i], out RaycastHit fHit, dataRecord.dataStruct.wallRunCheckDistance))
+            if (Physics.Raycast(fRays[i], out RaycastHit fHit, dataRecord.dataStruct.wallRunCheckDistance * dataRecord.dataStruct.forwardWallRunCheckDistanceMultiplier))
             {
                 dataRecord.frontWallNormal = fHit.normal;
                 returnValue = true;

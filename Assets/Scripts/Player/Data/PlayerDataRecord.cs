@@ -44,6 +44,10 @@ public record PlayerDataRecord
     public Vector3 leftWallNormal;
     public Vector3 rightWallNormal;
     public Vector3 frontWallNormal;
+    public bool previousWallRunWasVertical;
+    public Vector3 previousWallNormal;
+    // public GameObject currentWallObject;
+    // public GameObject previousWallObject;
 
     [Space(5)]
     public bool isInTimeTrial;

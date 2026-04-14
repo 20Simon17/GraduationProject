@@ -6500,7 +6500,7 @@ Transform:
   m_GameObject: {fileID: 4576708330290168007}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 78.79, y: 1, z: 0}
+  m_LocalPosition: {x: 49.87, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6540,6 +6540,8 @@ MonoBehaviour:
     leftWallNormal: {x: 0, y: 0, z: 0}
     rightWallNormal: {x: 0, y: 0, z: 0}
     frontWallNormal: {x: 0, y: 0, z: 0}
+    previousWallRunWasVertical: 0
+    previousWallNormal: {x: 0, y: 0, z: 0}
     isInTimeTrial: 0
     dataStruct:
       velocityHardCap: 0
@@ -6574,6 +6576,10 @@ MonoBehaviour:
       wallRunGravityMultiplier: 0
       maxWallRunEntryVelocity: 0
       wallRunCancelVerticalVelocity: 0
+      wallRunVerticalVelocityLoss: 0
+      verticalWallJumpOutwardForce: 0
+      forwardWallRunCheckDistanceMultiplier: 0
+      percentageConvertedVelocityOnVerticalWallRun: 0
       maxWallRuns: 0
       maxInteractionDistance: 50
       ziplineAutoDropVelocity: 0
@@ -6883,6 +6889,8 @@ MonoBehaviour:
     leftWallNormal: {x: 0, y: 0, z: 0}
     rightWallNormal: {x: 0, y: 0, z: 0}
     frontWallNormal: {x: 0, y: 0, z: 0}
+    previousWallRunWasVertical: 0
+    previousWallNormal: {x: 0, y: 0, z: 0}
     isInTimeTrial: 0
     dataStruct:
       velocityHardCap: 0
@@ -6917,6 +6925,10 @@ MonoBehaviour:
       wallRunGravityMultiplier: 0
       maxWallRunEntryVelocity: 0
       wallRunCancelVerticalVelocity: 0
+      wallRunVerticalVelocityLoss: 0
+      verticalWallJumpOutwardForce: 0
+      forwardWallRunCheckDistanceMultiplier: 0
+      percentageConvertedVelocityOnVerticalWallRun: 0
       maxWallRuns: 0
       maxInteractionDistance: 0
       ziplineAutoDropVelocity: 0

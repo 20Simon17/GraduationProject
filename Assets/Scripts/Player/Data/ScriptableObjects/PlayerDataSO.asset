@@ -69,7 +69,7 @@ MonoBehaviour:
       maxWallRunEntryVelocity: 40
       wallRunCancelVerticalVelocity: -8
       wallRunVerticalVelocityLoss: 3
-      verticalWallJumpOutwardForce: 250
+      verticalWallJumpOutwardForce: 300
       forwardWallRunCheckDistanceMultiplier: 1.5
       percentageConvertedVelocityOnVerticalWallRun: 0.75
       maxWallRuns: 2

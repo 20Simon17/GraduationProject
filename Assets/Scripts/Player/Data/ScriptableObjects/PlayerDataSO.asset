@@ -61,8 +61,8 @@ MonoBehaviour:
       defaultGravity: {x: 0, y: -9.81, z: 0}
       physicsMaterial: {fileID: 13400000, guid: ac46e870bda3604488a90dcf6373c15e, type: 2}
       maxRunVelocity: 10
-      accelerationForce: 50
-      decelerationForce: 50
+      accelerationForce: 20
+      decelerationForce: 5
       wallRunCheckDistance: 0.5
       wallRunJumpSpeedBoost: 1.3
       wallRunGravityMultiplier: 0.75

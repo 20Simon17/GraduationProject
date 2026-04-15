@@ -66,7 +66,7 @@ public class CameraActionStack : ActionStack
     public void UpdateActionStack()
     {
         base.UpdateStack();
-
+        
         if (currentAction != CurrentAction as CameraAction)
         {
             currentAction = (CameraAction) CurrentAction;
@@ -76,7 +76,7 @@ public class CameraActionStack : ActionStack
     private void FreeCamToggle(InputValue value)
     {
         // On press, add the free cam action. On release, complete the action
-        if (value.isPressed && CurrentAction.ToString() != "FreeMoveCameraAction")
+        if (value.isPressed && currentAction is not FreeMoveCameraAction)
         {
             PushAction(new FreeMoveCameraAction(playerTransform, cameraTransform));
         }
@@ -89,5 +89,17 @@ public class CameraActionStack : ActionStack
     private void Look(InputValue value)
     {
         currentAction?.RotateCamera(value.Get<Vector2>());
+    }
+
+    public void OnWallRunStateChange(bool isEntry, Vector3 wallNormal = default, Vector3 wallRunDirection = default)
+    {
+        if (isEntry)
+        {
+            PushAction(new WallRunCameraAction(playerTransform, cameraTransform, wallNormal, wallRunDirection));
+        }
+        else
+        {
+            (currentAction as WallRunCameraAction)?.SetIsDone(true);
+        }
     }
 }

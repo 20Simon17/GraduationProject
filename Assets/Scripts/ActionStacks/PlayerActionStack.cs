@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using System.Numerics;
 using System.Xml;
@@ -43,6 +44,8 @@ public class PlayerActionStack : ActionStack
     
     private Vector3 velocityOnPause;
     private Vector3 gravityOnPause;
+
+    private CameraActionStack cameraActionStack;
     
     private bool gameIsQuitting;
     
@@ -60,6 +63,8 @@ public class PlayerActionStack : ActionStack
         
         playerDataComponent = GetComponent<PlayerData>();
         dataRecord = playerDataComponent.dataRecord;
+
+        cameraActionStack = FindFirstObjectByType<CameraActionStack>();
         
         PushAction(new DefaultMovementAction(rb, transform, dataRecord));
         BindEvents();
@@ -313,7 +318,7 @@ public class PlayerActionStack : ActionStack
 
         if (currentAction is not WallRunAction && !dataRecord.isGrounded)
         {
-            PushAction(new WallRunAction(rb, transform, dataRecord));
+            PushAction(new WallRunAction(rb, transform, dataRecord, cameraActionStack));
             jumpBufferActive = false;
             slideBufferActive = false;
         }
@@ -323,6 +328,14 @@ public class PlayerActionStack : ActionStack
             dataRecord.canWallRunJump = true;
             dataRecord.CanJump = true;
 
+            //TODO: How the **** do I fix this?? Waiting one frame solves my problem with the camera tilting back and changes the way the jump works. (The effect it has)
+            StartCoroutine(FrameDelay());
+        }
+
+        return;
+        IEnumerator FrameDelay()
+        {
+            yield return null;
             ForceAddJumpAction();
         }
     }

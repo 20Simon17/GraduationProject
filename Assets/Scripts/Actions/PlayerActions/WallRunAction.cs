@@ -2,11 +2,15 @@ using UnityEngine;
 
 public class WallRunAction : PlayerActionStack.PlayerAction
 {
-    public WallRunAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData)
-        : base(inRb, inTransform, inData) {}
+    public WallRunAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData, CameraActionStack inCameraActionStack)
+        : base(inRb, inTransform, inData)
+    {
+        cameraActionStack = inCameraActionStack;
+    }
 
     private Vector3 HorizontalVelocity => new(rb.linearVelocity.x, 0, rb.linearVelocity.z);
     private bool normalWallRun;
+    private CameraActionStack cameraActionStack;
 
     public override bool IsDone()
     {
@@ -87,6 +91,12 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             float extraVerticalVelocity = rb.linearVelocity.y > 0 ? 3 : 0;
             rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y + extraVerticalVelocity, movementVelocity.z);
         }
+
+        if (normalWallRun)
+        {
+            cameraActionStack.OnWallRunStateChange(true, dataRecord.previousWallNormal, moveDirection);
+        }
+        
         
         Physics.gravity = Vector3.zero;
         data.physicsMaterial.dynamicFriction = 0;
@@ -112,6 +122,11 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         if (dataRecord.currentWallRuns < data.maxWallRuns && dataRecord.frontWallNormal == Vector3.zero)
         {
             dataRecord.currentWallRuns++;
+        }
+
+        if (normalWallRun)
+        {
+            cameraActionStack.OnWallRunStateChange(false);
         }
 
         data.physicsMaterial.dynamicFriction = data.defaultFriction;

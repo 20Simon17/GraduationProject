@@ -1,11 +1,7 @@
 using System.Collections;
 using System.Linq;
-using System.Numerics;
-using System.Xml;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Quaternion = UnityEngine.Quaternion;
-using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent(typeof(PlayerData))]
 public class PlayerActionStack : ActionStack
@@ -58,7 +54,7 @@ public class PlayerActionStack : ActionStack
     
     private void Start()
     {
-        GetComponent<CapsuleCollider>().material = dataRecord.dataStruct.physicsMaterial;
+        //GetComponent<CapsuleCollider>().material = dataRecord.dataStruct.physicsMaterial;
         rb = GetComponent<Rigidbody>();
         
         playerDataComponent = GetComponent<PlayerData>();
@@ -96,7 +92,16 @@ public class PlayerActionStack : ActionStack
         
         GroundCheck();
         SlopeCheck();
-        CanWallRun();
+        WallChecks();
+
+        if (!dataRecord.isGrounded)
+        {
+            dataRecord.dataStruct.physicsMaterial.dynamicFriction = 0;
+        }
+        else
+        {
+            dataRecord.dataStruct.physicsMaterial.dynamicFriction = dataRecord.dataStruct.defaultFriction;
+        }
 
         if (rb.linearVelocity.magnitude > dataRecord.dataStruct.velocityHardCap)
         {
@@ -111,6 +116,20 @@ public class PlayerActionStack : ActionStack
             {
                 dataRecord.isCoyoteTimeActive = false;
                 dataRecord.coyoteTime = 0;
+            }
+        }
+
+        if (dataRecord.isHoldingJump)
+        {
+            if (dataRecord.frontWallNormal != Vector3.zero && !dataRecord.isWallClimbing)
+            {
+                ForceAddWallClimbAction();
+                dataRecord.isHoldingJump = false;
+            }
+            else if (!dataRecord.isWallRunning && (dataRecord.rightWallNormal != Vector3.zero || dataRecord.leftWallNormal != Vector3.zero))
+            {
+                ForceAddWallRunAction();
+                dataRecord.isHoldingJump = false;
             }
         }
         
@@ -133,6 +152,7 @@ public class PlayerActionStack : ActionStack
                 dataRecord.isGrounded = true;
                 
                 dataRecord.canWallRunJump = false;
+                dataRecord.canWallClimbJump = false;
                 dataRecord.previousWallRunWasVertical = false;
                 dataRecord.previousWallNormal = Vector3.zero;
                 dataRecord.currentWallRuns = 0;
@@ -202,43 +222,14 @@ public class PlayerActionStack : ActionStack
             dataRecord.slopeNormal = Vector3.zero;
         }
     }
-    
-    private void CheckJumpActions(InputValue value)
-    {
-        if (currentAction is WaitAction) return;
-        
-        if (currentAction is WallRunAction)
-        {
-            HandleWallRunAction(value);
-            return;
-        }
-        
-        if (!dataRecord.isGrounded && value.isPressed)
-        {
-            jumpBufferActive = true;
-            
-            if (slideBufferActive) slideBufferActive = false;
-        }
-        else if (jumpBufferActive && !value.isPressed)
-        {
-            jumpBufferActive = false;
-            return;
-        }
-        
-        if (dataRecord.CanJump)
-        {
-            AddJumpAction(value);
-        }
-        else if (CanWallRun()) HandleWallRunAction(value);
-    }
-    
-    private bool CanWallRun()
+
+    private bool WallChecks()
     {
         float rayOffset = 0.2f;
         float raySidewaysOffset = 0.5f;
 
         // When wallrunning upwards, check that there is still a wall there (need to do this since the player can look around)
-        if (dataRecord.isWallRunning && dataRecord.previousWallRunWasVertical && dataRecord.frontWallNormal != Vector3.zero)
+        if (dataRecord.isWallClimbing && dataRecord.frontWallNormal != Vector3.zero)
         {
             Vector3 offsetDirection = Vector3.Cross(-dataRecord.frontWallNormal, transform.up);
             Vector3 rayDirection = -dataRecord.frontWallNormal;
@@ -246,11 +237,14 @@ public class PlayerActionStack : ActionStack
 
             foreach (Ray ray in wallRays)
             {
-                if (Physics.Raycast(ray, dataRecord.dataStruct.wallRunCheckDistance * dataRecord.dataStruct.forwardWallRunCheckDistanceMultiplier))
+                if (Physics.Raycast(ray, dataRecord.dataStruct.wallClimbCheckDistance))
                 {
                     return true;
                 }
             }
+
+            dataRecord.frontWallNormal = Vector3.zero;
+            return false;
         }
 
         Ray[] lRays = LocalCreateRays(-transform.right, transform.forward);
@@ -260,7 +254,7 @@ public class PlayerActionStack : ActionStack
         bool returnValue = false;
         for (int i = 0; i < lRays.Length; i++)
         {
-            if (Physics.Raycast(fRays[i], out RaycastHit fHit, dataRecord.dataStruct.wallRunCheckDistance * dataRecord.dataStruct.forwardWallRunCheckDistanceMultiplier))
+            if (Physics.Raycast(fRays[i], out RaycastHit fHit, dataRecord.dataStruct.wallClimbCheckDistance))
             {
                 dataRecord.frontWallNormal = fHit.normal;
                 returnValue = true;
@@ -292,6 +286,50 @@ public class PlayerActionStack : ActionStack
                 new(transform.position - rayOffsetDirection * rayOffset + transform.up * rayOffset + direction * raySidewaysOffset, direction),
                 new(transform.position - rayOffsetDirection * rayOffset - transform.up * rayOffset + direction * raySidewaysOffset, direction)
             };
+        }
+    }
+    
+    private void CheckJumpActions(InputValue value)
+    {
+        dataRecord.isHoldingJump = value.isPressed;
+
+        if (currentAction is WaitAction) return;
+        
+        if (dataRecord.isWallRunning)
+        {
+            HandleWallRunAction(value);
+            return;
+        }
+
+        if (dataRecord.isWallClimbing)
+        {
+            HandleWallClimbAction(value);
+            return;
+        }
+        
+        if (!dataRecord.isGrounded && value.isPressed)
+        {
+            jumpBufferActive = true;
+            
+            if (slideBufferActive) slideBufferActive = false;
+        }
+        else if (jumpBufferActive && !value.isPressed)
+        {
+            jumpBufferActive = false;
+            return;
+        }
+        
+        if (dataRecord.CanJump)
+        {
+            AddJumpAction(value);
+        }
+        else if (dataRecord.frontWallNormal != Vector3.zero)
+        {
+            HandleWallClimbAction(value);
+        }
+        else if (dataRecord.leftWallNormal != Vector3.zero || dataRecord.rightWallNormal != Vector3.zero)
+        {
+            HandleWallRunAction(value);
         }
     }
     
@@ -337,6 +375,53 @@ public class PlayerActionStack : ActionStack
         {
             yield return null;
             ForceAddJumpAction();
+        }
+    }
+
+    private void ForceAddWallRunAction()
+    {
+        if (currentAction is not WallRunAction && !dataRecord.isGrounded)
+        {
+            PushAction(new WallRunAction(rb, transform, dataRecord, cameraActionStack));
+            jumpBufferActive = false;
+            slideBufferActive = false;
+        }
+    }
+
+    private void HandleWallClimbAction(InputValue value)
+    {
+        if (!value.isPressed) return;
+
+        if (currentAction is not WallClimbAction && !dataRecord.isGrounded)
+        {
+            PushAction(new WallClimbAction(rb, transform, dataRecord));
+            jumpBufferActive = false;
+            slideBufferActive = false;
+        }
+        else if (currentAction is WallClimbAction)
+        {
+            currentAction.CompleteAction();
+            dataRecord.canWallClimbJump = true;
+            dataRecord.CanJump = true;
+
+            StartCoroutine(FrameDelay());
+        }
+
+        return;
+        IEnumerator FrameDelay()
+        {
+            yield return null;
+            ForceAddJumpAction();
+        }
+    }
+
+    private void ForceAddWallClimbAction()
+    {
+        if (currentAction is not WallClimbAction && !dataRecord.isGrounded)
+        {
+            PushAction(new WallClimbAction(rb, transform, dataRecord));
+            jumpBufferActive = false;
+            slideBufferActive = false;
         }
     }
     

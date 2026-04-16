@@ -97,7 +97,7 @@ public class CameraActionStack : ActionStack
         {
             PushAction(new WallRunCameraAction(playerTransform, cameraTransform, wallNormal, wallRunDirection));
         }
-        else
+        else if (currentAction is WallRunCameraAction)
         {
             (currentAction as WallRunCameraAction)?.SetIsDone(true);
         }

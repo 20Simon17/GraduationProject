@@ -14,7 +14,7 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
     private float mouseSensitivity = 0.15f;
     private Vector3 wallNormal;
     private Vector3 wallRunDirection;
-    private float maxHorizontalAngle = 45f;
+    private float maxHorizontalAngle = 25f;
     private GameObject playerObject;
 
     private bool isDone;
@@ -43,10 +43,10 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
         Vector3 previousPlayerRotation = PlayerTransform.eulerAngles;
         playerObject?.transform.Rotate(Vector3.up, input.x * mouseSensitivity);
 
-        // if (Mathf.Abs(Vector3.Angle(PlayerTransform.eulerAngles, wallRunDirection)) > maxHorizontalAngle)
-        // {
-        //     PlayerTransform.eulerAngles = previousPlayerRotation;
-        // }
+        if (Mathf.Abs(Vector3.Angle(PlayerTransform.eulerAngles, wallRunDirection)) > maxHorizontalAngle)
+        {
+            PlayerTransform.eulerAngles = previousPlayerRotation;
+        }
 
         //Rotate the camera up/down based on the input, clamp to min/max angles
         VerticalRotation += -input.y * mouseSensitivity;

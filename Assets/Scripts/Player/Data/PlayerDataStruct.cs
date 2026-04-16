@@ -50,14 +50,17 @@ public struct PlayerDataStruct
     [Header("Wall Run")]
     public float wallRunCheckDistance;
     public float wallRunJumpSpeedBoost;
-    public float wallRunGravityMultiplier;
     public float maxWallRunEntryVelocity;
     public float wallRunCancelVerticalVelocity;
     public float wallRunVerticalVelocityLoss;
-    public float verticalWallJumpOutwardForce;
-    public float forwardWallRunCheckDistanceMultiplier;
-    public float percentageConvertedVelocityOnVerticalWallRun;
     public int maxWallRuns;
+
+    [Header("Wall Climb")]
+    public float wallClimbCheckDistance;
+    public float wallClimbVerticalVelocityLoss;
+    public float wallClimbJumpOutwardForce;
+    public float percentageConvertedVelocityOnWallClimb;
+
 
     [Header("Interaction")]
     public float maxInteractionDistance;

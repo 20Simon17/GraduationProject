@@ -28368,8 +28368,11 @@ MonoBehaviour:
     isSliding: 0
     isSlamming: 0
     isWallRunning: 0
+    isWallClimbing: 0
+    isHoldingJump: 0
     currentWallRuns: 0
     canWallRunJump: 0
+    canWallClimbJump: 0
     leftWallNormal: {x: 0, y: 0, z: 0}
     rightWallNormal: {x: 0, y: 0, z: 0}
     frontWallNormal: {x: 0, y: 0, z: 0}
@@ -28406,14 +28409,14 @@ MonoBehaviour:
       decelerationForce: 0
       wallRunCheckDistance: 0
       wallRunJumpSpeedBoost: 0
-      wallRunGravityMultiplier: 0
       maxWallRunEntryVelocity: 0
       wallRunCancelVerticalVelocity: 0
       wallRunVerticalVelocityLoss: 0
-      verticalWallJumpOutwardForce: 0
-      forwardWallRunCheckDistanceMultiplier: 0
-      percentageConvertedVelocityOnVerticalWallRun: 0
       maxWallRuns: 0
+      wallClimbCheckDistance: 0
+      wallClimbVerticalVelocityLoss: 0
+      wallClimbJumpOutwardForce: 0
+      percentageConvertedVelocityOnWallClimb: 0
       maxInteractionDistance: 50
       ziplineAutoDropVelocity: 0
       ziplineAccelerationReduction: 0
@@ -28913,8 +28916,11 @@ MonoBehaviour:
     isSliding: 0
     isSlamming: 0
     isWallRunning: 0
+    isWallClimbing: 0
+    isHoldingJump: 0
     currentWallRuns: 0
     canWallRunJump: 0
+    canWallClimbJump: 0
     leftWallNormal: {x: 0, y: 0, z: 0}
     rightWallNormal: {x: 0, y: 0, z: 0}
     frontWallNormal: {x: 0, y: 0, z: 0}
@@ -28951,14 +28957,14 @@ MonoBehaviour:
       decelerationForce: 0
       wallRunCheckDistance: 0
       wallRunJumpSpeedBoost: 0
-      wallRunGravityMultiplier: 0
       maxWallRunEntryVelocity: 0
       wallRunCancelVerticalVelocity: 0
       wallRunVerticalVelocityLoss: 0
-      verticalWallJumpOutwardForce: 0
-      forwardWallRunCheckDistanceMultiplier: 0
-      percentageConvertedVelocityOnVerticalWallRun: 0
       maxWallRuns: 0
+      wallClimbCheckDistance: 0
+      wallClimbVerticalVelocityLoss: 0
+      wallClimbJumpOutwardForce: 0
+      percentageConvertedVelocityOnWallClimb: 0
       maxInteractionDistance: 0
       ziplineAutoDropVelocity: 0
       ziplineAccelerationReduction: 0

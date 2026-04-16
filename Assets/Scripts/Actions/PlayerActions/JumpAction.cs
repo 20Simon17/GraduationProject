@@ -12,8 +12,6 @@ public class JumpAction : PlayerActionStack.PlayerAction
 
     private void CheckJumps()
     {
-        // TODO: if (forceJump) perform jump regardless of other conditions. (from zipline)
-        // Do I want a way to combine slam and slide jump? slam -> land, slide + jump = forward + up boost
         if (CanSlamJump())
         {
             PerformSlamJump();
@@ -68,23 +66,24 @@ public class JumpAction : PlayerActionStack.PlayerAction
     
     private void PerformJump()
     {
-        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        Vector3 horizontalVelocity = new(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
         if (dataRecord.canWallRunJump)
         {
-            if (dataRecord.previousWallRunWasVertical)
-            {
-                if (Vector3.Dot(transform.forward, -dataRecord.previousWallNormal) < 0)
-                {
-                    rb.linearVelocity = horizontalVelocity;
-                    rb.AddForce(dataRecord.previousWallNormal * data.verticalWallJumpOutwardForce, ForceMode.Force);
-                }
-            }
-            else
+            if (InputManager.Instance.moveDirection != Vector2.zero)
             {
                 int direction = Vector3.Dot(horizontalVelocity, transform.forward) >= 0 ? 1 : -1;
-                rb.linearVelocity = transform.rotation * horizontalVelocity.normalized * rb.linearVelocity.magnitude * direction;
+                Debug.Log($"Performing wall jump with direction {direction}");
+                rb.linearVelocity = rb.transform.rotation * (horizontalVelocity.normalized * rb.linearVelocity.magnitude * direction);
                 rb.AddForce(transform.forward * data.wallRunJumpSpeedBoost, ForceMode.Force);
+            }
+        }
+        else if (dataRecord.canWallClimbJump)
+        {
+            if (Vector3.Dot(transform.forward, -dataRecord.previousWallNormal) < 0)
+            {
+                rb.linearVelocity = horizontalVelocity;
+                rb.AddForce(dataRecord.previousWallNormal * data.wallClimbJumpOutwardForce, ForceMode.Force);
             }
         }
         else rb.linearVelocity = horizontalVelocity;

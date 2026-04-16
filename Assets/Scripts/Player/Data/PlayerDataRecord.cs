@@ -37,10 +37,13 @@ public record PlayerDataRecord
     public bool isSliding;
     public bool isSlamming;
     public bool isWallRunning;
+    public bool isWallClimbing;
     
     [Space(5)]
+    public bool isHoldingJump;
     public int currentWallRuns;
     public bool canWallRunJump;
+    public bool canWallClimbJump;
     public Vector3 leftWallNormal;
     public Vector3 rightWallNormal;
     public Vector3 frontWallNormal;

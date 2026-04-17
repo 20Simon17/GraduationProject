@@ -13,6 +13,7 @@ public class WallClimbAction : PlayerActionStack.PlayerAction
         }
         if (dataRecord.frontWallNormal == Vector3.zero)
         {
+            Debug.Log("Wallclimb ended due to no front wall");
             // Make player climb the edge in front of them in this case?
             return true;
         }
@@ -39,7 +40,7 @@ public class WallClimbAction : PlayerActionStack.PlayerAction
         
         Physics.gravity = Vector3.zero;
         data.physicsMaterial.dynamicFriction = 0;
-        dataRecord.isWallClimbing = true;
+        dataRecord.isWallClimbing = true;;
     }
 
     public override void OnUpdate(float deltaTime)

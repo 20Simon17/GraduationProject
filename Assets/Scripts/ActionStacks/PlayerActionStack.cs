@@ -90,10 +90,24 @@ public class PlayerActionStack : ActionStack
     {
         base.UpdateStack();
         
+        HandleVelocityCap();
+
         GroundCheck();
         SlopeCheck();
         WallChecks();
 
+        HandleFriction();
+        HandleCoyoteTime();
+        HandleChainJumpInput();
+        
+        if (currentAction != CurrentAction as PlayerAction)
+        {
+            currentAction = (PlayerAction) CurrentAction;
+        }
+    }
+
+    private void HandleFriction()
+    {
         if (!dataRecord.isGrounded)
         {
             dataRecord.dataStruct.physicsMaterial.dynamicFriction = 0;
@@ -102,12 +116,18 @@ public class PlayerActionStack : ActionStack
         {
             dataRecord.dataStruct.physicsMaterial.dynamicFriction = dataRecord.dataStruct.defaultFriction;
         }
+    }
 
+    private void HandleVelocityCap()
+    {
         if (rb.linearVelocity.magnitude > dataRecord.dataStruct.velocityHardCap)
         {
             rb.linearVelocity = rb.linearVelocity.normalized * dataRecord.dataStruct.velocityHardCap;
         }
-        
+    }
+
+    private void HandleCoyoteTime()
+    {
         if (dataRecord.isCoyoteTimeActive)
         {
             dataRecord.coyoteTime += Time.deltaTime;
@@ -118,7 +138,10 @@ public class PlayerActionStack : ActionStack
                 dataRecord.coyoteTime = 0;
             }
         }
+    }
 
+    private void HandleChainJumpInput()
+    {
         if (dataRecord.isHoldingJump)
         {
             if (dataRecord.frontWallNormal != Vector3.zero && !dataRecord.isWallClimbing)
@@ -131,11 +154,6 @@ public class PlayerActionStack : ActionStack
                 ForceAddWallRunAction();
                 dataRecord.isHoldingJump = false;
             }
-        }
-        
-        if (currentAction != CurrentAction as PlayerAction)
-        {
-            currentAction = (PlayerAction) CurrentAction;
         }
     }
 

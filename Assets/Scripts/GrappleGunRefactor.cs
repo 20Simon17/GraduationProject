@@ -157,6 +157,20 @@ public class GrappleGunRefactor : ItemBase
         }
         
         Vector3 swingDirection = inPosition - inAttachmentPoint;
+
+        float verticalDot = Vector3.Dot(swingDirection.normalized, Vector3.up);
+        if (verticalDot > 0.5f)
+        {
+            // normal swing
+        }
+        else if (verticalDot > -0.5f)
+        {
+            // make the swing go around the corner
+        }
+        else
+        {
+            //cancel swing? no swinging below player?
+        }
        
         Vector3 clampedVelocity = inVelocity;
         if (inVelocity.magnitude < minSwingVelocity)
@@ -192,20 +206,21 @@ public class GrappleGunRefactor : ItemBase
                 swingGrapples++;
                 
                 attachPoint = hit.point;
-                /*Vector3 flatPlayerVelocity = new Vector3(playerRb.linearVelocity.x, 0, playerRb.linearVelocity.z);
-                if (hit.normal != Vector3.down && Vector3.Dot(-hit.normal, flatPlayerVelocity) < 0.9f && playerRb.linearVelocity.magnitude > 2)
-                {
-                    //TODO: For this to work correctly, need the prediction point / assist points to work.
-                    //If the player didn't directly hit anything, check a larger area (spherecollider with grapplingrange radius?) and use the closest point?
-                    if (hit.normal == Vector3.right || hit.normal == Vector3.left)
-                    {
-                        attachPoint.x = playerRb.transform.position.x;
-                    }
-                    else if (hit.normal == Vector3.forward || hit.normal == Vector3.back)
-                    {
-                        attachPoint.z = playerRb.transform.position.z;
-                    }
-                }*/
+                
+                // Vector3 flatPlayerVelocity = new Vector3(playerRb.linearVelocity.x, 0, playerRb.linearVelocity.z);
+                // if (hit.normal != Vector3.down && Vector3.Dot(-hit.normal, flatPlayerVelocity) < 0.9f && playerRb.linearVelocity.magnitude > 2)
+                // {
+                //     //TODO: For this to work correctly, need the prediction point / assist points to work.
+                //     //If the player didn't directly hit anything, check a larger area (spherecollider with grapplingrange radius?) and use the closest point?
+                //     if (hit.normal == Vector3.right || hit.normal == Vector3.left)
+                //     {
+                //         attachPoint.x = playerRb.transform.position.x;
+                //     }
+                //     else if (hit.normal == Vector3.forward || hit.normal == Vector3.back)
+                //     {
+                //         attachPoint.z = playerRb.transform.position.z;
+                //     }
+                // }
                 
                 player.AddWaitingAction(ref onGrappleFinished);
             }

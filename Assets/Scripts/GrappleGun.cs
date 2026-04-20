@@ -61,22 +61,17 @@ public class GrappleGun : ItemBase
 
     private Action OnGrappleFinished;
 
-    private void Start()
-    {
-        if (!eventsAreBound) BindEvents();
-
-        lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.enabled = false;
-
-        predictionPoint = new GameObject("Grapple Prediction Point").transform;
-    }
-
     private void GetReferences()
     {
         player = FindFirstObjectByType<PlayerActionStack>();
         playerRb = player.GetComponent<Rigidbody>();
         playerCamera = FindFirstObjectByType<CameraActionStack>();
         referencesAreSet = true;
+        
+        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.enabled = false;
+
+        predictionPoint = new GameObject("Grapple Prediction Point").transform;
     }
 
     public override void EquipItem()

@@ -19569,10 +19569,10 @@ MonoBehaviour:
     m_Bits: 513
   grappleCooldown: 0.5
   grappleRange: 75
-  maxPullGrapples: 1
+  maxPullGrapples: 10
   pullForce: 20
   pullDetachDistance: 2
-  maxSwingGrapples: 2
+  maxSwingGrapples: 10
   minSwingVelocity: 30
   maxSwingVelocity: 75
   swingForceDivision: 2

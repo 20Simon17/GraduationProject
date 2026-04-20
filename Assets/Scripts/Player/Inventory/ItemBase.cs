@@ -6,6 +6,7 @@ public class ItemBase : MonoBehaviour
     public bool isUnlocked;
     public bool isEnabled;
     public bool isEquipped;
+    public bool startEquipped;
     
     public virtual void EquipItem()
     {

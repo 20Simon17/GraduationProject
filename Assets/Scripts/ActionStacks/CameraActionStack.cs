@@ -18,6 +18,8 @@ public class CameraActionStack : ActionStack
         public virtual void RotateCamera(Vector2 input) { }
     }
     
+    private Camera cameraComponent;
+
     private CameraAction currentAction;
 
     private Transform playerTransform;
@@ -32,6 +34,7 @@ public class CameraActionStack : ActionStack
         
         // Get references
         cameraTransform = transform;
+        cameraComponent = GetComponent<Camera>();
         playerTransform = FindFirstObjectByType<PlayerActionStack>().transform;
         
         PushAction(new DefaultCameraAction(playerTransform, cameraTransform));
@@ -101,5 +104,25 @@ public class CameraActionStack : ActionStack
         {
             (currentAction as WallRunCameraAction)?.SetIsDone(true);
         }
+    }
+
+    public bool IsObjectVisible(Transform targetObject)
+    {
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(cameraComponent);
+
+        foreach (var plane in planes)
+        {
+            if (plane.GetDistanceToPoint(targetObject.position) < 0f)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public Vector3 WorldToScreenPoint(Vector3 worldPosition)
+    {
+        return cameraComponent.WorldToScreenPoint(worldPosition);
     }
 }

@@ -27,6 +27,7 @@ public class InventoryMenu : MonoBehaviour
         }
             
         LoadItems();
+        CheckStartEquippedItems();
     }
 
     public void BindEvents()
@@ -53,6 +54,18 @@ public class InventoryMenu : MonoBehaviour
         {
             buttons[i].interactable = inventoryItems[i].item.isEnabled;
             buttons[i].GetComponent<Image>().color = inventoryItems[i].item.isEquipped ? Color.green : Color.white;
+        }
+    }
+
+    private void CheckStartEquippedItems()
+    {
+        foreach (InventoryItemBase inventoryItem in inventoryItems)
+        {
+            if (inventoryItem.item.startEquipped)
+            {
+                playerInventory.EquipItem(inventoryItem.item);
+                return;
+            }
         }
     }
 

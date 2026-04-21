@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using TMPro;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(LineRenderer))]
 
@@ -59,6 +61,11 @@ public class GrappleGun : ItemBase
     private RaycastHit predictionHit;
     private bool disableIcon = false;
 
+    [Header("Grapple UI")]
+    [SerializeField] private GameObject grapplingUI;
+    [SerializeField] private TMP_Text swingAmmoText;
+    [SerializeField] private TMP_Text pullAmmoText;
+
     private Action OnGrappleFinished;
 
     private void GetReferences()
@@ -80,6 +87,8 @@ public class GrappleGun : ItemBase
         if (!referencesAreSet) GetReferences();
         BindEvents();
         gameObject.SetActive(true);
+        grapplingUI.SetActive(true);
+
     }
 
     public override void UnequipItem()
@@ -87,6 +96,7 @@ public class GrappleGun : ItemBase
         base.UnequipItem();
         UnbindEvents();
         gameObject.SetActive(false);
+        grapplingUI.SetActive(false);
     }
 
     private void BindEvents()
@@ -133,7 +143,15 @@ public class GrappleGun : ItemBase
         swingGrapples = 0;
         pullGrapples = 0;
 
+        UpdateAmmoText();
+
         if (isSwinging) HandleSwingGrapple(false);
+    }
+
+    private void UpdateAmmoText()
+    {
+        swingAmmoText.text = "S: " + (maxSwingGrapples - swingGrapples) + "/" + maxSwingGrapples;
+        pullAmmoText.text = "P: " + (maxPullGrapples - pullGrapples) + "/" + maxPullGrapples;
     }
     
     private RaycastHit? GetLookAtHit()
@@ -151,8 +169,7 @@ public class GrappleGun : ItemBase
 
         if (isPulling)
         {
-            Vector3 direction = (attachPoint - player.transform.position).normalized;
-            playerRb.linearVelocity = direction * pullForce;
+            playerRb.linearVelocity = (attachPoint - player.transform.position).normalized * pullForce;
 
             if (Vector3.Distance(attachPoint, player.transform.position) < pullDetachDistance)
             {
@@ -163,9 +180,8 @@ public class GrappleGun : ItemBase
         {
             Vector3 swingArcForce = CalculateSwingArcForce(playerRb.linearVelocity, player.transform.position, attachPoint);
             Vector3 extraForwardForce = player.transform.forward.normalized * forwardVelocityAddition;
-            Vector3 totalForce = swingArcForce + extraForwardForce;
             
-            playerRb.AddForce(totalForce, ForceMode.Acceleration);
+            playerRb.AddForce(swingArcForce + extraForwardForce, ForceMode.Acceleration);
         }
     }
 
@@ -273,20 +289,6 @@ public class GrappleGun : ItemBase
         }
         
         Vector3 swingDirection = inPosition - inAttachmentPoint;
-
-        float verticalDot = Vector3.Dot(swingDirection.normalized, Vector3.up);
-        if (verticalDot > 0.5f)
-        {
-            // normal swing
-        }
-        else if (verticalDot > -0.5f)
-        {
-            // make the swing go around the corner
-        }
-        else
-        {
-            //cancel swing? no swinging below player?
-        }
        
         Vector3 clampedVelocity = inVelocity;
         if (inVelocity.magnitude < minSwingVelocity)
@@ -323,6 +325,8 @@ public class GrappleGun : ItemBase
             {
                 isSwinging = true;
                 swingGrapples++;
+
+                UpdateAmmoText();
                 
                 attachPoint = hit.point;
                 lineRendererAttachPoint = hit.point;
@@ -330,10 +334,8 @@ public class GrappleGun : ItemBase
                 
                 Vector3 flatPlayerVelocity = new Vector3(playerRb.linearVelocity.x, 0, playerRb.linearVelocity.z);
                 float normalDot = Vector3.Dot(-hit.normal, flatPlayerVelocity.normalized);
-                if (hit.normal != Vector3.down && normalDot < 0.9f && normalDot > -0.9f && playerRb.linearVelocity.magnitude > 2)
+                if (hit.normal != Vector3.down && normalDot < 0.5f && normalDot > -0.5f && playerRb.linearVelocity.magnitude > 2)
                 {
-                    //TODO: For this to work correctly, need the prediction point / assist points to work.
-                    //If the player didn't directly hit anything, check a larger area (spherecollider with grapplingrange radius?) and use the closest point?
                     if (hit.normal == Vector3.right || hit.normal == Vector3.left)
                     {
                         attachPoint.x = playerRb.transform.position.x;
@@ -342,6 +344,24 @@ public class GrappleGun : ItemBase
                     {
                         attachPoint.z = playerRb.transform.position.z;
                     }
+                }
+
+                Vector3 swingDirection = player.transform.position - attachPoint;
+                Vector3 directionToPoint = player.transform.position - new Vector3(attachPoint.x, player.transform.position.y, attachPoint.z);
+                float verticalDot = Vector3.Dot(swingDirection.normalized, directionToPoint.normalized);
+                if (verticalDot > 0.8f)
+                {
+                    attachPoint.y = player.transform.position.y;
+                    // normal swing
+                }
+                else if (verticalDot > -0.5f)
+                {
+                    
+                    // make the swing go around the corner
+                }
+                else
+                {
+                    //cancel swing? no swinging below player?
                 }
                 
                 player.AddWaitingAction(ref OnGrappleFinished);
@@ -369,6 +389,8 @@ public class GrappleGun : ItemBase
             {
                 isPulling = true;
                 pullGrapples++;
+
+                UpdateAmmoText();
                 
                 attachPoint = hit.point;
                 lineRendererAttachPoint = hit.point;

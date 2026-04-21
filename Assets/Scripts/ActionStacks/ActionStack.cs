@@ -103,6 +103,20 @@ public class ActionStack : MonoBehaviour
         }
     }
 
+    public virtual void InsertAction(IAction action, int index)
+    {
+        if (action == null) return;
+
+        if (m_actionStack.Count > index)
+        {
+            // is the action already on the stack?
+            m_actionStack.RemoveAll(a => a == action);
+
+            // insert action into the stack
+            m_actionStack.Insert(index, action);
+        }
+    }
+
     protected void UpdateStack()
     {
         UpdateActions(Time.deltaTime);

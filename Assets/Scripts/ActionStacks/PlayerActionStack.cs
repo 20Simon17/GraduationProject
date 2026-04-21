@@ -380,19 +380,12 @@ public class PlayerActionStack : ActionStack
         }
         else if (currentAction is WallRunAction && dataRecord.currentWallRuns < dataRecord.dataStruct.maxWallRuns)
         {
+            // insert the jump action right below the wallrun action so that it executes immediately after the wallrun action finishes
+            InsertAction(new JumpAction(rb, transform, dataRecord), 1);
+
             currentAction.CompleteAction();
             dataRecord.canWallRunJump = true;
             dataRecord.CanJump = true;
-
-            //TODO: How the **** do I fix this?? Waiting one frame solves my problem with the camera tilting back and changes the way the jump works. (The effect it has)
-            StartCoroutine(FrameDelay());
-        }
-
-        return;
-        IEnumerator FrameDelay()
-        {
-            yield return null;
-            ForceAddJumpAction();
         }
     }
 
@@ -418,18 +411,12 @@ public class PlayerActionStack : ActionStack
         }
         else if (currentAction is WallClimbAction)
         {
+            // insert the jump action right below the wallclimb action so that it executes immediately after the wallclimb action finishes
+            InsertAction(new JumpAction(rb, transform, dataRecord), 1);
+            
             currentAction.CompleteAction();
             dataRecord.canWallClimbJump = true;
             dataRecord.CanJump = true;
-
-            StartCoroutine(FrameDelay());
-        }
-
-        return;
-        IEnumerator FrameDelay()
-        {
-            yield return null;
-            ForceAddJumpAction();
         }
     }
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class WallRunCameraAction : CameraActionStack.CameraAction
@@ -14,8 +15,10 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
     private float mouseSensitivity = 0.15f;
     private Vector3 wallNormal;
     private Vector3 wallRunDirection;
-    private float maxHorizontalAngle = 25f;
-    private GameObject playerObject;
+    private float maxHorizontalAngle = 35f;
+    private float forwardY;
+    private float horizontalRotation;
+    private float cameraTilt = 5f;
 
     private bool isDone;
 
@@ -25,33 +28,41 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
     {
         if (bFirstTime)
         {
-            playerObject = PlayerTransform.gameObject;
+            GetRotationOffset();
+            Debug.Log("Camera direction is " + wallRunDirection);
+
             float dot = Vector3.Dot(PlayerTransform.right, wallNormal);
             if (dot > 0)
             {
-                SetCameraZRotation(-10);
+                SetCameraZRotation(-cameraTilt);
             }
             else
             {
-                SetCameraZRotation(10);
+                SetCameraZRotation(cameraTilt);
             }
         }
+    }
+
+    private void GetRotationOffset()
+    {
+        forwardY = wallRunDirection.y;
+
+        horizontalRotation = PlayerTransform.eulerAngles.y - forwardY;
+        horizontalRotation = Mathf.Clamp(horizontalRotation, forwardY - maxHorizontalAngle, forwardY + maxHorizontalAngle);
+        PlayerTransform.eulerAngles = new Vector3(PlayerTransform.eulerAngles.x, horizontalRotation, PlayerTransform.eulerAngles.z);
     }
     
     public override void RotateCamera(Vector2 input)
     {
-        Vector3 previousPlayerRotation = PlayerTransform.eulerAngles;
-        playerObject?.transform.Rotate(Vector3.up, input.x * mouseSensitivity);
-
-        if (Mathf.Abs(Vector3.Angle(PlayerTransform.eulerAngles, wallRunDirection)) > maxHorizontalAngle)
-        {
-            PlayerTransform.eulerAngles = previousPlayerRotation;
-        }
+         //Rotate the player left/right based on the input, clamp to min/max angles
+        horizontalRotation += input.x * mouseSensitivity;
+        horizontalRotation = Mathf.Clamp(horizontalRotation, forwardY - maxHorizontalAngle, forwardY + maxHorizontalAngle);
+        PlayerTransform.eulerAngles = new Vector3(PlayerTransform.eulerAngles.x, horizontalRotation, PlayerTransform.eulerAngles.z);
 
         //Rotate the camera up/down based on the input, clamp to min/max angles
         VerticalRotation += -input.y * mouseSensitivity;
         VerticalRotation = Mathf.Clamp(VerticalRotation, clampAngleMin, clampAngleMax);
-        CameraTransform.localEulerAngles = new Vector3(VerticalRotation, CameraTransform.localEulerAngles.y, CameraTransform.localEulerAngles.z);
+        CameraTransform.localEulerAngles = new Vector3(VerticalRotation, CameraTransform.localEulerAngles.z, CameraTransform.localEulerAngles.z);
     }
 
     public override void OnEnd()

@@ -249,20 +249,36 @@ public class PlayerActionStack : ActionStack
         // When wallrunning upwards, check that there is still a wall there (need to do this since the player can look around)
         if (dataRecord.isWallClimbing && dataRecord.frontWallNormal != Vector3.zero)
         {
-            Vector3 offsetDirection = Vector3.Cross(-dataRecord.frontWallNormal, transform.up);
-            Vector3 rayDirection = -dataRecord.frontWallNormal;
-            Ray[] wallRays = LocalCreateRays(rayDirection, offsetDirection);
-
-            foreach (Ray ray in wallRays)
+            if (LocalCheckWall(dataRecord.frontWallNormal, dataRecord.dataStruct.wallClimbCheckDistance))
             {
-                if (Physics.Raycast(ray, dataRecord.dataStruct.wallClimbCheckDistance))
-                {
-                    return true;
-                }
+                return true;
             }
 
             dataRecord.frontWallNormal = Vector3.zero;
             return false;
+        }
+        else if (dataRecord.isWallRunning)
+        {
+            if (dataRecord.rightWallNormal != Vector3.zero)
+            {
+                if (LocalCheckWall(dataRecord.rightWallNormal, dataRecord.dataStruct.wallRunCheckDistance))
+                {
+                    return true;
+                }
+
+                dataRecord.rightWallNormal = Vector3.zero;
+                return false;
+            }
+            else if (dataRecord.leftWallNormal != Vector3.zero)
+            {
+                if (LocalCheckWall(dataRecord.leftWallNormal, dataRecord.dataStruct.wallRunCheckDistance))
+                {
+                    return true;
+                }
+
+                dataRecord.leftWallNormal = Vector3.zero;
+                return false;
+            }
         }
 
         Ray[] lRays = LocalCreateRays(-transform.right, transform.forward);
@@ -304,6 +320,19 @@ public class PlayerActionStack : ActionStack
                 new(transform.position - rayOffsetDirection * rayOffset + transform.up * rayOffset + direction * raySidewaysOffset, direction),
                 new(transform.position - rayOffsetDirection * rayOffset - transform.up * rayOffset + direction * raySidewaysOffset, direction)
             };
+        }
+
+        bool LocalCheckWall(Vector3 wallNormal, float rayDistance)
+        {
+            Ray[] wallRays = LocalCreateRays(-wallNormal, Vector3.Cross(-wallNormal, transform.up));
+            foreach (Ray ray in wallRays)
+            {
+                if (Physics.Raycast(ray, rayDistance))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
     

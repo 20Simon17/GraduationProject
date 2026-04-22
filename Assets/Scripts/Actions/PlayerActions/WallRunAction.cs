@@ -70,6 +70,9 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y + extraVerticalVelocity, movementVelocity.z);
 
         cameraActionStack.OnWallRunStateChange(true, dataRecord.previousWallNormal, moveDirection);
+        Debug.Log("wallrun is going in direction " + moveDirection);
+
+        //TODO: FIX ISSUE WITH WALLRUN GOING THE WRONG DIRECTION
         
         Physics.gravity = Vector3.zero;
         data.physicsMaterial.dynamicFriction = 0;
@@ -78,9 +81,9 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
         Vector3 GetWallMoveDirection(Vector3 inNormal)
         {
-            Vector3 wallDirection = Vector3.Cross(inNormal, transform.up);
-            float fDot = Vector3.Dot(HorizontalVelocity, wallDirection);
-            float bDot = Vector3.Dot(HorizontalVelocity, -wallDirection);
+            Vector3 wallDirection = Vector3.Cross(inNormal, transform.up).normalized;
+            float fDot = Vector3.Dot(HorizontalVelocity.normalized, wallDirection);
+            float bDot = Vector3.Dot(HorizontalVelocity.normalized, -wallDirection);
             return fDot > bDot ? wallDirection : -wallDirection;
         }
     }

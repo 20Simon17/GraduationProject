@@ -71,7 +71,7 @@ MonoBehaviour:
       maxWallRunEntryVelocity: 40
       wallRunCancelVerticalVelocity: -8
       wallRunVerticalVelocityLoss: 3
-      maxWallRuns: 2
+      maxWallRuns: 10
       wallClimbCheckDistance: 1
       wallClimbVerticalVelocityLoss: 12
       wallClimbJumpOutwardForce: 200

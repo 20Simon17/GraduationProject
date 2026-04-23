@@ -32,7 +32,6 @@ public class WallClimbAction : PlayerActionStack.PlayerAction
         }
 
         Vector3 moveDirection;
-        dataRecord.previousWallRunWasVertical = true;
         dataRecord.previousWallNormal = dataRecord.frontWallNormal;
 
         moveDirection = Vector3.Cross(dataRecord.frontWallNormal, -transform.right);

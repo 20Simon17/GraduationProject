@@ -10,15 +10,16 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
         wallRunDirection = inWallRunDirection;
     }
 
-    private float clampAngleMin = -90f;
-    private float clampAngleMax = 90f;
-    private float mouseSensitivity = 0.15f;
+    //TODO: Make any camera settings also be saved in some collective data storage
+    private readonly float clampAngleMin = -90f;
+    private readonly float clampAngleMax = 90f;
+    private readonly float mouseSensitivity = 0.15f;
     private Vector3 wallNormal;
     private Vector3 wallRunDirection;
-    private float maxHorizontalAngle = 35f;
+    private readonly float maxHorizontalAngle = 45f;
     private float forwardY;
     private float horizontalRotation;
-    private float cameraTilt = 5f;
+    private readonly float cameraTilt = 2f;
 
     private bool isDone;
 
@@ -29,7 +30,6 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
         if (bFirstTime)
         {
             GetRotationOffset();
-            Debug.Log("Camera direction is " + wallRunDirection);
 
             float dot = Vector3.Dot(PlayerTransform.right, wallNormal);
             if (dot > 0)
@@ -45,11 +45,9 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
 
     private void GetRotationOffset()
     {
-        forwardY = wallRunDirection.y;
-
-        horizontalRotation = PlayerTransform.eulerAngles.y - forwardY;
-        horizontalRotation = Mathf.Clamp(horizontalRotation, forwardY - maxHorizontalAngle, forwardY + maxHorizontalAngle);
-        PlayerTransform.eulerAngles = new Vector3(PlayerTransform.eulerAngles.x, horizontalRotation, PlayerTransform.eulerAngles.z);
+        PlayerTransform.forward = wallRunDirection;
+        forwardY = PlayerTransform.eulerAngles.y;
+        horizontalRotation = forwardY;
     }
     
     public override void RotateCamera(Vector2 input)

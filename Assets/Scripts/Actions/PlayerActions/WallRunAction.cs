@@ -10,12 +10,13 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     private Vector3 HorizontalVelocity => new(rb.linearVelocity.x, 0, rb.linearVelocity.z);
     private CameraActionStack cameraActionStack;
+    private Vector3 direction;
+    private bool exitedEarly;
 
     public override bool IsDone()
     {
         if (HorizontalVelocity.magnitude <= 0)
         {
-            Debug.Log("Wallrun ended due to low horizontal velocity");
             return true;
         }
         if (rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity || dataRecord.isGrounded)
@@ -31,32 +32,45 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     
     public override void OnBegin(bool bFirstTime)
     {
-        if (dataRecord.currentWallRuns >= data.maxWallRuns || rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity)
+        if (dataRecord.wallRuns >= data.maxWallRuns || rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity)
         {
             CompleteAction();
             return;
         }
 
-        if (rb.linearVelocity.magnitude > data.maxWallRunEntryVelocity)
+        // TODO: Cancel unless > x speed on entering (check HorizontalVelocity.magnitude)
+
+        if (Vector3.Dot(transform.forward, HorizontalVelocity.normalized) < Vector3.Dot(-transform.forward, HorizontalVelocity.normalized))
         {
-            // Perform wall jump
+            CompleteAction();
+            return;
         }
-
-        // TODO: max 1 wallrun per side, meaning if the player wallruns on a wall to the right, left is the only remaining option (turn around to stick to same wall)
-        // This doesn't make sense because what if there is a case where the player would wallrun on the inner side of an L shaped wall, then there would be 2 of the same direction
-        // wallrun. Instead I should limit it to 1 of the same directional wallrun per same wall. (can't do 2 right wallruns on 1 wall)
-        dataRecord.previousWallRunWasVertical = false;
-
-        Vector3 moveDirection;
+        
         if (dataRecord.rightWallNormal != Vector3.zero)
         {
+            if (dataRecord.previousWallRunWasRight && dataRecord.rightWallNormal == dataRecord.previousWallRunNormal)
+            {
+                CompleteAction();
+                return;
+            }
+
             dataRecord.previousWallNormal = dataRecord.rightWallNormal;
-            moveDirection = GetWallMoveDirection(dataRecord.rightWallNormal);
+            dataRecord.previousWallRunNormal = dataRecord.rightWallNormal;
+            dataRecord.previousWallRunWasRight = true;
+            direction = GetWallMoveDirection(dataRecord.rightWallNormal);
         }
         else if (dataRecord.leftWallNormal != Vector3.zero)
         {
+            if (!dataRecord.previousWallRunWasRight && dataRecord.leftWallNormal == dataRecord.previousWallRunNormal)
+            {
+                CompleteAction();
+                return;
+            }
+
             dataRecord.previousWallNormal = dataRecord.leftWallNormal;
-            moveDirection = GetWallMoveDirection(dataRecord.leftWallNormal);
+            dataRecord.previousWallRunNormal = dataRecord.leftWallNormal;
+            dataRecord.previousWallRunWasRight = false;
+            direction = GetWallMoveDirection(dataRecord.leftWallNormal);
         }
         else
         {
@@ -64,15 +78,12 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             return;
         }
 
-        Vector3 movementVelocity = moveDirection.normalized * HorizontalVelocity.magnitude;
+        Vector3 movementVelocity = direction.normalized * HorizontalVelocity.magnitude;
 
-        float extraVerticalVelocity = rb.linearVelocity.y > 0 ? 3 : 0;
+        float extraVerticalVelocity = rb.linearVelocity.y > 0 ? 2 : 0;
         rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y + extraVerticalVelocity, movementVelocity.z);
 
-        cameraActionStack.OnWallRunStateChange(true, dataRecord.previousWallNormal, moveDirection);
-        Debug.Log("wallrun is going in direction " + moveDirection);
-
-        //TODO: FIX ISSUE WITH WALLRUN GOING THE WRONG DIRECTION
+        cameraActionStack.OnWallRunStateChange(true, dataRecord.previousWallNormal, direction);
         
         Physics.gravity = Vector3.zero;
         data.physicsMaterial.dynamicFriction = 0;
@@ -95,9 +106,9 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     public override void OnEnd()
     {
-        if (dataRecord.currentWallRuns < data.maxWallRuns)
+        if (!exitedEarly && dataRecord.wallRuns < data.maxWallRuns)
         {
-            dataRecord.currentWallRuns++;
+            dataRecord.wallRuns++;
         }
 
         cameraActionStack.OnWallRunStateChange(false);
@@ -105,5 +116,12 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         data.physicsMaterial.dynamicFriction = data.defaultFriction;
         Physics.gravity = data.defaultGravity;
         dataRecord.isWallRunning = false;
+        dataRecord.previousWallRunDirection = direction;
+    }
+
+    public override void CompleteAction()
+    {
+        base.CompleteAction();
+        exitedEarly = true;
     }
 }

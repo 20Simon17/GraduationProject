@@ -27,7 +27,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
     {
         if (!dataRecord.isGrounded) return;
         
-        if (Time.time - dataRecord.timeAtLastSlide < data.slideCooldown || 
+        if (Time.time - dataRecord.timeAtLastSlide < data.slideCooldown ||
             rb.linearVelocity.magnitude < data.slideSpeedRequirement)
         {
             exitedEarly = true;
@@ -44,7 +44,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
         
         //TODO: Only collider gets scaled down, model / capsule gets rotated to be flat instead
         transform.localScale = new Vector3(transform.localScale.x, data.slidePlayerScaleY, transform.localScale.z);
-        if (rb.linearVelocity.y < 20) rb.AddForce(-transform.up * 5, ForceMode.Impulse); //Send the player downwards to stick to the ground
+        if (rb.linearVelocity.y < 20) rb.AddForce(-transform.up * 25, ForceMode.Impulse); //Send the player downwards to stick to the ground
     }
 
     public override void OnEnd()

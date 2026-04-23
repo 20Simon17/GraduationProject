@@ -41,14 +41,16 @@ public record PlayerDataRecord
     
     [Space(5)]
     public bool isHoldingJump;
-    public int currentWallRuns;
+    public int wallRuns;
     public bool canWallRunJump;
     public bool canWallClimbJump;
     public Vector3 leftWallNormal;
     public Vector3 rightWallNormal;
     public Vector3 frontWallNormal;
-    public bool previousWallRunWasVertical;
     public Vector3 previousWallNormal;
+    public Vector3 previousWallRunDirection;
+    public bool previousWallRunWasRight;
+    public Vector3 previousWallRunNormal;
     // public GameObject currentWallObject;
     // public GameObject previousWallObject;
 

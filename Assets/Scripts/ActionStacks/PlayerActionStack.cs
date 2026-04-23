@@ -142,6 +142,7 @@ public class PlayerActionStack : ActionStack
 
     private void HandleChainJumpInput()
     {
+        //TODO: Make wallrun jump allow insta wallrun enter as well
         if (dataRecord.isHoldingJump)
         {
             if (dataRecord.frontWallNormal != Vector3.zero && !dataRecord.isWallClimbing)
@@ -167,32 +168,7 @@ public class PlayerActionStack : ActionStack
             if (!dataRecord.isGrounded)
             {
                 OnGroundedEvent?.Invoke();
-                dataRecord.isGrounded = true;
-                
-                dataRecord.canWallRunJump = false;
-                dataRecord.canWallClimbJump = false;
-                dataRecord.previousWallRunWasVertical = false;
-                dataRecord.previousWallNormal = Vector3.zero;
-                dataRecord.currentWallRuns = 0;
-                if (dataRecord.isWallRunning)
-                {
-                    slideBufferActive = false;
-                    jumpBufferActive = false;
-                }
-                
-                if (slideBufferActive)
-                {
-                    slideBufferActive = false;
-                    AddSlideAction();
-                }
-                else if (jumpBufferActive)
-                {
-                    //TODO: Max buffer time (aka store the time of buffering and compare it here)
-                    Debug.Log("Jump buffered, adding jump action.");
-                    Debug.Log(dataRecord.isWallRunning);
-                    jumpBufferActive = false;
-                    ForceAddJumpAction();
-                }
+                OnGrounded();
             }
             
             if (dataRecord.hasJumped && dataRecord.timeAtLastJump != 0 && Time.time - dataRecord.timeAtLastJump > 0.1f)
@@ -335,6 +311,37 @@ public class PlayerActionStack : ActionStack
             return false;
         }
     }
+
+    private void OnGrounded()
+    {
+        dataRecord.isGrounded = true;
+                
+        dataRecord.canWallRunJump = false;
+        dataRecord.canWallClimbJump = false;
+        dataRecord.previousWallNormal = Vector3.zero;
+        dataRecord.previousWallRunWasRight = false;
+        dataRecord.previousWallRunNormal = Vector3.zero;
+        dataRecord.wallRuns = 0;
+        if (dataRecord.isWallRunning)
+        {
+            slideBufferActive = false;
+            jumpBufferActive = false;
+        }
+        
+        if (slideBufferActive)
+        {
+            slideBufferActive = false;
+            AddSlideAction();
+        }
+        else if (jumpBufferActive)
+        {
+            //TODO: Max buffer time (aka store the time of buffering and compare it here)
+            Debug.Log("Jump buffered, adding jump action.");
+            Debug.Log(dataRecord.isWallRunning);
+            jumpBufferActive = false;
+            ForceAddJumpAction();
+        }
+    }
     
     private void CheckJumpActions(InputValue value)
     {
@@ -407,7 +414,7 @@ public class PlayerActionStack : ActionStack
             jumpBufferActive = false;
             slideBufferActive = false;
         }
-        else if (currentAction is WallRunAction && dataRecord.currentWallRuns < dataRecord.dataStruct.maxWallRuns)
+        else if (currentAction is WallRunAction && dataRecord.wallRuns < dataRecord.dataStruct.maxWallRuns)
         {
             // insert the jump action right below the wallrun action so that it executes immediately after the wallrun action finishes
             InsertAction(new JumpAction(rb, transform, dataRecord), 1);

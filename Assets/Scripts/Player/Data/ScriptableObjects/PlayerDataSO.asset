@@ -29,14 +29,16 @@ MonoBehaviour:
     isWallRunning: 0
     isWallClimbing: 0
     isHoldingJump: 0
-    currentWallRuns: 0
+    wallRuns: 0
     canWallRunJump: 0
     canWallClimbJump: 0
     leftWallNormal: {x: 0, y: 0, z: 0}
     rightWallNormal: {x: 0, y: 0, z: 0}
     frontWallNormal: {x: 0, y: 0, z: 0}
-    previousWallRunWasVertical: 0
     previousWallNormal: {x: 0, y: 0, z: 0}
+    previousWallRunDirection: {x: 0, y: 0, z: 0}
+    previousWallRunWasRight: 0
+    previousWallRunNormal: {x: 0, y: 0, z: 0}
     isInTimeTrial: 0
     dataStruct:
       velocityHardCap: 250
@@ -70,7 +72,7 @@ MonoBehaviour:
       wallRunJumpSpeedBoost: 1.3
       maxWallRunEntryVelocity: 40
       wallRunCancelVerticalVelocity: -8
-      wallRunVerticalVelocityLoss: 3
+      wallRunVerticalVelocityLoss: 2
       maxWallRuns: 10
       wallClimbCheckDistance: 1
       wallClimbVerticalVelocityLoss: 12

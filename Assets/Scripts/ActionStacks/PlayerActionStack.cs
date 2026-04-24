@@ -99,6 +99,18 @@ public class PlayerActionStack : ActionStack
         HandleFriction();
         HandleCoyoteTime();
         HandleChainJumpInput();
+
+        /*  feedback from playtest session:
+            wallrun entry a bit weird, wallclimb jump lacks feedback
+            speedlines could be good
+            pullgrappler to the ground + jump = speed boost
+            pullgrappler shorter range (more limited, less versatile)
+            potentially charge jump?
+            slam -> slide = preserve more speed? potentially...
+            (fix slide either way)
+            fix zipline entry not working
+            tweak the effect of things, make speed feel more present
+        */
         
         if (currentAction != CurrentAction as PlayerAction)
         {
@@ -142,7 +154,6 @@ public class PlayerActionStack : ActionStack
 
     private void HandleChainJumpInput()
     {
-        //TODO: Make wallrun jump allow insta wallrun enter as well
         if (dataRecord.isHoldingJump)
         {
             if (dataRecord.frontWallNormal != Vector3.zero && !dataRecord.isWallClimbing)
@@ -150,10 +161,24 @@ public class PlayerActionStack : ActionStack
                 ForceAddWallClimbAction();
                 dataRecord.isHoldingJump = false;
             }
-            else if (!dataRecord.isWallRunning && (dataRecord.rightWallNormal != Vector3.zero || dataRecord.leftWallNormal != Vector3.zero))
+            else if (!dataRecord.isWallRunning)
             {
+                bool exitFunction = true;
+                if (dataRecord.rightWallNormal != Vector3.zero)
+                {
+                    if (dataRecord.previousWallRunWasRight && dataRecord.rightWallNormal == dataRecord.previousWallRunNormal) { return;}
+
+                    exitFunction = false;
+                }
+                else if (dataRecord.leftWallNormal != Vector3.zero)
+                {
+                    if (!dataRecord.previousWallRunWasRight && dataRecord.leftWallNormal == dataRecord.previousWallRunNormal) { return; }
+
+                    exitFunction = false;
+                }
+
+                if (exitFunction) return;
                 ForceAddWallRunAction();
-                dataRecord.isHoldingJump = false;
             }
         }
     }
@@ -222,7 +247,7 @@ public class PlayerActionStack : ActionStack
         float rayOffset = 0.2f;
         float raySidewaysOffset = 0.5f;
 
-        // When wallrunning upwards, check that there is still a wall there (need to do this since the player can look around)
+        // When attached to a wall, make sure that wall is still there
         if (dataRecord.isWallClimbing && dataRecord.frontWallNormal != Vector3.zero)
         {
             if (LocalCheckWall(dataRecord.frontWallNormal, dataRecord.dataStruct.wallClimbCheckDistance))

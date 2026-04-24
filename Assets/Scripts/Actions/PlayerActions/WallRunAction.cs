@@ -17,14 +17,17 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     {
         if (HorizontalVelocity.magnitude <= 0)
         {
+            Debug.Log("Wallrun ended due to 0 horizontal velocity");
             return true;
         }
-        if (rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity || dataRecord.isGrounded)
+        if (rb.linearVelocity.y <= data.wallRunVerticalCancelVelocity || dataRecord.isGrounded)
         {
+            Debug.Log("Wallrun ended due to low vertical velocity or grounding");
             return true;
         }
         if (dataRecord.rightWallNormal == Vector3.zero && dataRecord.leftWallNormal == Vector3.zero)
         {
+            Debug.Log("Wallrun ended due to no wall");
             return true;
         }
         return ActionCompleted;
@@ -32,16 +35,23 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     
     public override void OnBegin(bool bFirstTime)
     {
-        if (dataRecord.wallRuns >= data.maxWallRuns || rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity)
+        if (dataRecord.wallRuns >= data.maxWallRuns || rb.linearVelocity.y <= data.wallRunVerticalCancelVelocity)
         {
+            Debug.Log("Did not start wallrun due to already maxed wallruns");
             CompleteAction();
             return;
         }
 
-        // TODO: Cancel unless > x speed on entering (check HorizontalVelocity.magnitude)
+        if (HorizontalVelocity.magnitude < data.wallRunHorizontalEntryCancelVelocity)
+        {
+            Debug.Log("Did not start wallrun due to low horizontal velocity");
+            CompleteAction();
+            return;
+        }
 
         if (Vector3.Dot(transform.forward, HorizontalVelocity.normalized) < Vector3.Dot(-transform.forward, HorizontalVelocity.normalized))
         {
+            Debug.Log("Did not start wallrun due to incorrect direction");
             CompleteAction();
             return;
         }
@@ -50,6 +60,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         {
             if (dataRecord.previousWallRunWasRight && dataRecord.rightWallNormal == dataRecord.previousWallRunNormal)
             {
+                Debug.Log("Did not start wallrun due to same wall");
                 CompleteAction();
                 return;
             }
@@ -63,6 +74,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         {
             if (!dataRecord.previousWallRunWasRight && dataRecord.leftWallNormal == dataRecord.previousWallRunNormal)
             {
+                Debug.Log("Did not start wallrun due to same wall");
                 CompleteAction();
                 return;
             }
@@ -74,6 +86,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         }
         else
         {
+            Debug.Log("Did not start wallrun due to no wall");
             CompleteAction();
             return;
         }
@@ -88,6 +101,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         Physics.gravity = Vector3.zero;
         data.physicsMaterial.dynamicFriction = 0;
         dataRecord.isWallRunning = true;
+        dataRecord.isHoldingJump = false;
         return;
 
         Vector3 GetWallMoveDirection(Vector3 inNormal)

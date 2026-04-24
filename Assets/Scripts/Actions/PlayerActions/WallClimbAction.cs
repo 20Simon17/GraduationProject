@@ -7,7 +7,7 @@ public class WallClimbAction : PlayerActionStack.PlayerAction
 
     public override bool IsDone()
     {
-        if (rb.linearVelocity.y <= data.wallRunCancelVerticalVelocity || dataRecord.isGrounded)
+        if (rb.linearVelocity.y <= data.wallRunVerticalCancelVelocity || dataRecord.isGrounded)
         {
             return true;
         }

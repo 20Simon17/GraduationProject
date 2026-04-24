@@ -51,7 +51,8 @@ public struct PlayerDataStruct
     public float wallRunCheckDistance;
     public float wallRunJumpSpeedBoost;
     public float maxWallRunEntryVelocity;
-    public float wallRunCancelVerticalVelocity;
+    public float wallRunVerticalCancelVelocity;
+    public float wallRunHorizontalEntryCancelVelocity;
     public float wallRunVerticalVelocityLoss;
     public int maxWallRuns;
 

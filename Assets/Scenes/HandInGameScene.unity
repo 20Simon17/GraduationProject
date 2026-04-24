@@ -20232,11 +20232,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 513
   grappleCooldown: 0.5
-  grappleRange: 75
-  maxPullGrapples: 8
-  pullForce: 20
+  maxPullGrapples: 1
+  pullGrappleRange: 25
+  pullForce: 25
   pullDetachDistance: 2
-  maxSwingGrapples: 8
+  maxSwingGrapples: 2
+  swingGrappleRange: 75
   minSwingVelocity: 30
   maxSwingVelocity: 75
   swingForceDivision: 2
@@ -29395,7 +29396,8 @@ MonoBehaviour:
       wallRunCheckDistance: 0
       wallRunJumpSpeedBoost: 0
       maxWallRunEntryVelocity: 0
-      wallRunCancelVerticalVelocity: 0
+      wallRunVerticalCancelVelocity: 0
+      wallRunHorizontalEntryCancelVelocity: 0
       wallRunVerticalVelocityLoss: 0
       maxWallRuns: 0
       wallClimbCheckDistance: 0
@@ -29945,7 +29947,8 @@ MonoBehaviour:
       wallRunCheckDistance: 0
       wallRunJumpSpeedBoost: 0
       maxWallRunEntryVelocity: 0
-      wallRunCancelVerticalVelocity: 0
+      wallRunVerticalCancelVelocity: 0
+      wallRunHorizontalEntryCancelVelocity: 0
       wallRunVerticalVelocityLoss: 0
       maxWallRuns: 0
       wallClimbCheckDistance: 0

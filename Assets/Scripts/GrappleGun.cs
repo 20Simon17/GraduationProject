@@ -33,16 +33,17 @@ public class GrappleGun : ItemBase
     [Header("General")]
     [SerializeField] private LayerMask grappleLayerMask;
     [SerializeField] private float grappleCooldown = 0.5f;
-    [SerializeField] private float grappleRange;
 
     [Header("Pull Grapple")]
     [SerializeField] private int maxPullGrapples = 1;
+    [SerializeField] private float pullGrappleRange;
     [SerializeField] private float pullForce = 20;
     [SerializeField] private float pullDetachDistance = 2;
     private int pullGrapples = 0;
 
     [Header("Swing Grapple")]
     [SerializeField] private int maxSwingGrapples = 1;
+    [SerializeField] private float swingGrappleRange;
     [SerializeField] private float minSwingVelocity = 0;
     [SerializeField] private float maxSwingVelocity = 100;
     [SerializeField] private float swingForceDivision = 1;
@@ -153,10 +154,10 @@ public class GrappleGun : ItemBase
         pullAmmoText.text = "P: " + (maxPullGrapples - pullGrapples) + "/" + maxPullGrapples;
     }
     
-    private RaycastHit? GetLookAtHit()
+    private RaycastHit? GetLookAtHit(float inRange)
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, grappleRange, grappleLayerMask)) return hit;
+        if (Physics.Raycast(ray, out RaycastHit hit, inRange, grappleLayerMask)) return hit;
         else return null;
     }
 
@@ -189,9 +190,9 @@ public class GrappleGun : ItemBase
         if (isSwinging || isPulling) return;
 
         Physics.SphereCast(playerCamera.transform.position, predictionSphereCastRadius,
-                            playerCamera.transform.forward, out RaycastHit sphereCastHit, grappleRange);
+                            playerCamera.transform.forward, out RaycastHit sphereCastHit, swingGrappleRange);
         
-        Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, grappleRange);
+        Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit raycastHit, swingGrappleRange);
         
         Vector3 realHitPoint;
         
@@ -249,7 +250,7 @@ public class GrappleGun : ItemBase
         
         float distanceToCamera = Vector3.Distance(predictionPoint.position, playerCamera.transform.position);
         
-        if (predictionPoint.position == Vector3.zero || distanceToCamera > grappleRange)
+        if (predictionPoint.position == Vector3.zero || distanceToCamera > swingGrappleRange)
         {
             if (grapplePointIcon.enabled)
             {
@@ -272,7 +273,7 @@ public class GrappleGun : ItemBase
             
             grapplePointIcon.transform.position = playerCamera.WorldToScreenPoint(predictionPoint.position);
             
-            float lerpValue = distanceToCamera / grappleRange;
+            float lerpValue = distanceToCamera / swingGrappleRange;
             float scaleValue = Mathf.Lerp(1f, 0.75f, lerpValue);
             grapplePointIcon.rectTransform.sizeDelta = new Vector2(64 * scaleValue, 64 * scaleValue);
         }
@@ -313,7 +314,7 @@ public class GrappleGun : ItemBase
         if (isStart && !IsActive && swingGrapples < maxSwingGrapples &&
             playerRb.linearVelocity.y < 0 && !player.dataRecord.isGrounded && !player.dataRecord.isInTimeTrial)
         {
-            RaycastHit? checkHit = GetLookAtHit();
+            RaycastHit? checkHit = GetLookAtHit(swingGrappleRange);
             RaycastHit hit;
 
             if (checkHit.HasValue) hit = checkHit.Value;
@@ -377,7 +378,7 @@ public class GrappleGun : ItemBase
     {
         if (isStart && !IsActive && pullGrapples < maxPullGrapples  && !player.dataRecord.isInTimeTrial)
         {
-            RaycastHit? checkHit = GetLookAtHit();
+            RaycastHit? checkHit = GetLookAtHit(pullGrappleRange);
             RaycastHit hit;
 
             if (checkHit.HasValue) hit = checkHit.Value;

@@ -22,7 +22,8 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         }
         if (rb.linearVelocity.y <= data.wallRunVerticalCancelVelocity || dataRecord.isGrounded)
         {
-            Debug.Log("Wallrun ended due to low vertical velocity or grounding");
+            if (dataRecord.isGrounded) Debug.Log("Wallrun ended due to grounding");
+            else Debug.Log("Wallrun ended due to low vertical velocity");
             return true;
         }
         if (dataRecord.rightWallNormal == Vector3.zero && dataRecord.leftWallNormal == Vector3.zero)

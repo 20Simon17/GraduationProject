@@ -382,7 +382,6 @@ public class GrappleGun : ItemBase
             RaycastHit hit;
 
             if (checkHit.HasValue) hit = checkHit.Value;
-            else if (predictionHit.point != Vector3.zero) hit = predictionHit;
             else return;
 
             if (hit.point != attachPoint && hit.point != Vector3.zero)
@@ -402,6 +401,7 @@ public class GrappleGun : ItemBase
         else if (isPulling)
         {
             isPulling = false;
+            player.dataRecord.timeAtLastPullGrapple = Time.time;
             OnGrappleFinished?.Invoke();
         }
     }

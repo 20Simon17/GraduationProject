@@ -416,7 +416,15 @@ public class PlayerActionStack : ActionStack
     {
         if (!value.isPressed || currentAction is JumpAction) return;
         
-        ForceAddJumpAction();
+        if (currentAction is SlideAction)
+        {
+            InsertAction(new JumpAction(rb, transform, dataRecord), 1);
+            currentAction.CompleteAction();
+        }
+        else
+        {
+            ForceAddJumpAction();
+        }
     }
     
     private void ForceAddJumpAction()

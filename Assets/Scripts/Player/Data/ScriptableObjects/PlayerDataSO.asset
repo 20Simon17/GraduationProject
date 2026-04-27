@@ -16,6 +16,7 @@ MonoBehaviour:
     timeAtLastSlide: 0
     timeAtLastSlam: 0
     timeAtLastJump: 0
+    timeAtLastPullGrapple: 0
     isCoyoteTimeActive: 0
     coyoteTime: 0
     isGrounded: 0
@@ -49,13 +50,15 @@ MonoBehaviour:
       jumpForce: 10
       slamJumpTimeFrame: 0.5
       slideJumpTimeFrame: 0.5
+      pullGrappleJumpTimeFrame: 0.3
+      grappleJumpForwardForce: 5
       slideSpeedBoost: 1.2
-      slideSpeed: 15
+      slideSpeed: 18
       slideJumpForceMultiplier: 0.85
       slideJumpSpeedMultiplier: 1.15
       slideFriction: 0.15
       slidePlayerScaleY: 0.5
-      slideCooldown: 0.5
+      slideCooldown: 0.2
       slideSpeedRequirement: 7
       slideSpeedLoss: 1
       maxSlideSpeed: 30

@@ -8,6 +8,7 @@ public record PlayerDataRecord
     public float timeAtLastSlide;
     public float timeAtLastSlam;
     public float timeAtLastJump;
+    public float timeAtLastPullGrapple;
     
     [Header("Active values")]
     public bool isCoyoteTimeActive;

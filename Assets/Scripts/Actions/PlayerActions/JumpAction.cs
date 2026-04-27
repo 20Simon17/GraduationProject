@@ -93,6 +93,12 @@ public class JumpAction : PlayerActionStack.PlayerAction
                 rb.AddForce(dataRecord.previousWallNormal * data.wallClimbJumpOutwardForce, ForceMode.Force);
             }
         }
+        else if (dataRecord.timeAtLastPullGrapple != 0 && Time.time - dataRecord.timeAtLastPullGrapple <= data.pullGrappleJumpTimeFrame)
+        {
+            Debug.Log("Grapple Jump");
+            rb.linearVelocity = horizontalVelocity;
+            rb.AddForce(transform.forward * data.grappleJumpForwardForce, ForceMode.Impulse);
+        }
         else rb.linearVelocity = horizontalVelocity;
 
         rb.AddForce(transform.up * (data.jumpForce * data.jumpForceScaling), ForceMode.Force);

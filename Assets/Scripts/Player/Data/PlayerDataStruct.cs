@@ -8,18 +8,18 @@ public struct PlayerDataStruct
     public float velocityHardCap;
     public float defaultPlayerScaleY;
     public float jumpForceScaling;
+    public float speedLineSpeedRequirement;
     
     [Header("Ground")]
-    //public float counterForceSpeedThreshold;
     public float defaultFriction;
-    //public float counterFriction;
-    //public float noInputFriction;
 
     [Header("Jump")]
     public float coyoteTimeDuration;
     public float jumpForce;
     public float slamJumpTimeFrame;
     public float slideJumpTimeFrame;
+    public float pullGrappleJumpTimeFrame;
+    public float grappleJumpForwardForce;
     
     [Header("Slide")]
     public float slideSpeedBoost;
@@ -61,7 +61,6 @@ public struct PlayerDataStruct
     public float wallClimbVerticalVelocityLoss;
     public float wallClimbJumpOutwardForce;
     public float percentageConvertedVelocityOnWallClimb;
-
 
     [Header("Interaction")]
     public float maxInteractionDistance;

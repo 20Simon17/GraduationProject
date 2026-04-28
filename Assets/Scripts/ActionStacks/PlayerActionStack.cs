@@ -1,9 +1,8 @@
-using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerData))]
+[RequireComponent(typeof(PlayerData), typeof(Rigidbody))]
 public class PlayerActionStack : ActionStack
 {
     public abstract class PlayerAction : Action
@@ -12,8 +11,8 @@ public class PlayerActionStack : ActionStack
         {
             rb = inRb;
             transform = inTransform;
-            dataRecord = inData;
-            data = inData.dataStruct;
+            playerData = inData;
+            staticData = inData.dataStruct;
         }
     
         public virtual void CompleteAction() => ActionCompleted = true;
@@ -22,8 +21,8 @@ public class PlayerActionStack : ActionStack
         protected bool ActionCompleted;
     
         protected readonly Rigidbody rb;
-        protected PlayerDataRecord dataRecord;
-        protected PlayerDataStruct data;
+        protected PlayerDataRecord playerData;
+        protected PlayerDataStruct staticData;
         protected readonly Transform transform;
     }
     
@@ -33,6 +32,8 @@ public class PlayerActionStack : ActionStack
     // The data for the player
     private PlayerData playerDataComponent;
     public PlayerDataRecord dataRecord;
+
+    [SerializeField] private ParticleSystem speedLinesParticleSystem;
     
     private Rigidbody rb;
     
@@ -49,18 +50,21 @@ public class PlayerActionStack : ActionStack
     private bool jumpBufferActive;
 
     [SerializeField] private LayerMask groundLayerMask;
+
+    private PhysicsMaterial physicsMaterial;
     
     //TODO: For vaulting (if I decide to add it) I could boxcast in front of the player around mid height to see if an edge is there
     
     private void Start()
     {
-        //GetComponent<CapsuleCollider>().material = dataRecord.dataStruct.physicsMaterial;
         rb = GetComponent<Rigidbody>();
         
         playerDataComponent = GetComponent<PlayerData>();
         dataRecord = playerDataComponent.dataRecord;
 
         cameraActionStack = FindFirstObjectByType<CameraActionStack>();
+
+        physicsMaterial = GetComponent<CapsuleCollider>().material;
         
         PushAction(new DefaultMovementAction(rb, transform, dataRecord));
         BindEvents();
@@ -90,27 +94,25 @@ public class PlayerActionStack : ActionStack
     {
         base.UpdateStack();
         
-        HandleVelocityCap();
+        // Cap player velocity
+        if (rb.linearVelocity.magnitude > dataRecord.dataStruct.velocityHardCap)
+        {
+            rb.linearVelocity = rb.linearVelocity.normalized * dataRecord.dataStruct.velocityHardCap;
+        }
+
+        // Set the collider's friction
+        physicsMaterial.dynamicFriction = dataRecord.isGrounded ? dataRecord.dataStruct.defaultFriction : 0;
+
+        // TODO: Separate these from the player script
+        HandleSpeedLines();
+        HandleCameraShake();
 
         GroundCheck();
         SlopeCheck();
-        WallChecks();
 
-        HandleFriction();
+        CheckWallActions();
+
         HandleCoyoteTime();
-        HandleChainJumpInput();
-
-        /*  feedback from playtest session:
-            wallrun entry a bit weird, wallclimb jump lacks feedback
-            speedlines could be good
-            pullgrappler to the ground + jump = speed boost
-            pullgrappler shorter range (more limited, less versatile)
-            potentially charge jump?
-            slam -> slide = preserve more speed? potentially...
-            (fix slide either way)
-            fix zipline entry not working
-            tweak the effect of things, make speed feel more present
-        */
         
         if (currentAction != CurrentAction as PlayerAction)
         {
@@ -118,68 +120,56 @@ public class PlayerActionStack : ActionStack
         }
     }
 
-    private void HandleFriction()
+    private void CheckWallActions()
     {
-        if (!dataRecord.isGrounded)
+        if (WallChecks() && dataRecord.CanDoWallAction)
         {
-            dataRecord.dataStruct.physicsMaterial.dynamicFriction = 0;
-        }
-        else
-        {
-            dataRecord.dataStruct.physicsMaterial.dynamicFriction = dataRecord.dataStruct.defaultFriction;
-        }
-    }
-
-    private void HandleVelocityCap()
-    {
-        if (rb.linearVelocity.magnitude > dataRecord.dataStruct.velocityHardCap)
-        {
-            rb.linearVelocity = rb.linearVelocity.normalized * dataRecord.dataStruct.velocityHardCap;
+            if (dataRecord.rightWallNormal != Vector3.zero || dataRecord.leftWallNormal != Vector3.zero)
+            {
+                ForceAddWallRunAction();
+            }
+            else if (dataRecord.frontWallNormal != Vector3.zero)
+            {
+                Debug.Log("Wall detected, adding wallclimb action");
+                ForceAddWallClimbAction();
+            }
         }
     }
 
     private void HandleCoyoteTime()
     {
-        if (dataRecord.isCoyoteTimeActive)
-        {
-            dataRecord.coyoteTime += Time.deltaTime;
+        if (!dataRecord.isCoyoteTimeActive) return;
 
-            if (dataRecord.coyoteTime >= dataRecord.dataStruct.coyoteTimeDuration)
-            {
-                dataRecord.isCoyoteTimeActive = false;
-                dataRecord.coyoteTime = 0;
-            }
+        dataRecord.coyoteTime += Time.deltaTime;
+        if (dataRecord.coyoteTime >= dataRecord.dataStruct.coyoteTimeDuration)
+        {
+            dataRecord.isCoyoteTimeActive = false;
+            dataRecord.coyoteTime = 0;
         }
     }
 
-    private void HandleChainJumpInput()
+    private void HandleSpeedLines()
     {
-        if (dataRecord.isHoldingJump)
+        //TODO: Separate into separate script for VFX handling
+        return;
+        // Compare our horizontal velocity to the speed requirement for speedlines
+        // if (new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude > dataRecord.dataStruct.speedLineSpeedRequirement)
+        // {
+        //     if (!speedLinesParticleSystem.isPlaying) speedLinesParticleSystem.Play();
+        // }
+        // else
+        // {
+        //     if (speedLinesParticleSystem.isPlaying) speedLinesParticleSystem.Stop();
+        // }
+    }
+
+    private void HandleCameraShake()
+    {
+        // TODO: Separate into separate script for VFX handling
+        if (!dataRecord.allowCameraShake) return;
+        if (rb.linearVelocity.y < dataRecord.dataStruct.cameraShakeSpeedRequirement)
         {
-            if (dataRecord.frontWallNormal != Vector3.zero && !dataRecord.isWallClimbing)
-            {
-                ForceAddWallClimbAction();
-                dataRecord.isHoldingJump = false;
-            }
-            else if (!dataRecord.isWallRunning)
-            {
-                bool exitFunction = true;
-                if (dataRecord.rightWallNormal != Vector3.zero)
-                {
-                    if (dataRecord.previousWallRunWasRight && dataRecord.rightWallNormal == dataRecord.previousWallRunNormal) { return;}
-
-                    exitFunction = false;
-                }
-                else if (dataRecord.leftWallNormal != Vector3.zero)
-                {
-                    if (!dataRecord.previousWallRunWasRight && dataRecord.leftWallNormal == dataRecord.previousWallRunNormal) { return; }
-
-                    exitFunction = false;
-                }
-
-                if (exitFunction) return;
-                ForceAddWallRunAction();
-            }
+            cameraActionStack.ToggleCameraShake(true);
         }
     }
 
@@ -218,7 +208,7 @@ public class PlayerActionStack : ActionStack
     
     private void SlopeCheck()
     {
-        Ray ray = new Ray(transform.position + transform.up * 0.01f, -transform.up);
+        Ray ray = new(transform.position + transform.up * 0.01f, -transform.up);
         if (Physics.SphereCast(ray, 0.5f, out RaycastHit hit, transform.localScale.y / 2 + 0.2f, groundLayerMask))
         {
             if (hit.normal != Vector3.up && dataRecord.isGrounded)
@@ -346,7 +336,7 @@ public class PlayerActionStack : ActionStack
         dataRecord.previousWallNormal = Vector3.zero;
         dataRecord.previousWallRunWasRight = false;
         dataRecord.previousWallRunNormal = Vector3.zero;
-        dataRecord.wallRuns = 0;
+        
         if (dataRecord.isWallRunning)
         {
             slideBufferActive = false;
@@ -402,14 +392,6 @@ public class PlayerActionStack : ActionStack
         {
             AddJumpAction(value);
         }
-        else if (dataRecord.frontWallNormal != Vector3.zero)
-        {
-            HandleWallClimbAction(value);
-        }
-        else if (dataRecord.leftWallNormal != Vector3.zero || dataRecord.rightWallNormal != Vector3.zero)
-        {
-            HandleWallRunAction(value);
-        }
     }
     
     private void AddJumpAction(InputValue value)
@@ -447,7 +429,7 @@ public class PlayerActionStack : ActionStack
             jumpBufferActive = false;
             slideBufferActive = false;
         }
-        else if (currentAction is WallRunAction && dataRecord.wallRuns < dataRecord.dataStruct.maxWallRuns)
+        else if (currentAction is WallRunAction /* && dataRecord.wallRuns < dataRecord.dataStruct.maxWallRuns */)
         {
             // insert the jump action right below the wallrun action so that it executes immediately after the wallrun action finishes
             InsertAction(new JumpAction(rb, transform, dataRecord), 1);
@@ -571,6 +553,4 @@ public class PlayerActionStack : ActionStack
     {
         PushAction(new ZiplineAction(rb, transform, dataRecord, zipline));
     }
-    
-    public void CompleteCurrentAction() => currentAction.CompleteAction();
 }

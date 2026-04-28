@@ -6958,9 +6958,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
   scriptableObject: {fileID: 11400000, guid: 83bc7ce8dc662314c8579125033d97f0, type: 2}
   dataRecord:
+    allowCameraShake: 0
     timeAtLastSlide: 0
     timeAtLastSlam: 0
     timeAtLastJump: 0
+    timeAtLastPullGrapple: 0
     isCoyoteTimeActive: 0
     coyoteTime: 0
     isGrounded: 0
@@ -6989,11 +6991,15 @@ MonoBehaviour:
       velocityHardCap: 0
       defaultPlayerScaleY: 0
       jumpForceScaling: 0
+      speedLineSpeedRequirement: 0
+      cameraShakeSpeedRequirement: 0
       defaultFriction: 0
       coyoteTimeDuration: 0
       jumpForce: 0
       slamJumpTimeFrame: 0
       slideJumpTimeFrame: 0
+      pullGrappleJumpTimeFrame: 0
+      grappleJumpForwardForce: 0
       slideSpeedBoost: 0
       slideSpeed: 0
       slideJumpForceMultiplier: 0
@@ -7188,9 +7194,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerActionStack
   dataRecord:
+    allowCameraShake: 0
     timeAtLastSlide: 0
     timeAtLastSlam: 0
     timeAtLastJump: 0
+    timeAtLastPullGrapple: 0
     isCoyoteTimeActive: 0
     coyoteTime: 0
     isGrounded: 0
@@ -7219,11 +7227,15 @@ MonoBehaviour:
       velocityHardCap: 0
       defaultPlayerScaleY: 0
       jumpForceScaling: 0
+      speedLineSpeedRequirement: 0
+      cameraShakeSpeedRequirement: 0
       defaultFriction: 0
       coyoteTimeDuration: 0
       jumpForce: 0
       slamJumpTimeFrame: 0
       slideJumpTimeFrame: 0
+      pullGrappleJumpTimeFrame: 0
+      grappleJumpForwardForce: 0
       slideSpeedBoost: 0
       slideSpeed: 0
       slideJumpForceMultiplier: 0
@@ -7257,6 +7269,7 @@ MonoBehaviour:
       maxInteractionDistance: 0
       ziplineAutoDropVelocity: 0
       ziplineAccelerationReduction: 0
+  speedLinesParticleSystem: {fileID: 0}
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 512

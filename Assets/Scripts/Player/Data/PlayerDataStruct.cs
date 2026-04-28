@@ -9,6 +9,7 @@ public struct PlayerDataStruct
     public float defaultPlayerScaleY;
     public float jumpForceScaling;
     public float speedLineSpeedRequirement;
+    public float cameraShakeSpeedRequirement;
     
     [Header("Ground")]
     public float defaultFriction;
@@ -54,7 +55,6 @@ public struct PlayerDataStruct
     public float wallRunVerticalCancelVelocity;
     public float wallRunHorizontalEntryCancelVelocity;
     public float wallRunVerticalVelocityLoss;
-    public int maxWallRuns;
 
     [Header("Wall Climb")]
     public float wallClimbCheckDistance;

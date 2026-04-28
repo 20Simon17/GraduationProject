@@ -37,7 +37,7 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
 
     public override void OnBegin(bool bFirstTime)
     {
-        dataRecord.isOnZipline = true;
+        playerData.isOnZipline = true;
         if (!bFirstTime) return;
         
         //TODO: Fix zipline bug where if you enter at the very edge it gets cancelled because the player is "not on the zipline" anymore
@@ -45,7 +45,7 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
 
         InputManager.Instance.OnCrouchEvent += DropFromZipline;
         
-        dataRecord.CanJump = true;
+        playerData.CanJump = true;
         
         // attach the player to the zipline
         Vector3 attachLocation = attachedZipline.GetClosestPointOnZipline(transform.position);
@@ -67,7 +67,7 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
         {
             float vDot = Vector3.Dot(ziplineDirection, Vector3.down);
             float hDot = Vector3.Dot(velocityDirection, ziplineDirection);
-            ziplineAngleAcceleration = data.defaultGravity.magnitude * vDot * (hDot > 0 ? 1 : -1);
+            ziplineAngleAcceleration = staticData.defaultGravity.magnitude * vDot * (hDot > 0 ? 1 : -1);
         }
         
         // set the gravity
@@ -79,18 +79,18 @@ public class ZiplineAction : PlayerActionStack.PlayerAction
     {
         InputManager.Instance.OnCrouchEvent -= DropFromZipline;
         
-        dataRecord.CanJump = false;
+        playerData.CanJump = false;
         Physics.gravity = gravityUponEntering;
 
         attachedZipline.isInUse = false;
-        dataRecord.isOnZipline = false;
+        playerData.isOnZipline = false;
     }
 
     public override void OnUpdate(float deltaTime)
     {
         rb.linearVelocity += velocityDirection * (ziplineAngleAcceleration * deltaTime);
         
-        if (ziplineDirection == Vector3.zero && rb.linearVelocity.magnitude <= data.ziplineAutoDropVelocity)
+        if (ziplineDirection == Vector3.zero && rb.linearVelocity.magnitude <= staticData.ziplineAutoDropVelocity)
         {
             rb.linearVelocity = Vector3.zero;
         }

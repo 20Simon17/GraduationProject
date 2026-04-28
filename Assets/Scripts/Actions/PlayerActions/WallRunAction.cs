@@ -1,3 +1,4 @@
+using UnityEditor.Toolbars;
 using UnityEngine;
 
 public class WallRunAction : PlayerActionStack.PlayerAction
@@ -11,79 +12,51 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     private Vector3 HorizontalVelocity => new(rb.linearVelocity.x, 0, rb.linearVelocity.z);
     private CameraActionStack cameraActionStack;
     private Vector3 direction;
-    private bool exitedEarly;
 
     public override bool IsDone()
     {
-        if (HorizontalVelocity.magnitude <= 0)
+        if (playerData.isGrounded) return true;
+        if (rb.linearVelocity.y <= staticData.wallRunVerticalCancelVelocity)
         {
-            Debug.Log("Wallrun ended due to 0 horizontal velocity");
+            Debug.Log("Wallrun ended due to low vertical velocity");
             return true;
         }
-        if (rb.linearVelocity.y <= data.wallRunVerticalCancelVelocity || dataRecord.isGrounded)
-        {
-            if (dataRecord.isGrounded) Debug.Log("Wallrun ended due to grounding");
-            else Debug.Log("Wallrun ended due to low vertical velocity");
-            return true;
-        }
-        if (dataRecord.rightWallNormal == Vector3.zero && dataRecord.leftWallNormal == Vector3.zero)
-        {
-            Debug.Log("Wallrun ended due to no wall");
-            return true;
-        }
+        if (playerData.rightWallNormal == Vector3.zero && playerData.leftWallNormal == Vector3.zero) return true;
         return ActionCompleted;
     }
     
     public override void OnBegin(bool bFirstTime)
     {
-        if (dataRecord.wallRuns >= data.maxWallRuns || rb.linearVelocity.y <= data.wallRunVerticalCancelVelocity)
-        {
-            Debug.Log("Did not start wallrun due to already maxed wallruns");
-            CompleteAction();
-            return;
-        }
+        if (!CanEnter()) return;
 
-        if (HorizontalVelocity.magnitude < data.wallRunHorizontalEntryCancelVelocity)
+        if (playerData.rightWallNormal != Vector3.zero)
         {
-            Debug.Log("Did not start wallrun due to low horizontal velocity");
-            CompleteAction();
-            return;
-        }
-
-        if (Vector3.Dot(transform.forward, HorizontalVelocity.normalized) < Vector3.Dot(-transform.forward, HorizontalVelocity.normalized))
-        {
-            Debug.Log("Did not start wallrun due to incorrect direction");
-            CompleteAction();
-            return;
-        }
-        
-        if (dataRecord.rightWallNormal != Vector3.zero)
-        {
-            if (dataRecord.previousWallRunWasRight && dataRecord.rightWallNormal == dataRecord.previousWallRunNormal)
+            if (playerData.previousWallRunWasRight && playerData.rightWallNormal == playerData.previousWallRunNormal)
             {
                 Debug.Log("Did not start wallrun due to same wall");
                 CompleteAction();
                 return;
             }
-
-            dataRecord.previousWallNormal = dataRecord.rightWallNormal;
-            dataRecord.previousWallRunNormal = dataRecord.rightWallNormal;
-            dataRecord.previousWallRunWasRight = true;
-            direction = GetWallMoveDirection(dataRecord.rightWallNormal);
+            
+            playerData.previousWallNormal = playerData.rightWallNormal;
+            playerData.previousWallRunNormal = playerData.rightWallNormal;
+            playerData.previousWallRunWasRight = true;
+            direction = LocalGetWallMoveDirection(playerData.rightWallNormal);
         }
-        else if (dataRecord.leftWallNormal != Vector3.zero)
+        else if (playerData.leftWallNormal != Vector3.zero)
         {
-            if (!dataRecord.previousWallRunWasRight && dataRecord.leftWallNormal == dataRecord.previousWallRunNormal)
+            if (!playerData.previousWallRunWasRight && playerData.leftWallNormal == playerData.previousWallRunNormal)
             {
+                //TODO: Can enter the same wall again if X time has passed
                 Debug.Log("Did not start wallrun due to same wall");
                 CompleteAction();
                 return;
             }
 
-            dataRecord.previousWallNormal = dataRecord.leftWallNormal;
-            dataRecord.previousWallRunNormal = dataRecord.leftWallNormal;
-            dataRecord.previousWallRunWasRight = false;
-            direction = GetWallMoveDirection(dataRecord.leftWallNormal);
+            playerData.previousWallNormal = playerData.leftWallNormal;
+            playerData.previousWallRunNormal = playerData.leftWallNormal;
+            playerData.previousWallRunWasRight = false;
+            direction = LocalGetWallMoveDirection(playerData.leftWallNormal);
         }
         else
         {
@@ -92,20 +65,18 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             return;
         }
 
-        Vector3 movementVelocity = direction.normalized * HorizontalVelocity.magnitude;
+        Vector3 hVelocity = direction.normalized * HorizontalVelocity.magnitude;
+        rb.linearVelocity = new Vector3(hVelocity.x, rb.linearVelocity.y, hVelocity.z);
 
-        float extraVerticalVelocity = rb.linearVelocity.y > 0 ? 2 : 0;
-        rb.linearVelocity = new Vector3(movementVelocity.x, rb.linearVelocity.y + extraVerticalVelocity, movementVelocity.z);
-
-        cameraActionStack.OnWallRunStateChange(true, dataRecord.previousWallNormal, direction);
+        cameraActionStack.OnWallRunStateChange(true, playerData.previousWallNormal, direction);
         
         Physics.gravity = Vector3.zero;
-        data.physicsMaterial.dynamicFriction = 0;
-        dataRecord.isWallRunning = true;
-        dataRecord.isHoldingJump = false;
+
+        playerData.isWallRunning = true;
+        playerData.isHoldingJump = false;
         return;
 
-        Vector3 GetWallMoveDirection(Vector3 inNormal)
+        Vector3 LocalGetWallMoveDirection(Vector3 inNormal)
         {
             Vector3 wallDirection = Vector3.Cross(inNormal, transform.up).normalized;
             float fDot = Vector3.Dot(HorizontalVelocity.normalized, wallDirection);
@@ -116,27 +87,40 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     public override void OnUpdate(float deltaTime)
     {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y - (data.wallRunVerticalVelocityLoss * deltaTime), rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y - (staticData.wallRunVerticalVelocityLoss * deltaTime), rb.linearVelocity.z);
     }
 
     public override void OnEnd()
     {
-        if (!exitedEarly && dataRecord.wallRuns < data.maxWallRuns)
-        {
-            dataRecord.wallRuns++;
-        }
-
         cameraActionStack.OnWallRunStateChange(false);
 
-        data.physicsMaterial.dynamicFriction = data.defaultFriction;
-        Physics.gravity = data.defaultGravity;
-        dataRecord.isWallRunning = false;
-        dataRecord.previousWallRunDirection = direction;
+        Physics.gravity = staticData.defaultGravity;
+        playerData.isWallRunning = false;
+        playerData.previousWallRunDirection = direction;
     }
 
-    public override void CompleteAction()
+    private bool CanEnter()
     {
-        base.CompleteAction();
-        exitedEarly = true;
+        //TODO: require speed towards the wall as an entry condition
+        if (rb.linearVelocity.y <= staticData.wallRunVerticalCancelVelocity)
+        {
+            CompleteAction();
+            return false;
+        }
+        //TODO: If the player starts with very low velocity, accelerate up towards a default velocity
+        if (HorizontalVelocity.magnitude < staticData.wallRunHorizontalEntryCancelVelocity)
+        {
+            Debug.Log("Did not start wallrun due to low horizontal velocity");
+            CompleteAction();
+            return false;
+        }
+
+        if (Vector3.Dot(transform.forward, HorizontalVelocity.normalized) < Vector3.Dot(-transform.forward, HorizontalVelocity.normalized))
+        {
+            Debug.Log("Did not start wallrun due to incorrect direction");
+            CompleteAction();
+            return false;
+        }
+        return true;
     }
 }

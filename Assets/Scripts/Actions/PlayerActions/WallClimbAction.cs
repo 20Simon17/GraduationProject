@@ -7,11 +7,11 @@ public class WallClimbAction : PlayerActionStack.PlayerAction
 
     public override bool IsDone()
     {
-        if (rb.linearVelocity.y <= data.wallRunVerticalCancelVelocity || dataRecord.isGrounded)
+        if (rb.linearVelocity.y <= staticData.wallRunVerticalCancelVelocity || playerData.isGrounded)
         {
             return true;
         }
-        if (dataRecord.frontWallNormal == Vector3.zero)
+        if (playerData.frontWallNormal == Vector3.zero)
         {
             Debug.Log("Wallclimb ended due to no front wall");
             // Make player climb the edge in front of them in this case?
@@ -32,25 +32,25 @@ public class WallClimbAction : PlayerActionStack.PlayerAction
         }
 
         Vector3 moveDirection;
-        dataRecord.previousWallNormal = dataRecord.frontWallNormal;
+        playerData.previousWallNormal = playerData.frontWallNormal;
 
-        moveDirection = Vector3.Cross(dataRecord.frontWallNormal, -transform.right);
-        rb.linearVelocity = moveDirection * (rb.linearVelocity.magnitude * data.percentageConvertedVelocityOnWallClimb);
+        moveDirection = Vector3.Cross(playerData.frontWallNormal, -transform.right);
+        rb.linearVelocity = moveDirection * (rb.linearVelocity.magnitude * staticData.percentageConvertedVelocityOnWallClimb);
         
         Physics.gravity = Vector3.zero;
-        data.physicsMaterial.dynamicFriction = 0;
-        dataRecord.isWallClimbing = true;;
+        staticData.physicsMaterial.dynamicFriction = 0;
+        playerData.isWallClimbing = true;;
     }
 
     public override void OnUpdate(float deltaTime)
     {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y - (data.wallClimbVerticalVelocityLoss * deltaTime), rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y - (staticData.wallClimbVerticalVelocityLoss * deltaTime), rb.linearVelocity.z);
     }
 
     public override void OnEnd()
     {
-        data.physicsMaterial.dynamicFriction = data.defaultFriction;
-        Physics.gravity = data.defaultGravity;
-        dataRecord.isWallClimbing = false;
+        staticData.physicsMaterial.dynamicFriction = staticData.defaultFriction;
+        Physics.gravity = staticData.defaultGravity;
+        playerData.isWallClimbing = false;
     }
 }

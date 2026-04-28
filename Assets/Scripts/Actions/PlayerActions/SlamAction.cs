@@ -9,7 +9,7 @@ public class SlamAction : PlayerActionStack.PlayerAction
 
     public override bool IsDone()
     {
-        if (dataRecord.isGrounded)
+        if (playerData.isGrounded)
         {
             return true;
         }
@@ -18,21 +18,21 @@ public class SlamAction : PlayerActionStack.PlayerAction
 
     public override void OnBegin(bool bFirstTime)
     {
-        if (Time.time - dataRecord.timeAtLastSlam < data.slamCooldown)
+        if (Time.time - playerData.timeAtLastSlam < staticData.slamCooldown)
         {
             CompleteAction();
             exitedOnCooldown = true;
             return;
         }
         
-        if (!dataRecord.isGrounded)
+        if (!playerData.isGrounded)
         {
-            dataRecord.isSlamming = true;
-            rb.AddForce(-transform.up * data.groundSlamForce, ForceMode.VelocityChange);
+            playerData.isSlamming = true;
+            rb.AddForce(-transform.up * staticData.groundSlamForce, ForceMode.VelocityChange);
         }
         else
         {
-            dataRecord.timeAtLastSlam = Time.time;
+            playerData.timeAtLastSlam = Time.time;
         }
     }
 
@@ -40,8 +40,8 @@ public class SlamAction : PlayerActionStack.PlayerAction
     {
         if (exitedOnCooldown) return;
         
-        dataRecord.isSlamming = false;
-        dataRecord.timeAtLastSlam = Time.time;
+        playerData.isSlamming = false;
+        playerData.timeAtLastSlam = Time.time;
     }
 }
 

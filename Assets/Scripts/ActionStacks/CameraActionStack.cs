@@ -24,6 +24,8 @@ public class CameraActionStack : ActionStack
 
     private Transform playerTransform;
     private Transform cameraTransform;
+
+    private bool shakeCamera;
     
     private bool gameIsQuitting;
     
@@ -69,10 +71,36 @@ public class CameraActionStack : ActionStack
     public void UpdateActionStack()
     {
         base.UpdateStack();
+
+        CameraShake();
         
         if (currentAction != CurrentAction as CameraAction)
         {
             currentAction = (CameraAction) CurrentAction;
+        }
+    }
+
+    private void CameraShake()
+    {
+        if (!shakeCamera) return;
+
+        Debug.Log("Shaking camera");
+
+        float shakeAngle = 2f;
+        float shakeAmount = Random.Range(-shakeAngle, shakeAngle);
+        int modifier = Random.Range(0, 2) * 2 - 1; // Randomly -1 or 1
+        cameraTransform.localRotation = Quaternion.Euler(shakeAmount, shakeAmount * modifier, shakeAmount * modifier);
+    }
+
+    public void ToggleCameraShake(bool toggle)
+    {
+        shakeCamera = toggle;
+
+        if (!shakeCamera)
+        {
+            // Reset camera position and rotation when stopping shake
+            cameraTransform.localPosition = new Vector3(0, 0.7f, 0);
+            cameraTransform.localRotation = Quaternion.identity;
         }
     }
 

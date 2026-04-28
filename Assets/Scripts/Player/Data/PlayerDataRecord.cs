@@ -4,6 +4,9 @@ using UnityEngine;
 [Serializable]
 public record PlayerDataRecord
 {
+    [Header("Settings")]
+    public bool allowCameraShake;
+
     [Header("Timestamps")]
     public float timeAtLastSlide;
     public float timeAtLastSlam;
@@ -16,7 +19,6 @@ public record PlayerDataRecord
     
     [Space(5)]
     public bool isGrounded;
-    
     public bool isOnSlope;
     public float slopeAngle;
     public Vector3 slopeNormal;
@@ -33,6 +35,8 @@ public record PlayerDataRecord
         get => isGrounded || canJump || (isCoyoteTimeActive && !hasJumped);
         set => canJump = value;
     }
+
+    public bool CanDoWallAction => !isGrounded && !isWallRunning && !isWallClimbing;
     
     [Space(5)]
     public bool isSliding;
@@ -42,7 +46,6 @@ public record PlayerDataRecord
     
     [Space(5)]
     public bool isHoldingJump;
-    public int wallRuns;
     public bool canWallRunJump;
     public bool canWallClimbJump;
     public Vector3 leftWallNormal;

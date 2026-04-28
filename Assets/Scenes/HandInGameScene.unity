@@ -3788,12 +3788,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 249177193}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0.5, z: 3}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalPosition: {x: 0, y: -0.19999999, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3709995593333351700}
+  m_Father: {fileID: 6996305959513681431}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!199 &249177195
 ParticleSystemRenderer:
@@ -34183,6 +34183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
   scriptableObject: {fileID: 11400000, guid: 83bc7ce8dc662314c8579125033d97f0, type: 2}
   dataRecord:
+    allowCameraShake: 0
     timeAtLastSlide: 0
     timeAtLastSlam: 0
     timeAtLastJump: 0
@@ -34216,6 +34217,7 @@ MonoBehaviour:
       defaultPlayerScaleY: 0
       jumpForceScaling: 0
       speedLineSpeedRequirement: 0
+      cameraShakeSpeedRequirement: 0
       defaultFriction: 0
       coyoteTimeDuration: 0
       jumpForce: 0
@@ -34297,7 +34299,6 @@ Transform:
   - {fileID: 7687850339803141709}
   - {fileID: 1381479459}
   - {fileID: 1606751704}
-  - {fileID: 249177194}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3842532007331278964
@@ -34577,7 +34578,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 249177194}
   m_Father: {fileID: 3709995593333351700}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7430979812381071525
@@ -34739,6 +34741,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerActionStack
   dataRecord:
+    allowCameraShake: 0
     timeAtLastSlide: 0
     timeAtLastSlam: 0
     timeAtLastJump: 0
@@ -34772,6 +34775,7 @@ MonoBehaviour:
       defaultPlayerScaleY: 0
       jumpForceScaling: 0
       speedLineSpeedRequirement: 0
+      cameraShakeSpeedRequirement: 0
       defaultFriction: 0
       coyoteTimeDuration: 0
       jumpForce: 0
@@ -34812,6 +34816,7 @@ MonoBehaviour:
       maxInteractionDistance: 0
       ziplineAutoDropVelocity: 0
       ziplineAccelerationReduction: 0
+  speedLinesParticleSystem: {fileID: 249177196}
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 512

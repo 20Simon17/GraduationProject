@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEditor.Toolbars;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class WallRunAction : PlayerActionStack.PlayerAction
     private Vector3 HorizontalVelocity => new(rb.linearVelocity.x, 0, rb.linearVelocity.z);
     private CameraActionStack cameraActionStack;
     private Vector3 direction;
+    private bool initializedWallRun;
 
     public override bool IsDone()
     {
@@ -22,6 +24,11 @@ public class WallRunAction : PlayerActionStack.PlayerAction
             return true;
         }
         if (playerData.rightWallNormal == Vector3.zero && playerData.leftWallNormal == Vector3.zero) return true;
+        if (Vector3.Dot(direction, transform.forward) < 0.3f)
+        {
+            Debug.Log("Wallrun ended due to looking too far away from the wall direction");
+            return true;
+        }
         return ActionCompleted;
     }
     
@@ -66,14 +73,16 @@ public class WallRunAction : PlayerActionStack.PlayerAction
         }
 
         Vector3 hVelocity = direction.normalized * HorizontalVelocity.magnitude;
-        rb.linearVelocity = new Vector3(hVelocity.x, rb.linearVelocity.y, hVelocity.z);
+        rb.linearVelocity = new Vector3(hVelocity.x, /*rb.linearVelocity.y*/ 0, hVelocity.z);
 
-        cameraActionStack.OnWallRunStateChange(true, playerData.previousWallNormal, direction);
+        cameraActionStack.OnWallRunStateChange(true, playerData.previousWallNormal);
         
         Physics.gravity = Vector3.zero;
 
         playerData.isWallRunning = true;
         playerData.isHoldingJump = false;
+
+        initializedWallRun = true;
         return;
 
         Vector3 LocalGetWallMoveDirection(Vector3 inNormal)
@@ -87,11 +96,12 @@ public class WallRunAction : PlayerActionStack.PlayerAction
 
     public override void OnUpdate(float deltaTime)
     {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y - (staticData.wallRunVerticalVelocityLoss * deltaTime), rb.linearVelocity.z);
+        //rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y - (staticData.wallRunVerticalVelocityLoss * deltaTime), rb.linearVelocity.z);
     }
 
     public override void OnEnd()
     {
+        if (!initializedWallRun) return;
         cameraActionStack.OnWallRunStateChange(false);
 
         Physics.gravity = staticData.defaultGravity;

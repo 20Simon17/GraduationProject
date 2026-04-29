@@ -122,11 +122,11 @@ public class CameraActionStack : ActionStack
         currentAction?.RotateCamera(value.Get<Vector2>());
     }
 
-    public void OnWallRunStateChange(bool isEntry, Vector3 wallNormal = default, Vector3 wallRunDirection = default)
+    public void OnWallRunStateChange(bool isEntry, Vector3 wallNormal = default)
     {
         if (isEntry)
         {
-            PushAction(new WallRunCameraAction(playerTransform, cameraTransform, wallNormal, wallRunDirection));
+            PushAction(new WallRunCameraAction(playerTransform, cameraTransform, wallNormal));
         }
         else if (currentAction is WallRunCameraAction)
         {

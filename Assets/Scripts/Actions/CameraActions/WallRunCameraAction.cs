@@ -1,35 +1,35 @@
-using System;
 using UnityEngine;
 
 public class WallRunCameraAction : CameraActionStack.CameraAction
 {
-    public WallRunCameraAction(Transform player, Transform camera, Vector3 inWallNormal, Vector3 inWallRunDirection)
-        : base(player, camera)
+    public WallRunCameraAction(Transform player, Transform camera, Vector3 inWallNormal): base(player, camera)
     {
         wallNormal = inWallNormal;
-        wallRunDirection = inWallRunDirection;
     }
 
-    //TODO: Make any camera settings also be saved in some collective data storage
     private readonly float clampAngleMin = -90f;
     private readonly float clampAngleMax = 90f;
     private readonly float mouseSensitivity = 0.15f;
     private Vector3 wallNormal;
-    private Vector3 wallRunDirection;
-    private readonly float maxHorizontalAngle = 45f;
-    private float forwardY;
     private float horizontalRotation;
-    private readonly float cameraTilt = 2f;
+    private readonly float cameraTilt = 10f;
+
+    private bool smoothRotate;
+    private float targetRotation;
+    private float smoothRotationTime;
+    private float startRotation;
+    private float previousTargetRotation;
+    private float smoothRotationDuration = 0.15f;
 
     private bool isDone;
 
-    public override bool IsDone() => isDone;
+    public override bool IsDone() => isDone && !smoothRotate;
 
     public override void OnBegin(bool bFirstTime)
     {
         if (bFirstTime)
         {
-            GetRotationOffset();
+            horizontalRotation = PlayerTransform.eulerAngles.y;
 
             float dot = Vector3.Dot(PlayerTransform.right, wallNormal);
             if (dot > 0)
@@ -42,39 +42,53 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
             }
         }
     }
-
-    private void GetRotationOffset()
-    {
-        PlayerTransform.forward = wallRunDirection;
-        forwardY = PlayerTransform.eulerAngles.y;
-        horizontalRotation = forwardY;
-    }
     
     public override void RotateCamera(Vector2 input)
     {
-         //Rotate the player left/right based on the input, clamp to min/max angles
+         //Rotate the player left/right based on the input
         horizontalRotation += input.x * mouseSensitivity;
-        horizontalRotation = Mathf.Clamp(horizontalRotation, forwardY - maxHorizontalAngle, forwardY + maxHorizontalAngle);
         PlayerTransform.eulerAngles = new Vector3(PlayerTransform.eulerAngles.x, horizontalRotation, PlayerTransform.eulerAngles.z);
 
         //Rotate the camera up/down based on the input, clamp to min/max angles
         VerticalRotation += -input.y * mouseSensitivity;
         VerticalRotation = Mathf.Clamp(VerticalRotation, clampAngleMin, clampAngleMax);
-        CameraTransform.localEulerAngles = new Vector3(VerticalRotation, CameraTransform.localEulerAngles.z, CameraTransform.localEulerAngles.z);
+        CameraTransform.localEulerAngles = new Vector3(VerticalRotation, CameraTransform.localEulerAngles.y, CameraTransform.localEulerAngles.z);
+    }
+
+    public override void OnUpdate(float deltaTime)
+    {
+        if (smoothRotate)
+        {
+            smoothRotationTime += deltaTime;
+            float zRotation = Mathf.Lerp(startRotation, targetRotation, smoothRotationTime / smoothRotationDuration);
+            CameraTransform.localEulerAngles = new Vector3(CameraTransform.localEulerAngles.x, CameraTransform.localEulerAngles.y, zRotation);
+
+            Debug.Log($"Smooth rotating camera. Time: {smoothRotationTime}, Start: {startRotation}, Target: {targetRotation}, Current: {zRotation}");
+
+            if (smoothRotationTime >= smoothRotationDuration)
+            {
+                smoothRotate = false;
+            }
+        }
     }
 
     public override void OnEnd()
     {
-        SetCameraZRotation(0);
+        //SetCameraZRotation(0);
     }
 
     private void SetCameraZRotation(float zRotation)
     {
-        CameraTransform.localEulerAngles = new Vector3(CameraTransform.localEulerAngles.x, CameraTransform.localEulerAngles.y, zRotation);
+        previousTargetRotation = targetRotation;
+        targetRotation = zRotation;
+        startRotation = CameraTransform.rotation.z;
+        smoothRotationTime = 0;
+        smoothRotate = true;
     }
 
     public void SetIsDone(bool newDone)
     {
+        SetCameraZRotation(0);
         isDone = newDone;
     }
 }

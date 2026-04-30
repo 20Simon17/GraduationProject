@@ -50,6 +50,7 @@ public class PlayerActionStack : ActionStack
     private bool jumpBufferActive;
 
     [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private LayerMask wallLayerMask;
 
     private PhysicsMaterial physicsMaterial;
     
@@ -279,21 +280,21 @@ public class PlayerActionStack : ActionStack
         bool returnValue = false;
         for (int i = 0; i < lRays.Length; i++)
         {
-            if (Physics.Raycast(fRays[i], out RaycastHit fHit, dataRecord.dataStruct.wallClimbCheckDistance))
+            if (Physics.Raycast(fRays[i], out RaycastHit fHit, dataRecord.dataStruct.wallClimbCheckDistance, wallLayerMask))
             {
                 dataRecord.frontWallNormal = fHit.normal;
                 returnValue = true;
             }
             else dataRecord.frontWallNormal = Vector3.zero;
 
-            if (Physics.Raycast(lRays[i], out RaycastHit lHit, dataRecord.dataStruct.wallRunCheckDistance))
+            if (Physics.Raycast(lRays[i], out RaycastHit lHit, dataRecord.dataStruct.wallRunCheckDistance, wallLayerMask))
             {
                 dataRecord.leftWallNormal = lHit.normal;
                 returnValue = true;
             }
             else dataRecord.leftWallNormal = Vector3.zero;
 
-            if (Physics.Raycast(rRays[i], out RaycastHit rHit, dataRecord.dataStruct.wallRunCheckDistance))
+            if (Physics.Raycast(rRays[i], out RaycastHit rHit, dataRecord.dataStruct.wallRunCheckDistance, wallLayerMask))
             {
                 dataRecord.rightWallNormal = rHit.normal;
                 returnValue = true;
@@ -515,7 +516,7 @@ public class PlayerActionStack : ActionStack
     
     private void AddSlamAction(InputValue value)
     {
-        if (currentAction is WaitAction) return;
+        if (currentAction is WaitAction || currentAction is WallRunAction) return;
         if (value.isPressed && currentAction is not SlamAction)
         {
             PushAction(new SlamAction(rb, transform, dataRecord));

@@ -63,7 +63,7 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
             float zRotation = Mathf.Lerp(startRotation, targetRotation, smoothRotationTime / smoothRotationDuration);
             CameraTransform.localEulerAngles = new Vector3(CameraTransform.localEulerAngles.x, CameraTransform.localEulerAngles.y, zRotation);
 
-            Debug.Log($"Smooth rotating camera. Time: {smoothRotationTime}, Start: {startRotation}, Target: {targetRotation}, Current: {zRotation}");
+            //Debug.Log($"Smooth rotating camera. Time: {smoothRotationTime}, Start: {startRotation}, Target: {targetRotation}, Current: {zRotation}");
 
             if (smoothRotationTime >= smoothRotationDuration)
             {
@@ -79,10 +79,12 @@ public class WallRunCameraAction : CameraActionStack.CameraAction
 
     private void SetCameraZRotation(float zRotation)
     {
+        smoothRotate = false;
+        smoothRotationTime = 0;
+        Debug.Log(CameraTransform.localRotation.z);
         previousTargetRotation = targetRotation;
         targetRotation = zRotation;
-        startRotation = CameraTransform.rotation.z;
-        smoothRotationTime = 0;
+        startRotation = CameraTransform.localRotation.z;
         smoothRotate = true;
     }
 

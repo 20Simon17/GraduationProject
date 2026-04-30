@@ -34201,7 +34201,6 @@ MonoBehaviour:
     isWallRunning: 0
     isWallClimbing: 0
     isHoldingJump: 0
-    wallRuns: 0
     canWallRunJump: 0
     canWallClimbJump: 0
     leftWallNormal: {x: 0, y: 0, z: 0}
@@ -34250,7 +34249,6 @@ MonoBehaviour:
       wallRunVerticalCancelVelocity: 0
       wallRunHorizontalEntryCancelVelocity: 0
       wallRunVerticalVelocityLoss: 0
-      maxWallRuns: 0
       wallClimbCheckDistance: 0
       wallClimbVerticalVelocityLoss: 0
       wallClimbJumpOutwardForce: 0
@@ -34759,7 +34757,6 @@ MonoBehaviour:
     isWallRunning: 0
     isWallClimbing: 0
     isHoldingJump: 0
-    wallRuns: 0
     canWallRunJump: 0
     canWallClimbJump: 0
     leftWallNormal: {x: 0, y: 0, z: 0}
@@ -34808,7 +34805,6 @@ MonoBehaviour:
       wallRunVerticalCancelVelocity: 0
       wallRunHorizontalEntryCancelVelocity: 0
       wallRunVerticalVelocityLoss: 0
-      maxWallRuns: 0
       wallClimbCheckDistance: 0
       wallClimbVerticalVelocityLoss: 0
       wallClimbJumpOutwardForce: 0
@@ -34820,6 +34816,9 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 512
+  wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 513
 --- !u!114 &8808178612514799832
 MonoBehaviour:
   m_ObjectHideFlags: 0

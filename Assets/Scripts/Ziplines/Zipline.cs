@@ -110,7 +110,7 @@ public class Zipline : ProceduralMesh, IInteractable
         
         colors.AddRange(new Color[vertices.Count]);
         
-        for (int i = 0; i < vertices.Count; i++) 
+        for (int i = 0; i < vertices.Count; i++)
             colors[i] = Color.red;
         
         zipTriangles.AddRange(new int[]
@@ -247,7 +247,7 @@ public class Zipline : ProceduralMesh, IInteractable
         float dot = Vector3.Dot(ziplineDirection, pointDirection);
         if (dot < 0) return false;
 
-        if (dot > ziplineDirection.sqrMagnitude) return false;
+        //if (dot > ziplineDirection.sqrMagnitude) return false;
         return true;
     }
 }

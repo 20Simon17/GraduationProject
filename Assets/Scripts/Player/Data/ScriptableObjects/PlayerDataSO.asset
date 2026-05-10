@@ -26,12 +26,12 @@ MonoBehaviour:
     slopeNormal: {x: 0, y: 0, z: 0}
     isOnZipline: 0
     hasJumped: 0
+    isJumping: 0
     isSliding: 0
     isSlamming: 0
     isWallRunning: 0
     isWallClimbing: 0
     isHoldingJump: 0
-    wallRuns: 0
     canWallRunJump: 0
     canWallClimbJump: 0
     leftWallNormal: {x: 0, y: 0, z: 0}
@@ -41,6 +41,7 @@ MonoBehaviour:
     previousWallRunDirection: {x: 0, y: 0, z: 0}
     previousWallRunWasRight: 0
     previousWallRunNormal: {x: 0, y: 0, z: 0}
+    previousWallClimbNormal: {x: 0, y: 0, z: 0}
     isInTimeTrial: 0
     dataStruct:
       velocityHardCap: 250
@@ -80,11 +81,12 @@ MonoBehaviour:
       wallRunVerticalCancelVelocity: -12
       wallRunHorizontalEntryCancelVelocity: 3
       wallRunVerticalVelocityLoss: 1
-      maxWallRuns: 10
       wallClimbCheckDistance: 1
+      wallClimbRequiredEntryVelocity: -8
+      wallClimbMinimumVelocity: 12
       wallClimbVerticalVelocityLoss: 12
       wallClimbJumpOutwardForce: 200
-      percentageConvertedVelocityOnWallClimb: 1
+      percentageConvertedVelocityOnWallClimb: 0.75
       maxInteractionDistance: 2
       ziplineAutoDropVelocity: 1
       ziplineAccelerationReduction: 1.5

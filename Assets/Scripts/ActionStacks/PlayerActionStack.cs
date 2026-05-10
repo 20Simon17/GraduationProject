@@ -127,10 +127,13 @@ public class PlayerActionStack : ActionStack
         {
             if (dataRecord.rightWallNormal != Vector3.zero || dataRecord.leftWallNormal != Vector3.zero)
             {
+                if (currentAction is WallRunAction || currentAction is WaitAction) return;
+                Debug.Log("Wall detected, adding wallrun action");
                 ForceAddWallRunAction();
             }
             else if (dataRecord.frontWallNormal != Vector3.zero)
             {
+                if (currentAction is WallClimbAction || currentAction is WaitAction) return;
                 Debug.Log("Wall detected, adding wallclimb action");
                 ForceAddWallClimbAction();
             }
@@ -331,12 +334,14 @@ public class PlayerActionStack : ActionStack
     private void OnGrounded()
     {
         dataRecord.isGrounded = true;
+        dataRecord.isJumping = false;
                 
         dataRecord.canWallRunJump = false;
         dataRecord.canWallClimbJump = false;
-        dataRecord.previousWallNormal = Vector3.zero;
         dataRecord.previousWallRunWasRight = false;
+        dataRecord.previousWallNormal = Vector3.zero;
         dataRecord.previousWallRunNormal = Vector3.zero;
+        dataRecord.previousWallClimbNormal = Vector3.zero;
         
         if (dataRecord.isWallRunning)
         {
@@ -424,8 +429,10 @@ public class PlayerActionStack : ActionStack
     {
         if (!value.isPressed) return;
 
-        if (currentAction is not WallRunAction && !dataRecord.isGrounded)
+        if (!dataRecord.isGrounded && currentAction is not WallRunAction && currentAction is not WaitAction)
         {
+            Debug.Log("Wall run detected, adding wallrun action");
+
             PushAction(new WallRunAction(rb, transform, dataRecord, cameraActionStack));
             jumpBufferActive = false;
             slideBufferActive = false;
@@ -455,7 +462,7 @@ public class PlayerActionStack : ActionStack
     {
         if (!value.isPressed) return;
 
-        if (currentAction is not WallClimbAction && !dataRecord.isGrounded)
+        if (!dataRecord.isGrounded && currentAction is not WallClimbAction && currentAction is not WaitAction)
         {
             PushAction(new WallClimbAction(rb, transform, dataRecord));
             jumpBufferActive = false;

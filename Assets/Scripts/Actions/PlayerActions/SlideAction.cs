@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SlideAction : PlayerActionStack.PlayerAction
 {
-    public SlideAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData, PlayerActionStack inPlayer) 
+    public SlideAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData, PlayerActionStack inPlayer)
         : base(inRb, inTransform, inData) { player = inPlayer; }
     
     private bool exitedEarly;
@@ -25,10 +25,7 @@ public class SlideAction : PlayerActionStack.PlayerAction
 
     public override void OnBegin(bool bFirstTime)
     {
-        if (!playerData.isGrounded) return;
-        
-        if (Time.time - playerData.timeAtLastSlide < staticData.slideCooldown ||
-            rb.linearVelocity.magnitude < staticData.slideSpeedRequirement)
+        if (!CanEnterSlide())
         {
             exitedEarly = true;
             CompleteAction();
@@ -124,5 +121,15 @@ public class SlideAction : PlayerActionStack.PlayerAction
             rb.linearVelocity = Vector3.zero;
         }
         else rb.linearVelocity = rb.linearVelocity.normalized * (rb.linearVelocity.magnitude - (staticData.slideSpeedLoss * deltaTime));
+    }
+
+    private bool CanEnterSlide()
+    {
+        if (!playerData.isGrounded || playerData.isOnSlope) return false;
+        if (Time.time - playerData.timeAtLastSlide < staticData.slideCooldown || rb.linearVelocity.magnitude < staticData.slideSpeedRequirement)
+        {
+            return false;
+        }
+        return true;
     }
 }

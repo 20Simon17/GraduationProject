@@ -34,6 +34,8 @@ public class SlamAction : PlayerActionStack.PlayerAction
         {
             playerData.timeAtLastSlam = Time.time;
         }
+
+        ActionCompleted = true;
     }
 
     public override void OnEnd()

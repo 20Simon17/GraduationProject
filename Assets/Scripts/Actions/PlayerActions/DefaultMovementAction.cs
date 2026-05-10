@@ -39,7 +39,7 @@ public class DefaultMovementAction : PlayerActionStack.PlayerAction
         }
         
         // Slope movement
-        if (playerData.isOnSlope && playerData.isGrounded)
+        if (!playerData.isJumping && playerData.isOnSlope && playerData.isGrounded)
         {
             rb.linearVelocity = Vector3.ProjectOnPlane(rb.linearVelocity, playerData.slopeNormal).normalized * rb.linearVelocity.magnitude;
         }

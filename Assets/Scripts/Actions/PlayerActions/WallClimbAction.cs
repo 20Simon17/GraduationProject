@@ -1,3 +1,4 @@
+using System.Data.Common;
 using UnityEngine;
 
 public class WallClimbAction : PlayerActionStack.PlayerAction
@@ -25,7 +26,8 @@ public class WallClimbAction : PlayerActionStack.PlayerAction
         // TODO: Wallclimb can only happen if velocity.y > 0 and X time has passed since the previous one (to prevent permanent wallclimbing on the same wall)
         // Extra prevention: Maximum of X jumps? that doesn't make sense though if the player still has the speed for it. Maybe just allow it? Unless there's buggy behaviour.
 
-        if (rb.linearVelocity.y <= 0 || InputManager.Instance.moveDirection == Vector2.zero)
+        // set a min speed lower than 0 to be a bit more lenient
+        if (rb.linearVelocity.y <= staticData.wallClimbRequiredEntryVelocity || InputManager.Instance.moveDirection.y <= 0 || playerData.frontWallNormal == playerData.previousWallClimbNormal)
         {
             CompleteAction();
             return;
@@ -33,9 +35,17 @@ public class WallClimbAction : PlayerActionStack.PlayerAction
 
         Vector3 moveDirection;
         playerData.previousWallNormal = playerData.frontWallNormal;
+        playerData.previousWallClimbNormal = playerData.frontWallNormal;
 
         moveDirection = Vector3.Cross(playerData.frontWallNormal, -transform.right);
-        rb.linearVelocity = moveDirection * (rb.linearVelocity.magnitude * staticData.percentageConvertedVelocityOnWallClimb);
+        float convertedSpeed = rb.linearVelocity.magnitude * staticData.percentageConvertedVelocityOnWallClimb;
+
+        if (convertedSpeed < staticData.wallClimbMinimumVelocity)
+        {
+            convertedSpeed = staticData.wallClimbMinimumVelocity;
+        }
+
+        rb.linearVelocity = moveDirection * convertedSpeed;
         
         Physics.gravity = Vector3.zero;
         staticData.physicsMaterial.dynamicFriction = 0;

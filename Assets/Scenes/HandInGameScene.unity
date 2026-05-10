@@ -3779,7 +3779,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &249177194
 Transform:
   m_ObjectHideFlags: 0
@@ -34196,6 +34196,7 @@ MonoBehaviour:
     slopeNormal: {x: 0, y: 0, z: 0}
     isOnZipline: 0
     hasJumped: 0
+    isJumping: 0
     isSliding: 0
     isSlamming: 0
     isWallRunning: 0
@@ -34250,6 +34251,8 @@ MonoBehaviour:
       wallRunHorizontalEntryCancelVelocity: 0
       wallRunVerticalVelocityLoss: 0
       wallClimbCheckDistance: 0
+      wallClimbRequiredEntryVelocity: 0
+      wallClimbMinimumVelocity: 0
       wallClimbVerticalVelocityLoss: 0
       wallClimbJumpOutwardForce: 0
       percentageConvertedVelocityOnWallClimb: 0
@@ -34752,6 +34755,7 @@ MonoBehaviour:
     slopeNormal: {x: 0, y: 0, z: 0}
     isOnZipline: 0
     hasJumped: 0
+    isJumping: 0
     isSliding: 0
     isSlamming: 0
     isWallRunning: 0
@@ -34806,6 +34810,8 @@ MonoBehaviour:
       wallRunHorizontalEntryCancelVelocity: 0
       wallRunVerticalVelocityLoss: 0
       wallClimbCheckDistance: 0
+      wallClimbRequiredEntryVelocity: 0
+      wallClimbMinimumVelocity: 0
       wallClimbVerticalVelocityLoss: 0
       wallClimbJumpOutwardForce: 0
       percentageConvertedVelocityOnWallClimb: 0

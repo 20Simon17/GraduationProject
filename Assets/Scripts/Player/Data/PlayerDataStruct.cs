@@ -58,6 +58,8 @@ public struct PlayerDataStruct
 
     [Header("Wall Climb")]
     public float wallClimbCheckDistance;
+    public float wallClimbRequiredEntryVelocity;
+    public float wallClimbMinimumVelocity;
     public float wallClimbVerticalVelocityLoss;
     public float wallClimbJumpOutwardForce;
     public float percentageConvertedVelocityOnWallClimb;

@@ -36,6 +36,8 @@ public record PlayerDataRecord
         set => canJump = value;
     }
 
+    public bool isJumping;
+
     public bool CanDoWallAction => !isGrounded && !isWallRunning && !isWallClimbing;
     
     [Space(5)]
@@ -55,6 +57,7 @@ public record PlayerDataRecord
     public Vector3 previousWallRunDirection;
     public bool previousWallRunWasRight;
     public Vector3 previousWallRunNormal;
+    public Vector3 previousWallClimbNormal;
     // public GameObject currentWallObject;
     // public GameObject previousWallObject;
 

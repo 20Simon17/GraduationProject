@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class JumpAction : PlayerActionStack.PlayerAction
 {
-	public JumpAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData) 
+	public JumpAction(Rigidbody inRb, Transform inTransform, PlayerDataRecord inData)
         : base(inRb, inTransform, inData) {}
 
     public override void OnBegin(bool bFirstTime)
@@ -28,6 +28,7 @@ public class JumpAction : PlayerActionStack.PlayerAction
         ActionCompleted = true;
         playerData.hasJumped = true;
         playerData.timeAtLastJump = Time.time;
+        playerData.isJumping = true;
     }
 
     private bool CanSlideJump()
